@@ -6,6 +6,7 @@ module Stockboy::Providers
 
     dsl_attrs(
       :host,
+      :passive,
       :username,
       :password,
       :binary,
@@ -20,6 +21,7 @@ module Stockboy::Providers
     def initialize(opts={}, &block)
       super(opts, &block)
       @host         = opts[:host]
+      @passive      = opts[:passive]
       @username     = opts[:username]
       @password     = opts[:password]
       @binary       = opts[:binary]
@@ -43,10 +45,15 @@ module Stockboy::Providers
       Net::FTP.open(host, username, password) do |ftp|
         begin
           ftp.binary = binary
+          ftp.passive = passive
           ftp.chdir file_dir if file_dir
           matching_file = pick_file_from ftp.nlst.select(&file_name_matcher)
           validate_file(ftp, matching_file)
-          @data = ftp.get(matching_file,nil) if valid?
+          if valid?
+            logger.info "FTP getting file #{file_dir}/#{matching_file}"
+            @data = ftp.get(matching_file,nil)
+            logger.info "FTP got file #{file_dir}/#{matching_file} (#@data_size bytes)"
+          end
         rescue Net::FTPError
           errors.add :response, ftp.last_response
           logger.warn ftp.last_response
