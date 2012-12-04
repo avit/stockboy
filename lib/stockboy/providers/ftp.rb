@@ -47,7 +47,8 @@ module Stockboy::Providers
           ftp.binary = binary
           ftp.passive = passive
           ftp.chdir file_dir if file_dir
-          matching_file = pick_file_from ftp.nlst.select(&file_name_matcher)
+          file_listing = ftp.nlst.sort
+          matching_file = pick_file_from file_listing.select(&file_name_matcher)
           validate_file(ftp, matching_file)
           if valid?
             logger.info "FTP getting file #{file_dir}/#{matching_file}"
