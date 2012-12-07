@@ -19,6 +19,14 @@ module Stockboy
       end
     end
 
+    describe "[]" do
+      it "fetches raw values for raw input keys" do
+        map = AttributeMap.new { name from: 'full_name' }
+        subject = CandidateRecord.new(hash_attrs, map)
+        subject['full_name'].should == 'Arthur Dent'
+      end
+    end
+
     describe "#to_hash" do
       it "remaps attributes" do
         map = AttributeMap.new { name from: 'full_name' }

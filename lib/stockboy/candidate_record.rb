@@ -10,6 +10,10 @@ module Stockboy
       freeze
     end
 
+    def [](raw_key)
+      @table[raw_key.to_s]
+    end
+
     def to_hash
       Hash.new.tap do |out|
         @map.each { |col| out[col.to] = translate(col) }
