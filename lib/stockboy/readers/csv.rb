@@ -5,7 +5,7 @@ require 'csv'
 module Stockboy::Readers
   class CSV < Stockboy::Reader
 
-    dsl_attrs :skip_header_rows
+    dsl_attrs :skip_header_rows, :skip_footer_rows
 
     ::CSV::DEFAULT_OPTIONS.keys.each do |attr, opt|
       define_method attr do |*arg|
@@ -19,6 +19,7 @@ module Stockboy::Readers
       @csv_options = opts.reject {|k,v| !::CSV::DEFAULT_OPTIONS.keys.include?(k) }
       @csv_options[:headers] = @csv_options.fetch(:headers, true)
       @skip_header_rows = 0
+      @skip_footer_rows = 0
       instance_eval(&block) if block_given?
     end
 
@@ -34,8 +35,19 @@ module Stockboy::Readers
 
     def sanitize(data)
       data.force_encoding(encoding) if encoding
-      data.sub(/(.*\n){#@skip_header_rows}/, '')
+      data.encode! universal_newline: true
+      data.chomp!
+      from = row_start_index(data, skip_header_rows)
+      to = row_end_index(data, skip_footer_rows)
+      data[from..to]
     end
 
+    def row_start_index(data, skip_rows)
+      Array.new(skip_rows).inject(0) { |i| data.index(/$/, i) + 1 }
+    end
+
+    def row_end_index(data, skip_rows)
+      Array.new(skip_rows).inject(-1) { |i| data.rindex(/$/, i) - 1 }
+    end
   end
 end
