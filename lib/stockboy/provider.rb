@@ -122,5 +122,14 @@ module Stockboy #:nodoc:
       [self]
     end
 
+    def pick_from(list)
+      case @pick
+      when Symbol
+        list.public_send @pick
+      when Proc
+        list.detect &@pick
+      end
+    end
+
   end
 end

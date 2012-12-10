@@ -48,7 +48,7 @@ module Stockboy::Providers
           ftp.passive = passive
           ftp.chdir file_dir if file_dir
           file_listing = ftp.nlst.sort
-          matching_file = pick_file_from file_listing.select(&file_name_matcher)
+          matching_file = pick_from file_listing.select(&file_name_matcher)
           validate_file(ftp, matching_file)
           if valid?
             logger.info "FTP getting file #{file_dir}/#{matching_file}"
@@ -69,15 +69,6 @@ module Stockboy::Providers
         ->(i) { i =~ file_name }
       when String
         ->(i) { ::File.fnmatch(file_name, i) }
-      end
-    end
-
-    def pick_file_from(list)
-      case @pick
-      when Symbol
-        list.public_send @pick
-      when Proc
-        list.detect &@pick
       end
     end
 
