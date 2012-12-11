@@ -22,6 +22,7 @@ require 'stockboy/translations/date'
 require 'stockboy/translations/us_date'
 
 # Filters
+require 'stockboy/filters/missing_email'
 
 # Providers
 require 'stockboy/providers/ftp'
@@ -34,6 +35,10 @@ require 'stockboy/readers/csv'
 # require 'stockboy/readers/xml'
 
 module Stockboy
+
+  module Filters
+    register :missing_email, MissingEmail
+  end
 
   module Providers
     register :file, File
