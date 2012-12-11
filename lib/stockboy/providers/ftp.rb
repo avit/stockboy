@@ -73,6 +73,7 @@ module Stockboy::Providers
     end
 
     def validate_file(ftp, data_file)
+      return errors.add :response, "No matching files" unless data_file
       validate_file_newer(ftp, data_file)
       validate_file_smaller(ftp, data_file)
       validate_file_larger(ftp, data_file)
