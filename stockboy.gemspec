@@ -28,5 +28,6 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency "log4r"
   s.add_runtime_dependency "savon"
+  s.add_runtime_dependency "mail"
   s.add_runtime_dependency "activemodel"
 end

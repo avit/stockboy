@@ -25,6 +25,7 @@ require 'stockboy/translations/us_date'
 
 # Providers
 require 'stockboy/providers/ftp'
+require 'stockboy/providers/imap'
 require 'stockboy/providers/soap'
 require 'stockboy/providers/file'
 
@@ -38,7 +39,7 @@ module Stockboy
     register :file, File
     register :ftp,  FTP
     register :soap, SOAP
-    # register :imap, IMAP
+    register :imap, IMAP
   end
 
   module Readers
