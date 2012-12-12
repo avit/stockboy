@@ -18,8 +18,8 @@ module Stockboy::Readers
       super
       @csv_options = opts.reject {|k,v| !::CSV::DEFAULT_OPTIONS.keys.include?(k) }
       @csv_options[:headers] = @csv_options.fetch(:headers, true)
-      @skip_header_rows = 0
-      @skip_footer_rows = 0
+      @skip_header_rows = opts.fetch(:skip_header_rows, 0)
+      @skip_footer_rows = opts.fetch(:skip_footer_rows, 0)
       instance_eval(&block) if block_given?
     end
 
