@@ -3,6 +3,9 @@ require 'stockboy/readers/csv'
 
 module Stockboy
   describe Readers::CSV do
+
+    subject :reader
+
     describe "default params" do
       its(:row_sep)          { should be_nil }
       its(:col_sep)          { should be_nil }
@@ -26,14 +29,26 @@ module Stockboy
     end
 
     describe "#parse" do
-      subject(:records) do
-        Readers::CSV.new(headers: true).parse <<-EOF.gsub(/^ {8}/,'')
-        id,name
-        42,Arthur Dent
-        EOF
+      it "returns an array of records" do
+        records = reader.parse "id,name\n42,Arthur Dent"
+
+        records[0].should == {"id" => "42", "name" => "Arthur Dent"}
       end
 
-      it "returns an array of records" do
+      it "strips null bytes from empty fields (MSSQL BCP exports)" do
+        reader.options[:col_sep] = '|'
+        reader.options[:headers] = %w[city state country]
+        records = reader.parse "Vancouver|\x00|Canada"
+
+        records.should ==
+          [{"city" => "Vancouver", "state" => nil, "country" => "Canada"}]
+      end
+
+      it "strips preamble header rows" do
+        reader.skip_header_rows = 2
+        data = "IGNORE\r\nCOMMENTS\r\nid,name\r\n42,Arthur Dent"
+        records = reader.parse data
+
         records[0].should == {"id" => "42", "name" => "Arthur Dent"}
       end
     end

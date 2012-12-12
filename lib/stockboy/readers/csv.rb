@@ -35,8 +35,9 @@ module Stockboy::Readers
 
     def sanitize(data)
       data.force_encoding(encoding) if encoding
-      data.encode! universal_newline: true
-      data.chomp!
+      data = data.encode(universal_newline: true)
+                 .delete(0.chr)
+                 .chomp
       from = row_start_index(data, skip_header_rows)
       to = row_end_index(data, skip_footer_rows)
       data[from..to]
