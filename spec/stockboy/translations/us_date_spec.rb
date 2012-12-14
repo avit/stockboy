@@ -11,8 +11,23 @@ module Stockboy
         subject.call(start: "").should be_nil
       end
 
-      it "translates US format date strings" do
+      it "translates MM/DD/YYYY" do
         result = subject.call(start: "4/6/2013")
+        result.should == Date.new(2013,4,6)
+      end
+
+      it "translates MM/DD/YY" do
+        result = subject.call(start: "4/6/13")
+        result.should == Date.new(2013,4,6)
+      end
+
+      it "translates MM-DD-YYYY" do
+        result = subject.call(start: "4-6-2013")
+        result.should == Date.new(2013,4,6)
+      end
+
+      it "translates MM-DD-YY" do
+        result = subject.call(start: "4-6-13")
         result.should == Date.new(2013,4,6)
       end
     end
