@@ -22,8 +22,8 @@ module Stockboy
       end
     end
 
-    def initialize(&block)
-      @map = {}
+    def initialize(rows={}, &block)
+      @map = rows
       if block_given?
         DSL.new(self).instance_eval(&block)
       end

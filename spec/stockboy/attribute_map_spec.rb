@@ -10,6 +10,14 @@ module Stockboy
       end
     end
 
+    describe ".new" do
+      it "initializes from hash attribute" do
+        row = AttributeMap::Row.new(:email, "email", [])
+        map = AttributeMap.new(:email => row)
+        map[:email].should == row
+      end
+    end
+
     it "captures same destination as default" do
       subject[:email].should == AttributeMap::Row.new(:email,"email",[])
     end
