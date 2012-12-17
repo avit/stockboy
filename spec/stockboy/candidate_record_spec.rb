@@ -19,14 +19,6 @@ module Stockboy
       end
     end
 
-    describe "[]" do
-      it "fetches raw values for raw input keys" do
-        map = AttributeMap.new { name from: 'full_name' }
-        subject = CandidateRecord.new(hash_attrs, map)
-        subject['full_name'].should == 'Arthur Dent'
-      end
-    end
-
     describe "#to_hash" do
       it "remaps attributes" do
         map = AttributeMap.new { name from: 'full_name' }
@@ -82,6 +74,32 @@ module Stockboy
         subject = CandidateRecord.new(hash_attrs, map)
 
         subject.to_model(model)
+      end
+    end
+
+    describe "#input" do
+      describe "[]" do
+        it "fetches raw values for raw input keys" do
+          map = AttributeMap.new { name from: 'full_name' }
+          subject = CandidateRecord.new(hash_attrs, map)
+          subject.input['full_name'].should == 'Arthur Dent'
+        end
+      end
+
+      it "accesses fields by mapped name before translation" do
+        map = AttributeMap.new { name from: 'full_name', as: ->(r){ r.name.upcase } }
+        subject = CandidateRecord.new(hash_attrs, map)
+        subject.input.name.should == 'Arthur Dent'
+      end
+    end
+
+    describe "#output" do
+      describe "[]" do
+        it "fetches translated values for raw input keys" do
+          map = AttributeMap.new { name from: 'full_name' }
+          subject = CandidateRecord.new(hash_attrs, map)
+          subject.output.name.should == 'Arthur Dent'
+        end
       end
     end
 

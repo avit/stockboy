@@ -1,4 +1,6 @@
 require 'stockboy/attribute_map'
+require 'stockboy/mapped_record'
+require 'stockboy/source_record'
 require 'stockboy/translations'
 
 module Stockboy
@@ -8,10 +10,6 @@ module Stockboy
       @map = map
       @table = attrs.to_hash
       freeze
-    end
-
-    def [](raw_key)
-      @table[raw_key.to_s]
     end
 
     def to_hash
@@ -34,11 +32,19 @@ module Stockboy
 
     def partition(filters={})
       filters.each_pair do |filter_key, f|
-        if f.call(OpenStruct.new(raw_hash), OpenStruct.new(to_hash))
+        if f.call(input, output)
           return filter_key
         end
       end
       nil
+    end
+
+    def input
+      SourceRecord.new(self.raw_hash, @table)
+    end
+
+    def output
+      MappedRecord.new(self.to_hash)
     end
 
     private
