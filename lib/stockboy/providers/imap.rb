@@ -77,9 +77,21 @@ module Stockboy::Providers
       keys = []
       keys += ['SUBJECT', subject]  if subject
       keys += ['FROM', from]        if from
-      keys += ['SINCE', newer_than] if newer_than
+      keys += ['SINCE', date_format(newer_than)] if newer_than
       keys += search if search
       keys
+    end
+
+    def date_format(value)
+      case value
+      when Date, Time, DateTime
+        value.strftime('%v')
+      when Numeric
+        Time.at(value).strftime('%v')
+      when String
+        return value if value =~ /\A\d{2}-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d{2}\z/i
+        Date.parse(value).strftime('%v')
+      end
     end
 
     def client
