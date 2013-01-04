@@ -2,16 +2,15 @@ require 'pry'
 require 'pry-debugger'
 require 'pry-exception_explorer'
 require 'ostruct'
-require 'savon_spec'
 require 'log4r'
+require 'savon'
+require 'savon/mock/spec_helper'
 # require 'vcr'
 
 $:.unshift File.expand_path('../lib/stockboy/lib', __FILE__)
 
-Savon::Spec::Fixture.path = File.expand_path("./fixtures/soap", File.dirname(__FILE__))
-
 RSpec.configure do |config|
-  config.include Savon::Spec::Macros
+  config.include Savon::SpecHelper
   config.mock_with :rspec
   spec_fixtures = File.expand_path("fixtures", File.dirname(__FILE__))
   config.add_setting :fixture_path, default: Pathname(spec_fixtures)

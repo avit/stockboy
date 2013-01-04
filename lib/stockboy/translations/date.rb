@@ -4,8 +4,8 @@ module Stockboy::Translations
   class Date < Stockboy::Translator
 
     def translate(context)
-      return nil if context[field_key] == ""
-      val = context[field_key]
+      return nil if (val = context[field_key]).blank?
+
       case val
       when ::Date then val
       when String then ::Date.parse(val)

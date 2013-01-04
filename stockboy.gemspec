@@ -23,11 +23,10 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "rake"
   s.add_development_dependency "rspec"
-  s.add_development_dependency "savon_spec"
   # s.add_development_dependency "vcr"
 
   s.add_runtime_dependency "log4r"
-  s.add_runtime_dependency "savon"
+  s.add_runtime_dependency "savon", ">= 2.0"
   s.add_runtime_dependency "mail"
   s.add_runtime_dependency "activemodel"
 end
