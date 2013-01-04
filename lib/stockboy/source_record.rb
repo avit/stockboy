@@ -8,7 +8,8 @@ module Stockboy
     end
 
     def [](key)
-      @data_fields[key.to_s]
+      key = key.to_sym if key.respond_to?(:to_sym)
+      @data_fields[key]
     end
   end
 end

@@ -15,7 +15,8 @@ module Stockboy
       def method_missing(attr, *args)
         opts = args.first || {}
         to = attr.to_sym
-        from = opts.fetch(:from, attr).to_s
+        from = opts.fetch(:from, attr)
+        from = from.to_sym if from.respond_to?(:to_sym)
         translators = Array(opts[:as]).map { |t| Translations.translator_for(to, t) }
         @map[attr] = Row.new(to, from, translators)
         (class << @instance; self end).send(:define_method, attr) { @map[attr] }
