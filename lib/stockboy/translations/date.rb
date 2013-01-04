@@ -5,7 +5,13 @@ module Stockboy::Translations
 
     def translate(context)
       return nil if context[field_key] == ""
-      ::Date.parse(context[field_key])
+      val = context[field_key]
+      case val
+      when ::Date then val
+      when String then ::Date.parse(val)
+      when ::Time then ::Date.new(val.year, val.month, val.day)
+      else nil
+      end
     end
 
   end
