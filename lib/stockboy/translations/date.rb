@@ -4,12 +4,13 @@ module Stockboy::Translations
   class Date < Stockboy::Translator
 
     def translate(context)
-      return nil if (val = context[field_key]).blank?
+      value = context.public_send(field_key)
+      return nil if value.blank?
 
-      case val
-      when ::Date then val
-      when String then ::Date.parse(val)
-      when ::Time then ::Date.new(val.year, val.month, val.day)
+      case value
+      when String then ::Date.parse(value)
+      when ::Time, ::DateTime then ::Date.new(value.year, value.month, value.day)
+      when ::Date then value
       else nil
       end
     end

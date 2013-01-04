@@ -8,19 +8,23 @@ module Stockboy
 
     describe "#call" do
       it "returns zero for nil" do
-        subject.call(count: nil).should == 0
+        result = subject.call stub(count: nil)
+        result.should == 0
       end
 
       it "returns zero for empty string" do
-        subject.call(count: "").should == 0
+        result = subject.call stub(count: "")
+        result.should == 0
       end
 
       it "returns original value if present" do
-        subject.call(count: 42).should == 42
+        result = subject.call stub(count: 42)
+        result.should == 42
       end
 
       it "returns original value when zero" do
-        subject.call(count: 0).should == 0
+        result = subject.call stub(count: 0)
+        result.should == 0
       end
     end
 

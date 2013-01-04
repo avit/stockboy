@@ -51,14 +51,17 @@ module Stockboy
 
     def translate(col)
       return @table[col.from] if col.translators.empty?
-      tr_table = col.translators.inject(OpenStruct.new(raw_hash)) do |m,t|
+      fields = self.raw_hash.dup
+      tr_table = col.translators.inject(input) do |m,t|
         begin
           new_value = t.call(m)
         rescue # maybe there's a tighter way to catch translation errors here
-          m.public_send "#{col.to}=", nil
-          break m
+          fields[col.to] = nil
+          break SourceRecord.new(fields, @table)
         end
-        m.tap { |n| n.public_send("#{col.to}=", new_value) }
+
+        fields[col.to] = new_value
+        SourceRecord.new(fields, @table)
       end
       tr_table.public_send col.to
     end

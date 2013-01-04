@@ -8,11 +8,12 @@ module Stockboy
 
     describe "#call" do
       it "returns nil for an empty string" do
-        subject.call(id: "").should be_nil
+        result = subject.call stub(id: "")
+        result.should be_nil
       end
 
       it "returns an integer" do
-        result = subject.call(id: "42")
+        result = subject.call stub(id: "42")
         result.should == 42
       end
     end

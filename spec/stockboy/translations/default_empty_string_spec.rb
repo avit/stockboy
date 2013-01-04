@@ -8,19 +8,23 @@ module Stockboy
 
     describe "#call" do
       it "returns empty string for nil" do
-        subject.call(comment: nil).should == ""
+        result = subject.call stub(comment: nil)
+        result.should == ""
       end
 
       it "returns empty string for an empty string" do
-        subject.call(comment: "").should == ""
+        result = subject.call stub(comment: "")
+        result.should == ""
       end
 
       it "returns original value if present" do
-        subject.call(comment: "asdf").should == "asdf"
+        result = subject.call stub(comment: "asdf")
+        result.should == "asdf"
       end
 
       it "returns original value when zero" do
-        subject.call(comment: 0).should == 0
+        result = subject.call stub(comment: 0)
+        result.should == 0
       end
     end
 

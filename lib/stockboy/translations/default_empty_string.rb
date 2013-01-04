@@ -4,8 +4,8 @@ module Stockboy::Translations
   class DefaultEmptyString < Stockboy::Translator
 
     def translate(context)
-      return "" if context[field_key].nil?
-      return context[field_key]
+      return "" if (val = context.public_send field_key).nil?
+      return val
     end
 
   end

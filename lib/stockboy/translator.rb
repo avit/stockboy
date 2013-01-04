@@ -22,7 +22,7 @@ module Stockboy
       not str.nil? || str.empty?
     end
 
-    def translate(value)
+    def translate(context)
       raise NoMethodError, "def #{self.class}#translate needs implementation"
     end
 

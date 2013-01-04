@@ -4,9 +4,9 @@ module Stockboy::Translations
   class Decimal < Stockboy::Translator
 
     def translate(context)
-      value = context[field_key]
+      value = context.public_send field_key
       return nil if value.nil? || value.empty?
-      BigDecimal.new(context[field_key],10)
+      BigDecimal.new(value, 10)
     end
 
   end

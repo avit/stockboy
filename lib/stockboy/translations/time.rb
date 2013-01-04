@@ -4,8 +4,8 @@ module Stockboy::Translations
   class Time < Stockboy::Translator
 
     def translate(context)
-      return nil if context[field_key] == ""
-      clock.parse(context[field_key]).to_time
+      return nil if (value = context.public_send field_key) == ""
+      clock.parse(value).to_time
     end
 
     private
