@@ -1,5 +1,5 @@
 require 'pry'
-require 'pry-nav'
+require 'pry-debugger'
 require 'pry-exception_explorer'
 require 'ostruct'
 require 'savon_spec'

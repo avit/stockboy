@@ -3,7 +3,7 @@ gemspec
 
 group :debug do
   gem "pry"
-  gem "pry-nav"
+  gem "pry-debugger"
   gem "pry-exception_explorer"
 end
 
