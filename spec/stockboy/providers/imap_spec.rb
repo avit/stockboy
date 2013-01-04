@@ -3,7 +3,7 @@ require 'stockboy/providers/imap'
 
 module Stockboy
   describe Providers::IMAP do
-    subject(:imap)
+    subject(:imap) { Stockboy::Providers::IMAP.new }
 
     it "should assign parameters" do
       imap.host "mail.localhost.test"

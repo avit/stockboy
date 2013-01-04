@@ -4,7 +4,7 @@ require 'stockboy/configuration'
 module Stockboy
   describe Configuration do
 
-    subject(:config)
+    subject(:config) { Stockboy::Configuration.new }
 
     it "yields a config block" do
       Stockboy::Configuration.new do |c|

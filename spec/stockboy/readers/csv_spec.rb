@@ -4,7 +4,7 @@ require 'stockboy/readers/csv'
 module Stockboy
   describe Readers::CSV do
 
-    subject :reader
+    subject(:reader) { Stockboy::Readers::CSV.new }
 
     describe "default params" do
       its(:row_sep)          { should be_nil }
