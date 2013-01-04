@@ -14,7 +14,7 @@ module Stockboy::Providers
 
     def initialize(params={}, &block)
       super params, &block
-      yield self if block_given?
+      instance_eval(&block) if block_given?
     end
 
     def wsdl_document(*arg)

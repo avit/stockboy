@@ -32,7 +32,7 @@ require 'stockboy/providers/file'
 
 # Readers
 require 'stockboy/readers/csv'
-# require 'stockboy/readers/xml'
+require 'stockboy/readers/xml'
 
 module Stockboy
 
@@ -49,7 +49,7 @@ module Stockboy
 
   module Readers
     register :csv, CSV
-    # register :xml, XML
+    register :xml, XML
   end
 
   # Register default included translators
