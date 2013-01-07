@@ -18,6 +18,10 @@ module Stockboy
 
     private
 
+    def field_value(context)
+      context.public_send(field_key)
+    end
+
     def filter_empty_string?(str)
       not str.nil? || str.empty?
     end

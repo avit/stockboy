@@ -4,8 +4,8 @@ module Stockboy::Translations
   class DefaultZero < Stockboy::Translator
 
     def translate(context)
-      value = context.public_send field_key
-      return 0 if value.nil? || value.to_s.empty?
+      value = field_value(context)
+      return 0 if value.blank?
       return value
     end
 

@@ -4,8 +4,8 @@ module Stockboy::Translations
   class Integer < Stockboy::Translator
 
     def translate(context)
-      value = context.public_send field_key
-      return nil if value.nil? || value == ""
+      value = field_value(context)
+      return nil if value.blank?
       value.to_i
     end
 
