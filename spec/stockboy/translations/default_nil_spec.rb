@@ -8,22 +8,22 @@ module Stockboy
 
     describe "#call" do
       it "returns nil for empty string" do
-        result = subject.call stub(email: "")
+        result = subject.call email: ""
         result.should == nil
       end
 
       it "returns nil for nil" do
-        result = subject.call stub(email: nil)
+        result = subject.call email: nil
         result.should == nil
       end
 
       it "returns original value if present" do
-        result = subject.call stub(email: "a@example.com")
+        result = subject.call email: "a@example.com"
         result.should == "a@example.com"
       end
 
       it "returns original value when zero" do
-        result = subject.call stub(email: 0)
+        result = subject.call email: 0
         result.should == 0
       end
     end

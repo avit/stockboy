@@ -4,7 +4,7 @@ module Stockboy::Translations
   class Date < Stockboy::Translator
 
     def translate(context)
-      value = field_value(context)
+      value = context[field_key]
       return nil if value.blank?
 
       case value
