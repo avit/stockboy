@@ -9,10 +9,10 @@ module Stockboy
       @field_key = key
     end
 
-    def call(context={})
       if context.is_a?(OpenStruct)
         context = context.instance_variable_get(:@table)
       end
+    def call(context)
       translate(context)
     end
 
