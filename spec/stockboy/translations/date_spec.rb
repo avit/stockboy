@@ -9,8 +9,7 @@ module Stockboy
 
     describe "#call" do
       it "returns nil for an empty string" do
-        record = SourceRecord.new({start: ""}, {})
-        result = subject.call(record)
+        result = subject.call start: ""
         result.should be_nil
       end
 

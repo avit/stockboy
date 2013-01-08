@@ -12,7 +12,7 @@ module Stockboy::Translations
   class USDate < Stockboy::Translator
 
     def translate(context)
-      value = context[field_key]
+      value = field_value(context, field_key)
       return nil if value.blank?
 
       ::Date.strptime(value, date_format(value))
