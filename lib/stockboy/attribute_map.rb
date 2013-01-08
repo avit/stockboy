@@ -1,10 +1,10 @@
+require 'stockboy/attribute'
 require 'stockboy/translations'
 
 module Stockboy
   class AttributeMap
-    include Enumerable
 
-    Row = Struct.new(:to, :from, :translators)
+    include Enumerable
 
     class DSL
       def initialize(instance)
@@ -18,7 +18,7 @@ module Stockboy
         from = opts.fetch(:from, attr)
         from = from.to_sym if from.respond_to?(:to_sym)
         translators = Array(opts[:as]).map { |t| Translations.translator_for(to, t) }
-        @map[attr] = Row.new(to, from, translators)
+        @map[attr] = Attribute.new(to, from, translators)
         (class << @instance; self end).send(:define_method, attr) { @map[attr] }
       end
     end

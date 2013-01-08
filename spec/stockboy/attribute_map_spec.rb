@@ -3,6 +3,7 @@ require 'stockboy/attribute_map'
 
 module Stockboy
   describe AttributeMap do
+
     subject do
       AttributeMap.new do
         email
@@ -12,14 +13,14 @@ module Stockboy
 
     describe ".new" do
       it "initializes from hash attribute" do
-        row = AttributeMap::Row.new(:email, "email", [])
+        row = Attribute.new(:email, "email", [])
         map = AttributeMap.new(:email => row)
         map[:email].should == row
       end
     end
 
     it "captures same destination as default" do
-      subject[:email].should == AttributeMap::Row.new(:email, :email, [])
+      subject[:email].should == Attribute.new(:email, :email, [])
     end
 
     it "sets source from string to symbol" do
@@ -42,7 +43,7 @@ module Stockboy
     end
 
     it "has attr accessors" do
-      subject.email.should be_a AttributeMap::Row
+      subject.email.should be_a Attribute
     end
 
     it "raises error for undefined attrs" do
