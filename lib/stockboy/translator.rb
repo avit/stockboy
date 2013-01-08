@@ -15,6 +15,10 @@ module Stockboy
       translate(context)
     end
 
+    def inspect
+      "#<#{self.class.name||'Stockboy::Translator'} (#{@field_key})>"
+    end
+
     private
 
     def field_value(context, field_key)
