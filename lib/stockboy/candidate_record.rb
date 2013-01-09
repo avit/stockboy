@@ -31,6 +31,7 @@ module Stockboy
     end
 
     def partition(filters={})
+      input, output = self.input, self.output
       filters.each_pair do |filter_key, f|
         if f.call(input, output)
           return filter_key
