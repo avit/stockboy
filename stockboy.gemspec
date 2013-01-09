@@ -25,8 +25,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec"
   # s.add_development_dependency "vcr"
 
-  s.add_runtime_dependency "log4r"
-  s.add_runtime_dependency "savon", ">= 2.0"
-  s.add_runtime_dependency "mail"
-  s.add_runtime_dependency "activemodel"
+  s.add_runtime_dependency "log4r", "~> 1.1"
+  s.add_runtime_dependency "savon", "~> 2.0"
+  s.add_runtime_dependency "mail", "~> 2.4"
+  s.add_runtime_dependency "activemodel", "~> 3.2.3"
 end
