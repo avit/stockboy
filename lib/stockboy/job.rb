@@ -34,8 +34,10 @@ module Stockboy
 
     def process
       reset
-      load_records
-      yield @records if block_given?
+      with_query_caching do
+        load_records
+        yield @records if block_given?
+      end
       provider.errors.empty?
     end
 
@@ -70,6 +72,14 @@ module Stockboy
         @records[key]
       else
         @unfiltered_records
+      end
+    end
+
+    def with_query_caching(&block)
+      if defined? ActiveRecord
+        ActiveRecord::Base.cache(&block)
+      else
+        yield
       end
     end
 
