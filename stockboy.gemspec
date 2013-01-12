@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
   # s.add_development_dependency "vcr"
 
   s.add_runtime_dependency "log4r", "~> 1.1"
+  s.add_runtime_dependency "roo", "~> 1.10"
   s.add_runtime_dependency "savon", "~> 2.0"
   s.add_runtime_dependency "mail", "~> 2.4"
   s.add_runtime_dependency "activemodel", "~> 3.2.3"

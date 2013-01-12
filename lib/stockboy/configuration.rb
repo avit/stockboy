@@ -1,6 +1,7 @@
 module Stockboy
   class Configuration
     attr_accessor :template_load_paths
+    attr_accessor :tmp_dir
 
     def initialize
       @template_load_paths = []
