@@ -20,6 +20,7 @@ require 'stockboy/translations/decimal'
 require 'stockboy/translations/time'
 require 'stockboy/translations/date'
 require 'stockboy/translations/us_date'
+require 'stockboy/translations/uk_date'
 
 # Filters
 require 'stockboy/filters/missing_email'
@@ -62,6 +63,7 @@ module Stockboy
     register :time,     Time
     register :date,     Date
     register :us_date,  USDate
+    register :uk_date,  UKDate
   end
 
 end
