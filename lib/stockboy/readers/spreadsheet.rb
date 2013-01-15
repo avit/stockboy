@@ -42,7 +42,7 @@ module Stockboy::Readers
 
     def parse(content)
       with_spreadsheet(content) do |table|
-        headers = table.row(table.first_row).map(&:to_sym)
+        headers = table.row(table.first_row).map { |h| h.to_sym unless h.nil? }
 
         enum_data_rows(table).inject([]) do |rows, i|
           rows << Hash[headers.zip(table.row(i))]
