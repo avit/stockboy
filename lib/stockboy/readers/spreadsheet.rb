@@ -57,7 +57,7 @@ module Stockboy::Readers
     end
 
     def with_spreadsheet(content)
-      Tempfile.open(['stockboy', ".#{@format}"]) do |file|
+      Tempfile.open(tmp_name, encoding: content.encoding) do |file|
         file.write content
         table = Roo::Spreadsheet.open(file.path)
         table.default_sheet = sheet_number(table, @sheet)
@@ -73,5 +73,8 @@ module Stockboy::Readers
       end
     end
 
+    def tmp_name
+      ['stockboy', ".#{@format}"]
+    end
   end
 end
