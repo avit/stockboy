@@ -110,5 +110,32 @@ module Stockboy
       end
     end
 
+    describe "#record_counts" do
+      let(:attribute_map) { AttributeMap.new { name } }
+
+      subject(:job) do
+        Job.new(provider: stub(:provider, data:"", errors:[]),
+                attributes: attribute_map)
+      end
+
+      context "before processing" do
+        it "should be empty" do
+          job.record_counts.should == {}
+        end
+      end
+
+      it "returns a hash of counts by filtered record partition" do
+        job.filters = {
+          alpha: proc{ |r| r.name =~ /^A/ },
+          zeta:  proc{ |r| r.name =~ /^Z/ }
+        }
+
+        job.reader = stub(parse: [{name: 'Arthur'}, {name: 'Abc'}, {name: 'Zaphod'}])
+        job.process
+
+        job.record_counts.should == {alpha: 2, zeta: 1}
+      end
+    end
+
   end
 end

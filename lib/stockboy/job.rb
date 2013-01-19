@@ -42,7 +42,11 @@ module Stockboy
     end
 
     def total_records
-      @all_records.count
+      @all_records.size
+    end
+
+    def record_counts
+      @records.reduce(Hash.new) { |a, (k,v)| a[k] = v.size; a }
     end
 
     private
