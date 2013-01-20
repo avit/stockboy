@@ -50,35 +50,35 @@ module Stockboy
       end
     end
 
-    pending "#sheet" do
-      let(:sheets) { subject.target.sheets }
+    pending "#sheet", "Hard to test this due to roo. Needs a test case with fixtures" do
+      let(:sheets)      { ['Towels', 'Lemons'] }
+      let(:expectation) { mock(:spreadsheet, sheets: sheets).should_receive(:default_sheet=) }
+      let(:spreadsheet) { expectation }
+      before { subject.stub!(:with_spreadsheet).and_yield(spreadsheet) }
 
-      context "with a symbol" do
-        before       { subject.sheet = :last }
+      context "with :first" do
+        let(:spreadsheet) { expectation.with('Towels') }
 
-        it "calls on sheets" do
-          subject.target.should_receive(:default_sheet=)
-                        .with('Last Sheet Name')
+        it "calls on first sheet by name" do
+          subject.sheet = :first
           subject.parse ""
         end
       end
 
       context "with a string" do
-        before { subject.sheet = 'Second Sheet Name' }
+        let(:spreadsheet) { expectation.with('Towels') }
 
         it "passes unchanged" do
-          subject.target.should_receive(:default_sheet=)
-                        .with('Second Sheet Name')
+          subject.sheet = 'Towels'
           subject.parse ""
         end
       end
 
       context "with an integer" do
-        before { subject.sheet = 0 }
+        let(:spreadsheet) { expectation.with('Towels') }
 
         it "gets sheet name" do
-          subject.target.should_receive(:default_sheet=)
-                        .with('First Sheet Name')
+          subject.sheet = 1
           subject.parse ""
         end
       end
