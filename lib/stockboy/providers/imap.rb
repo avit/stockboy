@@ -46,16 +46,17 @@ module Stockboy::Providers
     end
 
     def fetch_data
-      begin
-        unless (imap_message_keys = fetch_imap_message_keys).empty?
-          mail = ::Mail.new(client.fetch(pick_from(imap_message_keys),'RFC822')[0].attr['RFC822'])
-          part = mail.attachments.detect { |part| validate_attachment(part)  }
-          @data = part.decoded if part
-        end
-      rescue ::Net::IMAP::Error => e
-        errors.add :response, "IMAP connection error"
+      unless (imap_message_keys = fetch_imap_message_keys).empty?
+        mail = ::Mail.new(client.fetch(pick_from(imap_message_keys),'RFC822')[0].attr['RFC822'])
+        part = mail.attachments.detect { |part| validate_attachment(part)  }
+        @data = part.decoded if part
       end
       !@data.nil?
+    rescue ::Net::IMAP::Error => e
+      errors.add :response, "IMAP connection error"
+    ensure
+      client.disconnect
+      @client = nil
     end
 
     def fetch_imap_message_keys
