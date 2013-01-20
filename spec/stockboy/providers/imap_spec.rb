@@ -33,5 +33,17 @@ module Stockboy
         imap.host.should == 'mail.test2.local'
       end
     end
+
+    describe "#data" do
+
+      context "with no messages found" do
+        it "should be nil" do
+          imap.stub!(:fetch_imap_message_keys).and_return []
+          imap.data.should be_nil
+        end
+      end
+
+    end
+
   end
 end
