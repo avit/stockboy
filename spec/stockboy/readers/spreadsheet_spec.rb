@@ -25,6 +25,7 @@ module Stockboy
 
       it "configures with a block" do
         reader = described_class.new do
+          encoding 'ISO-8859-1'
           format :xlsx
           sheet 'Sheet 42'
         end

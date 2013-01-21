@@ -24,6 +24,7 @@ module Stockboy
 
       it "configures with a block" do
         reader = Readers::XML.new do
+          encoding 'UTF-8'
           strip_namespaces true
           advanced_typecasting true
           convert_tags_to ->(t) { t.snake_case.to_sym }

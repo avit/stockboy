@@ -23,6 +23,7 @@ module Stockboy
 
       it "configures options with a block" do
         reader = Readers::CSV.new do
+          encoding 'ISO-8859-1'
           col_sep "|"
           skip_header_rows 2
           skip_footer_rows 1
