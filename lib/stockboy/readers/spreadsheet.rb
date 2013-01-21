@@ -12,6 +12,7 @@ module Stockboy::Readers
 
     class DSL
       include Stockboy::DSL
+      dsl_attrs :encoding
       dsl_attrs *OPTIONS
     end
 
