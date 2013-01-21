@@ -6,7 +6,7 @@ module Stockboy
     attr_accessor :encoding
 
     def initialize(opts={})
-      @encoding = opts[:encoding]
+      @encoding = opts.delete(:encoding)
     end
 
   end

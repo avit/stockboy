@@ -18,9 +18,9 @@ module Stockboy::Providers
       dsl_attrs *OPTIONS
     end
 
-    def initialize(params={}, &block)
-      super params, &block
-      instance_eval(&block) if block_given?
+    def initialize(opts={}, &block)
+      super
+      DSL.new(self).instance_eval(&block) if block_given?
     end
 
     def client

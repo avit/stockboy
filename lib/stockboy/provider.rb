@@ -40,8 +40,8 @@ module Stockboy #:nodoc:
     end
 
     # Initialize should be called by subclasses to set up dependencies
-    def initialize(params={}, &block)
-      @logger = params.delete(:logger) || self.class.logger
+    def initialize(opts={}, &block)
+      @logger = opts.delete(:logger) || self.class.logger
       clear
       # TODO: register callback for success?
       # TODO: register callback for failures
@@ -50,7 +50,7 @@ module Stockboy #:nodoc:
     # Return provided data as an array of key-value hashes
     def data
       return @data if @data
-      fetch_data if validate_required_params?
+      fetch_data if validate_config?
       @data
     end
 
@@ -67,7 +67,7 @@ module Stockboy #:nodoc:
     # Reload provided data
     def reload
       clear
-      fetch_data if validate_required_params?
+      fetch_data if validate_config?
       @data
     end
 
@@ -94,7 +94,7 @@ module Stockboy #:nodoc:
       raise NoMethodError, "#{self.class}#fetch_data needs implementation"
     end
 
-    def validate_required_params?
+    def validate_config?
       unless validation = valid?
         logger.error do
           "Invalid #{self.class} provider configuration: #{errors.full_messages}"

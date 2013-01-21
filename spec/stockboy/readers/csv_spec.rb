@@ -6,7 +6,7 @@ module Stockboy
 
     subject(:reader) { Stockboy::Readers::CSV.new }
 
-    describe "default params" do
+    describe "default options" do
       its(:row_sep)          { should be_nil }
       its(:col_sep)          { should be_nil }
       its(:quote_char)       { should be_nil }
@@ -16,12 +16,12 @@ module Stockboy
     end
 
     describe "initialize" do
-      it "configures with params" do
+      it "configures options with argument hash" do
         reader = Readers::CSV.new(col_sep: '|')
         reader.col_sep.should == '|'
       end
 
-      it "configures with a block" do
+      it "configures options with a block" do
         reader = Readers::CSV.new do
           col_sep "|"
           skip_header_rows 2

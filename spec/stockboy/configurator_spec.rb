@@ -8,12 +8,12 @@ module Stockboy
     let(:reader_class)   { OpenStruct }
 
     describe "#initialize" do
-      it "evaluates string param" do
+      it "evaluates string config" do
         Configurator.any_instance.should_receive(:provider).with(:ftp)
         Configurator.new("provider :ftp")
       end
 
-      it "evaluates block param" do
+      it "evaluates block config" do
         Configurator.any_instance.should_receive(:provider).with(:ftp)
         Configurator.new do
           provider :ftp
@@ -28,12 +28,12 @@ module Stockboy
 
       it "registers with a symbol" do
         subject.provider :ftp
-        subject.params[:provider].should be_a(provider_class)
+        subject.config[:provider].should be_a(provider_class)
       end
 
       it "registers with a class" do
         subject.provider provider_class
-        subject.params[:provider].should be_a(provider_class)
+        subject.config[:provider].should be_a(provider_class)
       end
 
       it "initializes arguments" do
@@ -49,19 +49,19 @@ module Stockboy
 
       it "registers with a symbol" do
         subject.reader :csv
-        subject.params[:reader].should be_a(reader_class)
+        subject.config[:reader].should be_a(reader_class)
       end
 
       it "registers with a class" do
         subject.reader reader_class
-        subject.params[:reader].should be_a(reader_class)
+        subject.config[:reader].should be_a(reader_class)
       end
 
       it "initializes arguments" do
         reader_stub = stub(:reader)
         reader_class.should_receive(:new).with(col_sep: '|').and_return(reader_stub)
         subject.reader reader_class, col_sep: '|'
-        subject.params[:reader].should == reader_stub
+        subject.config[:reader].should == reader_stub
       end
     end
 
@@ -70,7 +70,7 @@ module Stockboy
         attribute_map = stub
         AttributeMap.should_receive(:new).and_return(attribute_map)
         subject.attributes &proc{}
-        subject.params[:attributes].should be attribute_map
+        subject.config[:attributes].should be attribute_map
       end
     end
 
@@ -78,14 +78,14 @@ module Stockboy
       it "initializes a callable" do
         filter_stub = stub(call: true)
         subject.filter :pass, filter_stub
-        subject.params[:filters][:pass].should == filter_stub
+        subject.config[:filters][:pass].should == filter_stub
       end
 
       it "initializes a block" do
         subject.filter :pass do |r|
           true if r == 42
         end
-        subject.params[:filters][:pass].call(42).should == true
+        subject.config[:filters][:pass].call(42).should == true
       end
     end
 

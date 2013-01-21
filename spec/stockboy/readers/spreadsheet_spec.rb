@@ -6,9 +6,9 @@ module Stockboy
 
     subject(:reader) { Stockboy::Readers::Spreadsheet.new }
 
-    describe "default params" do
-      its(:format)           { should == :xls }
-      its(:sheet)            { should == :first }
+    describe "default options" do
+      its(:format) { should == :xls }
+      its(:sheet)  { should == :first }
     end
 
 

@@ -6,11 +6,11 @@ require 'stockboy/attribute_map'
 module Stockboy
   class Configurator
 
-    attr_reader :params
+    attr_reader :config
 
     def initialize(dsl='', file=__FILE__, &block)
-      @params = {}
-      @params[:filters] = {}
+      @config = {}
+      @config[:filters] = {}
       if block_given?
         instance_eval(&block)
       else
@@ -22,7 +22,7 @@ module Stockboy
     def provider(provider_class, opts={}, &block)
       raise ArgumentError unless provider_class
 
-      @params[:provider] = case provider_class
+      @config[:provider] = case provider_class
       when Symbol
         Providers.find(provider_class).new(opts, &block)
       when Class
@@ -36,7 +36,7 @@ module Stockboy
     def reader(reader_class, opts={}, &block)
       raise ArgumentError unless reader_class
 
-      @params[:reader] = case reader_class
+      @config[:reader] = case reader_class
       when Symbol
         Readers.find(reader_class).new(opts, &block)
       when Class
@@ -50,18 +50,18 @@ module Stockboy
     def attributes(&block)
       raise ArgumentError unless block_given?
 
-      @params[:attributes] = AttributeMap.new(&block)
+      @config[:attributes] = AttributeMap.new(&block)
     end
 
     def filter(key, callable=nil, &block)
       raise ArgumentError unless key
       raise ArgumentError unless callable.respond_to?(:call) ^ block_given?
 
-      @params[:filters][key] = block || callable
+      @config[:filters][key] = block || callable
     end
 
     def to_job
-      Job.new(@params)
+      Job.new(@config)
     end
 
   end
