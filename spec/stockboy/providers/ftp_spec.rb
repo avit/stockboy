@@ -5,11 +5,11 @@ module Stockboy
   describe Providers::FTP do
 
     it "should assign parameters" do
-      subject.host "localhost.test"
-      subject.username "uuu"
-      subject.password "ppp"
-      subject.file_dir "files/here"
-      subject.file_name %r{import_20[1-9][0-9]-(0[1-9]|1[0-2])-([0-2][1-9]|3[0-1]).csv}
+      subject.host = "localhost.test"
+      subject.username = "uuu"
+      subject.password = "ppp"
+      subject.file_dir = "files/here"
+      subject.file_name = %r{import_20[1-9][0-9]-(0[1-9]|1[0-2])-([0-2][1-9]|3[0-1]).csv}
 
       subject.host.should == "localhost.test"
       subject.username.should == "uuu"

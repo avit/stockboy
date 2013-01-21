@@ -5,13 +5,18 @@ require 'csv'
 module Stockboy::Readers
   class CSV < Stockboy::Reader
 
-    dsl_attrs :skip_header_rows, :skip_footer_rows
+    OPTIONS = [:skip_header_rows, :skip_footer_rows]
+    attr_accessor *OPTIONS
 
-    ::CSV::DEFAULT_OPTIONS.keys.each do |attr, opt|
-      define_method attr do |*arg|
-        options[attr.to_sym] = arg.first unless arg.empty?
-        options[attr.to_sym]
-      end
+    ::CSV::DEFAULT_OPTIONS.keys.each do |opt|
+      define_method(opt)        { @csv_options[opt] }
+      define_method(:"#{opt}=") { |value| @csv_options[opt] = value }
+    end
+
+    class DSL
+      include Stockboy::DSL
+      dsl_attrs *OPTIONS
+      dsl_attrs *::CSV::DEFAULT_OPTIONS.keys
     end
 
     def initialize(opts={}, &block)
@@ -20,7 +25,7 @@ module Stockboy::Readers
       @csv_options[:headers] = @csv_options.fetch(:headers, true)
       @skip_header_rows = opts.fetch(:skip_header_rows, 0)
       @skip_footer_rows = opts.fetch(:skip_footer_rows, 0)
-      instance_eval(&block) if block_given?
+      DSL.new(self).instance_eval(&block) if block_given?
     end
 
     def parse(data)

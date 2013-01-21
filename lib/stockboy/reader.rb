@@ -1,10 +1,9 @@
-require 'stockboy/dsl_attributes'
+require 'stockboy/dsl'
 
 module Stockboy
   class Reader
-    extend Stockboy::DSLAttributes
 
-    dsl_attrs :encoding
+    attr_accessor :encoding
 
     def initialize(opts={})
       @encoding = opts[:encoding]

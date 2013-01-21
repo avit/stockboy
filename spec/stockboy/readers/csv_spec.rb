@@ -42,8 +42,8 @@ module Stockboy
       end
 
       it "strips null bytes from empty fields (MSSQL BCP exports)" do
-        reader.options[:col_sep] = '|'
-        reader.options[:headers] = %w[city state country]
+        reader.col_sep = '|'
+        reader.headers = %w[city state country]
         records = reader.parse "Vancouver|\x00|Canada"
 
         records.should ==

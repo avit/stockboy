@@ -2,7 +2,7 @@ require 'log4r'
 
 require 'stockboy/version'
 require 'stockboy/exceptions'
-require 'stockboy/dsl_attributes'
+require 'stockboy/dsl'
 require 'stockboy/job'
 
 # Registries

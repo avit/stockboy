@@ -4,13 +4,19 @@ require 'savon'
 module Stockboy::Providers
   class SOAP < Stockboy::Provider
 
-    dsl_attrs :wsdl,
-              :request,
-              :namespace,
-              :namespace_id,
-              :endpoint,
-              :message,
-              :headers
+    OPTIONS = [:wsdl,
+               :request,
+               :namespace,
+               :namespace_id,
+               :endpoint,
+               :message,
+               :headers]
+    attr_accessor *OPTIONS
+
+    class DSL
+      include Stockboy::DSL
+      dsl_attrs *OPTIONS
+    end
 
     def initialize(params={}, &block)
       super params, &block

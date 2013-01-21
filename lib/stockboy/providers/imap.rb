@@ -5,18 +5,22 @@ require 'mail'
 module Stockboy::Providers
   class IMAP < Stockboy::Provider
 
-    dsl_attrs(
-      :host,
-      :username,
-      :password,
-      :mailbox,
-      :subject,
-      :from,
-      :newer_than,
-      :search,
-      :attachment,
-      :pick
-    )
+    OPTIONS = [:host,
+               :username,
+               :password,
+               :mailbox,
+               :subject,
+               :from,
+               :newer_than,
+               :search,
+               :attachment,
+               :pick]
+    attr_accessor *OPTIONS
+
+    class DSL
+      include Stockboy::DSL
+      dsl_attrs *OPTIONS
+    end
 
     class << self
       def imap_client
@@ -37,7 +41,7 @@ module Stockboy::Providers
       @search       = opts[:search]
       @attachment   = opts[:attachment]
       @pick         = opts[:pick] || :last
-      instance_eval(&block) if block_given?
+      DSL.new(self).instance_eval(&block) if block_given?
     end
 
     def validate

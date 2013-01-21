@@ -6,13 +6,13 @@ module Stockboy
     subject(:imap) { Stockboy::Providers::IMAP.new }
 
     it "should assign parameters" do
-      imap.host "mail.localhost.test"
-      imap.username "uuu"
-      imap.password "ppp"
-      imap.mailbox "INBOX/Data"
-      imap.subject %r{New Records 20[1-9][0-9]-(0[1-9]|1[0-2])-([0-2][1-9]|3[0-1])}
-      imap.newer_than Date.new(2012,12,1)
-      imap.attachment %r{data-[0-9]+\.csv}
+      imap.host = "mail.localhost.test"
+      imap.username = "uuu"
+      imap.password = "ppp"
+      imap.mailbox = "INBOX/Data"
+      imap.subject = %r{New Records 20[1-9][0-9]-(0[1-9]|1[0-2])-([0-2][1-9]|3[0-1])}
+      imap.newer_than = Date.new(2012,12,1)
+      imap.attachment = %r{data-[0-9]+\.csv}
 
       imap.host.should == "mail.localhost.test"
       imap.username.should == "uuu"

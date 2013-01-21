@@ -3,14 +3,18 @@ require 'stockboy/provider'
 module Stockboy::Providers
   class File < Stockboy::Provider
 
-    dsl_attrs(
-      :file_name,
-      :file_dir,
-      :file_newer,
-      :file_smaller,
-      :file_larger,
-      :pick
-    )
+    OPTIONS = [:file_name,
+               :file_dir,
+               :file_newer,
+               :file_smaller,
+               :file_larger,
+               :pick]
+    attr_accessor *OPTIONS
+
+    class DSL
+      include Stockboy::DSL
+      dsl_attrs *OPTIONS
+    end
 
     def initialize(opts={}, &block)
       super(opts, &block)
@@ -20,7 +24,7 @@ module Stockboy::Providers
       @file_smaller = opts[:file_smaller]
       @file_larger  = opts[:file_larger]
       @pick         = opts[:pick] || :last
-      instance_eval(&block) if block_given?
+      DSL.new(self).instance_eval(&block) if block_given?
     end
 
     private

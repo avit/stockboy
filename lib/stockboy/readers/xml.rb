@@ -2,24 +2,30 @@ require 'stockboy/reader'
 
 module Stockboy::Readers
   class XML < Stockboy::Reader
-    XML_OPTION_KEYS = [:strip_namespaces,
-                       :convert_tags_to,
-                       :advanced_typecasting,
-                       :parser]
 
-    XML_OPTION_KEYS.each do |attr, opt|
-      define_method attr do |*arg|
-        options[attr.to_sym] = arg.first unless arg.empty?
-        options[attr.to_sym]
-      end
+    XML_OPTIONS = [:strip_namespaces,
+                   :convert_tags_to,
+                   :advanced_typecasting,
+                   :parser]
+    XML_OPTIONS.each do |opt|
+      define_method(opt)        { @xml_options[opt] }
+      define_method(:"#{opt}=") { |value| @xml_options[opt] = value }
     end
 
-    dsl_attrs :elements
+    OPTIONS = [:elements]
+    attr_accessor *OPTIONS
+
+    class DSL
+      include Stockboy::DSL
+      dsl_attrs *XML_OPTIONS
+      dsl_attrs *OPTIONS
+    end
 
     def initialize(opts={}, &block)
-      @elements = opts.delete(:elements)
+      super
+      @elements    = opts.delete(:elements)
       @xml_options = opts
-      instance_eval &block if block_given?
+      DSL.new(self).instance_eval(&block) if block_given?
     end
 
     def options

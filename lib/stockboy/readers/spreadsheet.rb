@@ -5,39 +5,26 @@ require 'roo'
 require 'iconv' if RUBY_PLATFORM.downcase =~ /darwin|solaris|mswin32/
 
 module Stockboy::Readers
-  class Spreadsheet
-
-    class << self
-      def tmp_dir
-        @tmp_dir ||= Stockboy.configuration.tmp_dir
-      end
-      attr_reader :tmp_dir
-    end
+  class Spreadsheet < Stockboy::Reader
 
     OPTIONS = [:format, :sheet]
-    OPTIONS.each { |opt| attr_accessor opt }
+    attr_accessor *OPTIONS
 
     class DSL
-      def initialize(instance)
-        @instance = instance
-      end
+      include Stockboy::DSL
+      dsl_attrs *OPTIONS
+    end
 
-      def format(value)
-        @instance.format = value
-      end
-
-      def sheet(value)
-        @instance.sheet = value
-      end
+    class << self
+      def tmp_dir; @tmp_dir ||= Stockboy.configuration.tmp_dir end
+      attr_writer :tmp_dir
     end
 
     def initialize(opts={}, &block)
+      super
       @format = opts[:format] || :xls
       @sheet  = opts[:sheet]  || :first
-
-      if block_given?
-        DSL.new(self).instance_eval(&block)
-      end
+      DSL.new(self).instance_eval(&block) if block_given?
     end
 
     def parse(content)

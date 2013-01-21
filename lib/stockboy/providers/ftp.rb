@@ -4,19 +4,23 @@ require 'net/ftp'
 module Stockboy::Providers
   class FTP < Stockboy::Provider
 
-    dsl_attrs(
-      :host,
-      :passive,
-      :username,
-      :password,
-      :binary,
-      :file_name,
-      :file_dir,
-      :file_newer,
-      :file_smaller,
-      :file_larger,
-      :pick
-    )
+    OPTIONS = [:host,
+               :passive,
+               :username,
+               :password,
+               :binary,
+               :file_name,
+               :file_dir,
+               :file_newer,
+               :file_smaller,
+               :file_larger,
+               :pick]
+    attr_accessor *OPTIONS
+
+    class DSL
+      include Stockboy::DSL
+      dsl_attrs *OPTIONS
+    end
 
     def initialize(opts={}, &block)
       super(opts, &block)
@@ -31,7 +35,7 @@ module Stockboy::Providers
       @file_smaller = opts[:file_smaller]
       @file_larger  = opts[:file_larger]
       @pick         = opts[:pick] || :last
-      instance_eval(&block) if block_given?
+      DSL.new(self).instance_eval(&block) if block_given?
     end
 
     private
