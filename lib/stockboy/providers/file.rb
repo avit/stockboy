@@ -10,10 +10,14 @@ module Stockboy::Providers
                :file_larger,
                :pick]
     attr_accessor *OPTIONS
+    alias :since :file_newer
+    alias :since= :file_newer=
 
     class DSL
       include Stockboy::DSL
       dsl_attrs *OPTIONS
+      alias :since :file_newer
+      alias :since= :file_newer=
     end
 
     def initialize(opts={}, &block)

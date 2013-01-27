@@ -11,7 +11,7 @@ module Stockboy
       imap.password = "ppp"
       imap.mailbox = "INBOX/Data"
       imap.subject = %r{New Records 20[1-9][0-9]-(0[1-9]|1[0-2])-([0-2][1-9]|3[0-1])}
-      imap.newer_than = Date.new(2012,12,1)
+      imap.since = Date.new(2012,12,1)
       imap.attachment = %r{data-[0-9]+\.csv}
 
       imap.host.should == "mail.localhost.test"
@@ -20,7 +20,14 @@ module Stockboy
       imap.mailbox.should == "INBOX/Data"
       imap.subject.should == %r{New Records 20[1-9][0-9]-(0[1-9]|1[0-2])-([0-2][1-9]|3[0-1])}
       imap.attachment.should == %r{data-[0-9]+\.csv}
-      imap.newer_than.should == Date.new(2012,12,1)
+      imap.since.should == Date.new(2012,12,1)
+    end
+
+    describe "deprecated options", pending: "implement deprecated_alias" do
+      it "promotes since instead of newer_than" do
+        imap = Providers::IMAP.new{ |f| f.newer_than Date.new(2012,12,1) }
+        imap.since.should == Date.new(2012,12,1)
+      end
     end
 
     describe ".new" do

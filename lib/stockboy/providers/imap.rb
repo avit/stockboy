@@ -11,15 +11,19 @@ module Stockboy::Providers
                :mailbox,
                :subject,
                :from,
-               :newer_than,
+               :since,
                :search,
                :attachment,
                :pick]
     attr_accessor *OPTIONS
+    alias :newer_than :since
+    alias :newer_than= :since=
 
     class DSL
       include Stockboy::DSL
       dsl_attrs *OPTIONS
+      alias :newer_than :since
+      alias :newer_than= :since=
     end
 
     class << self
@@ -37,7 +41,7 @@ module Stockboy::Providers
       @mailbox      = opts[:mailbox]
       @subject      = opts[:subject]
       @from         = opts[:from]
-      @newer_than   = opts[:newer_than]
+      @since        = opts[:since]
       @search       = opts[:search]
       @attachment   = opts[:attachment]
       @pick         = opts[:pick] || :last
@@ -82,7 +86,7 @@ module Stockboy::Providers
       keys = []
       keys += ['SUBJECT', subject]  if subject
       keys += ['FROM', from]        if from
-      keys += ['SINCE', date_format(newer_than)] if newer_than
+      keys += ['SINCE', date_format(since)] if since
       keys += search if search
       keys
     end
