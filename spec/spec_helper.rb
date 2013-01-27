@@ -1,6 +1,5 @@
 require 'pry'
 require 'pry-debugger'
-require 'pry-exception_explorer'
 require 'ostruct'
 require 'log4r'
 require 'savon'

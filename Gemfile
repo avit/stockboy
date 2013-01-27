@@ -4,7 +4,6 @@ gemspec
 group :debug do
   gem "pry"
   gem "pry-debugger"
-  gem "pry-exception_explorer"
 end
 
 group :test do
