@@ -9,6 +9,7 @@ module Stockboy
     def initialize(attrs, map)
       @map = map
       @table = attrs.to_hash.symbolize_keys
+      @tr_table = Hash.new
       freeze
     end
 
@@ -52,11 +53,12 @@ module Stockboy
 
     def translate(col)
       return @table[col.from] if col.translators.empty?
+      return @tr_table[col.to] if @tr_table.has_key? col.to
       fields = self.raw_hash.dup
-      tr_table = col.translators.inject(input) do |m,t|
+      translated = col.translators.inject(input) do |m,t|
         begin
           new_value = t.call(m)
-        rescue # maybe there's a tighter way to catch translation errors here
+        rescue
           fields[col.to] = nil
           break SourceRecord.new(fields, @table)
         end
@@ -64,7 +66,7 @@ module Stockboy
         fields[col.to] = new_value
         SourceRecord.new(fields, @table)
       end
-      tr_table.public_send col.to
+      @tr_table[col.to] = translated.public_send(col.to)
     end
 
   end
