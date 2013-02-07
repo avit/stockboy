@@ -10,9 +10,9 @@ module Stockboy::Filters
     # Does not do any format checking.
     #
     def filter(raw,output)
-      value = raw.send(@attr)
+      value = output.send(@attr)
       return true if value.blank?
-      return true unless value.include? '@'
+      return true unless value =~ /\w@\w/
     end
 
   end

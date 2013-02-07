@@ -17,4 +17,10 @@ describe Stockboy::Filters::MissingEmail do
     record = OpenStruct.new(e: '-')
     filter.call(record, record).should be_true
   end
+
+  it 'uses translated output value' do
+    input = OpenStruct.new(e: '', other: 'me@example.com')
+    output = OpenStruct.new(e: input.other)
+    filter.call(input, output).should be_false
+  end
 end
