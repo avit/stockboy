@@ -29,7 +29,9 @@ module Stockboy
     #
     def self.define(template_name)
       return nil unless template = TemplateFile.read(template_name)
-      Configurator.new(template, TemplateFile.find(template_name)).to_job
+      job = Configurator.new(template, TemplateFile.find(template_name)).to_job
+      yield job if block_given?
+      job
     end
 
     def process

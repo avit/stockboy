@@ -43,6 +43,13 @@ module Stockboy
         Job.define("test_job").should be_a Job
       end
 
+      it "yields the defined job" do
+        yielded = nil
+        job = Job.define("test_job") { |j| yielded = j }
+        job.should be_a Job
+        job.should be yielded
+      end
+
       it "should read a file from a path" do
         File.should_receive(:read).with("#{jobs_path}/test_job.rb")
         Job.define("test_job")
