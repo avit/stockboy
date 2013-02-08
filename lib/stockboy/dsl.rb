@@ -25,8 +25,11 @@ module Stockboy
             @instance.public_send(writer, arg)
           end
           define_method attr do |*arg|
-            @instance.public_send(writer, arg.first) unless arg.empty?
-            @instance.public_send(attr)
+            if arg.empty?
+              @instance.public_send(attr)
+            else
+              @instance.public_send(writer, arg.first)
+            end
           end
         end
       end

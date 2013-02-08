@@ -27,6 +27,7 @@ require 'stockboy/filters/missing_email'
 
 # Providers
 require 'stockboy/providers/ftp'
+require 'stockboy/providers/http'
 require 'stockboy/providers/imap'
 require 'stockboy/providers/soap'
 require 'stockboy/providers/file'
@@ -44,6 +45,7 @@ module Stockboy
   module Providers
     register :file, File
     register :ftp,  FTP
+    register :http, HTTP
     register :soap, SOAP
     register :imap, IMAP
   end
