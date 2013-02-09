@@ -115,6 +115,11 @@ module Stockboy
         job.process
         job.all_records.length.should == 2
       end
+
+      it "has empty partitions" do
+        job.filters = {alpha: proc{ |r| r.name =~ /A/ }, beta: proc{ |r| r.name =~ /B/ }}
+        job.records.should == {alpha: [], beta: []}
+      end
     end
 
     describe "#record_counts" do

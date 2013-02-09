@@ -8,9 +8,8 @@ module Stockboy
 
     attr_accessor :provider
     attr_accessor :reader
-    attr_accessor :attributes
-    attr_accessor :filters
-    attr_accessor :workflow
+    attr_reader :attributes
+    attr_reader :filters
 
     attr_reader :records
     attr_reader :unfiltered_records
@@ -49,6 +48,18 @@ module Stockboy
 
     def record_counts
       @records.reduce(Hash.new) { |a, (k,v)| a[k] = v.size; a }
+    end
+
+    def filters=(new_filters)
+      @filters = new_filters
+      reset
+      @filters
+    end
+
+    def attributes=(new_attributes)
+      @attributes = new_attributes
+      reset
+      @attributes
     end
 
     private
