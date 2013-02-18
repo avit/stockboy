@@ -25,6 +25,14 @@ module Stockboy
         subject = CandidateRecord.new(hash_attrs, map).to_hash
         subject.should == { :name => 'Arthur Dent' }
       end
+
+      it "converts String subclasses to clean strings" do
+        stub_const 'Nori::StringWithAttributes', Class.new(String)
+        map = AttributeMap.new { full_name }
+        hash_attrs['full_name'] = Nori::StringWithAttributes.new('Arthur')
+        subject = CandidateRecord.new(hash_attrs, map).to_hash
+        subject[:full_name].class.should == String
+      end
     end
 
     describe "#raw_hash" do

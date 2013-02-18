@@ -46,7 +46,7 @@ module Stockboy::Readers
         end
       end
 
-      return extract hash
+      extract hash
     end
 
     private

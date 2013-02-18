@@ -52,7 +52,7 @@ module Stockboy
     private
 
     def translate(col)
-      return @table[col.from] if col.translators.empty?
+      return sanitize(@table[col.from]) if col.translators.empty?
       return @tr_table[col.to] if @tr_table.has_key? col.to
       fields = self.raw_hash.dup
       translated = col.translators.inject(input) do |m,t|
@@ -67,6 +67,10 @@ module Stockboy
         SourceRecord.new(fields, @table)
       end
       @tr_table[col.to] = translated.public_send(col.to)
+    end
+
+    def sanitize(value)
+      value.is_a?(String) ? value.to_s : value
     end
 
   end
