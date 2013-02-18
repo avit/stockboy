@@ -51,7 +51,7 @@ module Stockboy
       end
     end
 
-    pending "#sheet", "Hard to test this due to roo. Needs a test case with fixtures" do
+    describe "#sheet", pending: "Hard to test this due to roo. Needs a test case with fixtures" do
       let(:sheets)      { ['Towels', 'Lemons'] }
       let(:expectation) { mock(:spreadsheet, sheets: sheets).should_receive(:default_sheet=) }
       let(:spreadsheet) { expectation }
