@@ -15,6 +15,7 @@ require 'stockboy/filters'
 require 'stockboy/translations/default_empty_string'
 require 'stockboy/translations/default_zero'
 require 'stockboy/translations/default_nil'
+require 'stockboy/translations/boolean'
 require 'stockboy/translations/integer'
 require 'stockboy/translations/decimal'
 require 'stockboy/translations/time'
@@ -60,6 +61,7 @@ module Stockboy
     register :or_nil,   DefaultNil
     register :or_empty, DefaultEmptyString
     register :or_zero,  DefaultZero
+    register :boolean,  Boolean
     register :integer,  Integer
     register :decimal,  Decimal
     register :time,     Time
