@@ -72,6 +72,11 @@ module Stockboy
         let(:map) { AttributeMap.new{ id as: [->(r){r.id.to_i}, ->(r){r.id / 0}] } }
         it { should == {id: nil} }
       end
+
+      context "dynamic without an input field" do
+        let(:map) { AttributeMap.new{ generated as: [->(r){ "from lambda" }] } }
+        it { should == {generated: "from lambda"} }
+      end
     end
 
     describe "#to_model" do
