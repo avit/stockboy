@@ -121,12 +121,21 @@ module Stockboy #:nodoc:
       [self]
     end
 
-    def pick_from(list)
+    # When picking files from a list you can supply :first or :last to the
+    # provider's pick option or else a block that can reduce to a single
+    # value, like:
+    #
+    #     proc do |best_match, current_match|
+    #       current_match.better_than?(best_match) ?
+    #           current_match : best_match
+    #     end
+    #
+    def pick_from(list, &block)
       case @pick
       when Symbol
         list.public_send @pick
       when Proc
-        list.detect &@pick
+        list.reduce &@pick
       end
     end
 
