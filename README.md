@@ -9,6 +9,12 @@ Stockboy receives data from various sources and different formats, and puts it o
 
 The result is a dataset that is normalized and ready for persistence by the application.
 
+## Installation & Dependencies
+
+`gem install stockboy`
+
+Currently only ruby 1.9 is supported. Waiting on roo for spreadsheet dependency in ruby 2.0, or we may make it an optional load.
+
 ## Usage
 
 Given an example job template such as:
