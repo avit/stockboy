@@ -56,8 +56,10 @@ module Stockboy::Providers
     def fetch_data
       unless (imap_message_keys = fetch_imap_message_keys).empty?
         mail = ::Mail.new(client.fetch(pick_from(imap_message_keys),'RFC822')[0].attr['RFC822'])
-        part = mail.attachments.detect { |part| validate_attachment(part)  }
-        @data = part.decoded if part
+        if part = mail.attachments.detect { |part| validate_attachment(part) }
+          @data = part.decoded
+          @data_time = mail.date.to_time.utc
+        end
       end
       !@data.nil?
     rescue ::Net::IMAP::Error => e
