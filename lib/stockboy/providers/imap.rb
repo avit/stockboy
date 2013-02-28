@@ -58,7 +58,7 @@ module Stockboy::Providers
         mail = ::Mail.new(client.fetch(pick_from(imap_message_keys),'RFC822')[0].attr['RFC822'])
         if part = mail.attachments.detect { |part| validate_attachment(part) }
           @data = part.decoded
-          @data_time = mail.date.to_time.utc
+          @data_time = normalize_imap_datetime(mail.date)
         end
       end
       !@data.nil?
@@ -110,6 +110,14 @@ module Stockboy::Providers
         i.login(username, password)
         i.examine(mailbox)
       end
+    end
+
+    # If activesupport is loaded, it mucks with DateTime#to_time to return
+    # self when it has a utc_offset. Handle both to always return a Time.utc.
+    #
+    def normalize_imap_datetime(datetime)
+      datetime.respond_to?(:getutc) ?
+        datetime.getutc.to_time : datetime.to_time.utc
     end
   end
 end
