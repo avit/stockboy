@@ -5,6 +5,8 @@ require 'mail'
 module Stockboy::Providers
   class IMAP < Stockboy::Provider
 
+    VMS_DATE = /\A\d{2}-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d{2}\z/i
+
     OPTIONS = [:host,
                :username,
                :password,
@@ -100,7 +102,7 @@ module Stockboy::Providers
       when Numeric
         Time.at(value).strftime('%v')
       when String
-        return value if value =~ /\A\d{2}-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d{2}\z/i
+        return value if value =~ VMS_DATE
         Date.parse(value).strftime('%v')
       end
     end
