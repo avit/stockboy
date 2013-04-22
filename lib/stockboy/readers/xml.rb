@@ -38,10 +38,11 @@ module Stockboy::Readers
         hash = data
       else
         hash = if data.respond_to? :to_xml
-          Nori.new(@xml_options).parse(data.to_xml)
+          Nori.new(@xml_options).parse(data.to_xml("UTF-8"))
         elsif data.respond_to? :to_hash
           data.to_hash
         else
+          data.encode!("UTF-8", encoding) if encoding
           Nori.new(@xml_options).parse(data)
         end
       end
