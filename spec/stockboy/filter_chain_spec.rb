@@ -27,6 +27,14 @@ module Stockboy
       end
     end
 
+    describe "#prepend" do
+      it "adds filters to the front of the chain" do
+        chain = FilterChain.new(filter1: stub)
+        chain.prepend(filter0: stub)
+        chain.keys.should == [:filter0, :filter1]
+      end
+    end
+
   end
 end
 
