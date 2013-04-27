@@ -2,6 +2,7 @@ require 'stockboy/configuration'
 require 'stockboy/exceptions'
 require 'stockboy/configurator'
 require 'stockboy/template_file'
+require 'stockboy/filter_chain'
 
 module Stockboy
   class Job
@@ -19,7 +20,7 @@ module Stockboy
       @provider   = params[:provider]
       @reader     = params[:reader]
       @attributes = params[:attributes]
-      @filters    = params[:filters] || Hash.new
+      @filters    = FilterChain.new params[:filters]
       yield self if block_given?
       reset
     end
@@ -51,7 +52,7 @@ module Stockboy
     end
 
     def filters=(new_filters)
-      @filters = new_filters
+      @filters.replace new_filters
       reset
       @filters
     end
@@ -65,10 +66,9 @@ module Stockboy
     private
 
     def reset
-      @records = {}
+      @records = filters.reset
       @all_records = []
       @unfiltered_records = []
-      @filters.keys.each { |k| @records[k] = [] }
       true
     end
 
@@ -85,7 +85,7 @@ module Stockboy
     end
 
     def record_partition(record)
-      if key = record.partition(@filters)
+      if key = record.partition(filters)
         @records[key]
       else
         @unfiltered_records

@@ -116,6 +116,24 @@ module Stockboy
         job.all_records.length.should == 2
       end
 
+      it "resets filters between runs" do
+        class CountingFilter < Filter
+          attr_reader :matches
+          def initialize(pattern); @pattern, @matches = /A/, 0 end
+          def reset; @matches = 0 end
+          def filter(raw,output)
+            @matches += 1 if output.name =~ @pattern
+          end
+        end
+
+        job.reader = stub(parse: [{"name"=>"A"},{"name"=>"Z"}])
+        job.filters = {alpha: counter = CountingFilter.new(/A/)}
+
+        counter.matches.should == 0
+        2.times { job.process }
+        counter.matches.should == 1
+      end
+
       it "has empty partitions" do
         job.filters = {alpha: proc{ |r| r.name =~ /A/ }, beta: proc{ |r| r.name =~ /B/ }}
         job.records.should == {alpha: [], beta: []}
