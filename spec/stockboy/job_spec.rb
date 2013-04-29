@@ -167,5 +167,18 @@ module Stockboy
       end
     end
 
+    describe "#processed?" do
+      subject(:job) do
+        Job.new(provider: provider_stub,
+                reader: reader_stub,
+                attributes: AttributeMap.new)
+      end
+
+      it "indicates if the job has been processed" do
+        job.processed?.should be_false
+        job.process
+        job.processed?.should be_true
+      end
+    end
   end
 end

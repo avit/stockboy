@@ -63,12 +63,17 @@ module Stockboy
       @attributes
     end
 
+    def processed?
+      !!@processed
+    end
+
     private
 
     def reset
       @records = filters.reset
       @all_records = []
       @unfiltered_records = []
+      @processed = false
       true
     end
 
@@ -82,6 +87,8 @@ module Stockboy
       @all_records.each do |record|
         record_partition(record) << record
       end
+
+      @processed = true
     end
 
     def record_partition(record)
