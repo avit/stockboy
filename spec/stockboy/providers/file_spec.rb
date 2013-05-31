@@ -38,6 +38,13 @@ module Stockboy
         end
       end
 
+      it "fails with an error if the file doesn't exist" do
+        subject.file_name = "missing-file.csv"
+        subject.data.should be_nil
+        subject.valid?.should == false
+        subject.errors[:base].should_not be_empty
+      end
+
       it "finds last matching file from string glob" do
         subject.file_name = "test_data-*.csv"
         subject.data.should == "2012-02-02\n"

@@ -39,7 +39,7 @@ module Stockboy::Providers
     end
 
     def fetch_data
-      data_file = find_matching_file
+      errors.add(:base, "File #{file_name} not found") unless data_file = find_matching_file
       validate_file(data_file)
       @data = data_file.read if valid?
     end
@@ -53,7 +53,7 @@ module Stockboy::Providers
       when String
         files = Dir[::File.join(file_dir, file_name)]
       end
-      ::File.new(pick_file_from(files), 'r')
+      ::File.new(pick_file_from(files), 'r') if files.any?
     end
 
     def pick_file_from(list)
