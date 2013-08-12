@@ -9,12 +9,12 @@ module Stockboy
 
     describe "#initialize" do
       it "evaluates string config" do
-        Configurator.any_instance.should_receive(:provider).with(:ftp)
+        expect_any_instance_of(Configurator).to receive(:provider).with(:ftp)
         Configurator.new("provider :ftp")
       end
 
       it "evaluates block config" do
-        Configurator.any_instance.should_receive(:provider).with(:ftp)
+        expect_any_instance_of(Configurator).to receive(:provider).with(:ftp)
         Configurator.new do
           provider :ftp
         end
