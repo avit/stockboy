@@ -88,22 +88,22 @@ module Stockboy::Providers
     end
 
     def validate_file_newer(ftp, data_file)
-      @data_time ||= ftp.mtime(data_file)
-      if file_newer && @data_time < file_newer
+      @data_time = ftp.mtime(data_file)
+      if file_newer and @data_time < file_newer
         errors.add :response, "No new files since #{file_newer}"
       end
     end
 
     def validate_file_smaller(ftp, data_file)
-      @data_size ||= ftp.size(data_file)
-      if file_smaller && @data_size > file_smaller
+      @data_size = ftp.size(data_file)
+      if file_smaller and @data_size > file_smaller
         errors.add :response, "File size larger than #{file_smaller}"
       end
     end
 
     def validate_file_larger(ftp, data_file)
-      @data_size ||= ftp.size(data_file)
-      if file_larger && @data_size < file_larger
+      @data_size = ftp.size(data_file)
+      if file_larger and @data_size < file_larger
         errors.add :response, "File size smaller than #{file_larger}"
       end
     end
