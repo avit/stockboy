@@ -5,12 +5,11 @@ require 'roo'
 module Stockboy::Readers
   class Spreadsheet < Stockboy::Reader
 
-    OPTIONS = [:format, :sheet]
+    OPTIONS = [:format, :sheet, :header_line, :first_row, :last_row, :headers, :roo_options]
     attr_accessor *OPTIONS
 
     class DSL
       include Stockboy::DSL
-      dsl_attrs :encoding
       dsl_attrs *OPTIONS
     end
 
@@ -23,12 +22,16 @@ module Stockboy::Readers
       super
       @format = opts[:format] || :xls
       @sheet  = opts[:sheet]  || :first
+      @first_row = opts[:first_row]
+      @last_row  = opts[:last_row]
+      @headers = opts[:headers]
+      @roo_options = opts[:roo_options] || {}
       DSL.new(self).instance_eval(&block) if block_given?
     end
 
     def parse(content)
-      with_spreadsheet(content) do |table|
-        headers = table.row(table.first_row).map { |h| h.to_sym unless h.nil? }
+      with_spreadsheet_tempfile(content) do |table|
+        headers = table_headers(table)
 
         enum_data_rows(table).inject([]) do |rows, i|
           rows << Hash[headers.zip(table.row(i))]
@@ -39,14 +42,16 @@ module Stockboy::Readers
     private
 
     def enum_data_rows(table)
-      (table.first_row + 1).upto table.last_row
+      first_row(table).upto last_row(table)
     end
 
-    def with_spreadsheet(content)
-      Tempfile.open(tmp_name, encoding: content.encoding) do |file|
+    def with_spreadsheet_tempfile(content)
+      Tempfile.open(tmp_name) do |file|
+        file.binmode
         file.write content
-        table = Roo::Spreadsheet.open(file.path)
+        table = Roo::Spreadsheet.open(file.path, @roo_options)
         table.default_sheet = sheet_number(table, @sheet)
+        table.header_line = @header_line if @header_line
         yield table
       end
     end
@@ -57,6 +62,29 @@ module Stockboy::Readers
       when Fixnum then table.sheets[id-1]
       when String then id
       end
+    end
+
+    def first_row(table)
+      @first_row || table.first_row
+    end
+
+    def last_row(table)
+      if @last_row.to_i < 0
+        table.last_row + @last_row + 1
+      elsif @last_row.to_i > 0
+        @last_row
+      else
+        table.last_row
+      end
+    end
+
+    def table_headers(table)
+      return @headers if @headers
+      table.row(header_line(table)).map { |h| h.to_s unless h.nil? }
+    end
+
+    def header_line(table)
+      [table.header_line, table.first_row].max
     end
 
     def tmp_name

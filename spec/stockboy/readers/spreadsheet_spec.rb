@@ -17,10 +17,12 @@ module Stockboy
         reader = described_class.new(
           format:  :xlsx,
           sheet:   'Sheet 42',
+          header_line: 5
         )
 
         reader.format.should == :xlsx
         reader.sheet.should  == 'Sheet 42'
+        reader.roo_options[:header_line].should == 5
       end
 
       it "configures with a block" do
@@ -28,10 +30,12 @@ module Stockboy
           encoding 'ISO-8859-1'
           format :xlsx
           sheet 'Sheet 42'
+          header_line 5
         end
 
         reader.format.should == :xlsx
         reader.sheet.should  == 'Sheet 42'
+        reader.roo_options[:header_line].should == 5
       end
     end
 
@@ -47,6 +51,31 @@ module Stockboy
 
           data.should_not be_empty
           data.each { |i| i.should be_a Hash }
+        end
+      end
+
+      context "with blank line options" do
+        let(:fixture_file) { 'spreadsheets/test_row_options.xls' }
+
+        it "starts on the given first row" do
+          reader = described_class.new(format: :xls, first_row: 6)
+          data = reader.parse(content)
+
+          data.first.values.should == ["Arthur Dent", 42]
+        end
+
+        it "ends on the given last row counting backwards" do
+          reader = described_class.new(format: :xls, last_row: -3)
+          data = reader.parse(content)
+
+          data.last.values.should == ["Marvin", 9999999]
+        end
+
+        it "ends on the given last row counting upwards" do
+          reader = described_class.new(format: :xls, last_row: 9)
+          data = reader.parse(content)
+
+          data.last.values.should == ["Ford", 40]
         end
       end
     end
