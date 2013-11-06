@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   # s.add_development_dependency "vcr"
 
   s.add_runtime_dependency "log4r"
-  s.add_runtime_dependency "roo"
+  s.add_runtime_dependency "roo", ">= 1.12.2"
   s.add_runtime_dependency "savon", ">= 2.3.0"
   s.add_runtime_dependency "httpi"
   s.add_runtime_dependency "mail"

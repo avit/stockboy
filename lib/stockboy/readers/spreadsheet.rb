@@ -1,8 +1,6 @@
 require 'stockboy/reader'
 require 'tempfile'
 require 'roo'
-# roo breaks without iconv loaded in some environments
-require 'iconv' if RUBY_PLATFORM.downcase =~ /darwin|solaris|mswin32/
 
 module Stockboy::Readers
   class Spreadsheet < Stockboy::Reader
