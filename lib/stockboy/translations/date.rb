@@ -8,7 +8,7 @@ module Stockboy::Translations
       return nil if value.blank?
 
       case value
-      when String then ::Date.parse(value)
+      when ::String then ::Date.parse(value)
       when ::Time, ::DateTime then ::Date.new(value.year, value.month, value.day)
       when ::Date then value
       else nil
