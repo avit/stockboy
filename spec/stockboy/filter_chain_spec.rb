@@ -4,8 +4,8 @@ require 'stockboy/filter_chain'
 module Stockboy
   describe FilterChain do
 
-    let(:filter1) { stub("Filter") }
-    let(:filter2) { stub("Filter", reset: true) }
+    let(:filter1) { double("Filter") }
+    let(:filter2) { double("Filter", reset: true) }
 
     it "initializes keys and values from a hash" do
       chain = FilterChain.new(no_angels: filter1, no_daleks: filter2)
@@ -29,8 +29,8 @@ module Stockboy
 
     describe "#prepend" do
       it "adds filters to the front of the chain" do
-        chain = FilterChain.new(filter1: stub)
-        chain.prepend(filter0: stub)
+        chain = FilterChain.new(filter1: double)
+        chain.prepend(filter0: double)
         chain.keys.should == [:filter0, :filter1]
       end
     end

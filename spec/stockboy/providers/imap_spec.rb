@@ -45,7 +45,7 @@ module Stockboy
 
       context "with no messages found" do
         it "should be nil" do
-          imap.stub!(:fetch_imap_message_keys).and_return []
+          allow(imap).to receive(:fetch_imap_message_keys).and_return []
           imap.data.should be_nil
         end
       end

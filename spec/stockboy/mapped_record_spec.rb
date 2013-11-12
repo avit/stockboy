@@ -15,8 +15,8 @@ module Stockboy
       record1 = MappedRecord.new(:full_name => 'Arthur Dent')
       record2 = MappedRecord.new(:full_name => 'Arthur Dent')
 
-      record1.method(:full_name).unbind.should ==
-      record2.method(:full_name).unbind
+      record1.method(:full_name).owner.should ==
+      record2.method(:full_name).owner
     end
 
     it "only has its own accessor methods" do

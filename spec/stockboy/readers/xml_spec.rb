@@ -52,7 +52,7 @@ module Stockboy
       end
 
       it "parses a SOAP response" do
-        response = stub(to_hash: {'ul'=>{'li'=>[{'b'=>'one'}, {'b'=>'two'}]}})
+        response = double(to_hash: {'ul'=>{'li'=>[{'b'=>'one'}, {'b'=>'two'}]}})
         items = reader.parse response
 
         items.should == [{'b' => 'one'}, {'b' => 'two'}]

@@ -4,7 +4,7 @@ require 'stockboy/providers'
 module Stockboy
   describe Providers do
 
-    let(:provider) { stub("provider") }
+    let(:provider) { double("provider") }
 
     describe ".register" do
       it "registers a key and class" do

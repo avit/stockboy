@@ -4,7 +4,7 @@ require 'stockboy/filters'
 module Stockboy
   describe Filters do
 
-    let(:filter) { stub("filter") }
+    let(:filter) { double("filter") }
 
     describe ".register" do
       it "registers a key and class" do

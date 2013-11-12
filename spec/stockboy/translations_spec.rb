@@ -9,7 +9,7 @@ module Stockboy
     describe ".register" do
       it "accepts a class with method #call" do
         translation_class = Class
-        translation_class.stub(:call)
+        allow(translation_class).to receive(:call)
         Translations.register(:from_class, translation_class)
       end
 

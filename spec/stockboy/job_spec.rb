@@ -4,8 +4,8 @@ require 'stockboy/job'
 module Stockboy
   describe Job do
     let(:jobs_path) { RSpec.configuration.fixture_path.join('jobs') }
-    let(:provider_stub) { stub(:ftp).as_null_object }
-    let(:reader_stub)   { stub(:csv).as_null_object }
+    let(:provider_stub) { double(:ftp).as_null_object }
+    let(:reader_stub)   { double(:csv).as_null_object }
 
     let(:job_template) {
       <<-END.gsub(/^ {6}/,'')
@@ -29,15 +29,15 @@ module Stockboy
     before do
       Stockboy.configuration.template_load_paths = [jobs_path]
 
-      Stockboy::Providers.stub!(:find => provider_stub)
-      Stockboy::Readers.stub!(:find => reader_stub)
+      allow(Stockboy::Providers).to receive(:find) { provider_stub }
+      allow(Stockboy::Readers).to receive(:find) { reader_stub }
     end
 
     its(:filters) { should be_a Hash }
 
     describe "#define" do
       before do
-        File.stub!(:read)
+        allow(File).to receive(:read)
             .with("#{jobs_path}/test_job.rb")
             .and_return job_template
       end
@@ -81,19 +81,19 @@ module Stockboy
       let(:attribute_map) { AttributeMap.new { name } }
 
       subject(:job) do
-        Job.new(provider: stub(:provider, data:"", errors:[]),
+        Job.new(provider: double(:provider, data:"", errors:[]),
                 attributes: attribute_map)
       end
 
       it "records total received record count" do
-        job.reader = stub(parse: [{name:"A"},{name:"B"}])
+        job.reader = double(parse: [{"name"=>"A"},{"name"=>"B"}])
 
         job.process
         job.total_records.should == 2
       end
 
       it "partitions records by filter" do
-        job.reader = stub(parse: [{"name"=>"A"},{"name"=>"B"}])
+        job.reader = double(parse: [{"name"=>"A"},{"name"=>"B"}])
         job.filters = {alpha: proc{ |r| r.name =~ /A/ }}
 
         job.process
@@ -101,7 +101,7 @@ module Stockboy
       end
 
       it "keeps unfiltered_records" do
-        job.reader = stub(parse: [{"name"=>"A"}])
+        job.reader = double(parse: [{"name"=>"A"}])
         job.filters = {zeta: proc{ |r| r.name =~ /Z/ }}
 
         job.process
@@ -109,7 +109,7 @@ module Stockboy
       end
 
       it "keeps all_records" do
-        job.reader = stub(parse: [{"name"=>"A"},{"name"=>"Z"}])
+        job.reader = double(parse: [{"name"=>"A"},{"name"=>"Z"}])
         job.filters = {alpha: proc{ |r| r.name =~ /A/ }}
 
         job.process
@@ -125,7 +125,7 @@ module Stockboy
           define_method(:reset)      { @matches = 0 }
         end
 
-        job.reader = stub(parse: [{"name"=>"A"},{"name"=>"Z"}])
+        job.reader = double(parse: [{"name"=>"A"},{"name"=>"Z"}])
         job.filters = {alpha: counter = CountingFilter.new(/A/)}
 
         counter.matches.should == 0
@@ -143,7 +143,7 @@ module Stockboy
       let(:attribute_map) { AttributeMap.new { name } }
 
       subject(:job) do
-        Job.new(provider: stub(:provider, data:"", errors:[]),
+        Job.new(provider: double(:provider, data:"", errors:[]),
                 attributes: attribute_map)
       end
 
@@ -159,7 +159,7 @@ module Stockboy
           zeta:  proc{ |r| r.name =~ /^Z/ }
         }
 
-        job.reader = stub(parse: [{'name'=>'Arthur'}, {'name'=>'Abc'}, {'name'=>'Zaphod'}])
+        job.reader = double(parse: [{"name"=>"Arthur"}, {"name"=>"Abc"}, {"name"=>"Zaphod"}])
         job.process
 
         job.record_counts.should == {alpha: 2, zeta: 1}

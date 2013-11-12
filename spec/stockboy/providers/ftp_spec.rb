@@ -39,7 +39,7 @@ module Stockboy
         end
       end
 
-      let!(:ftp) { mock(:ftp).as_null_object }
+      let!(:ftp) { double(:ftp).as_null_object }
 
       def stub_ftp
         ::Net::FTP.should_receive(:open)
@@ -63,16 +63,16 @@ module Stockboy
 
       it "downloads the last matching file" do
         stub_ftp
-        ftp.stub!(:nlst).and_return ['20120101.csv', '20120102.csv']
+        allow(ftp).to receive(:nlst).and_return ['20120101.csv', '20120102.csv']
         ftp.should_receive(:get).with('20120102.csv', nil)
-        subject.stub(:validate_file).and_return true
+        allow(subject).to receive(:validate_file).and_return true
 
         subject.data
       end
 
       it "skips old files" do
         stub_ftp
-        ftp.stub!(:nlst).and_return ['20120101.csv', '20120102.csv']
+        allow(ftp).to receive(:nlst).and_return ['20120101.csv', '20120102.csv']
         ftp.should_receive(:mtime)
            .with('20120102.csv')
            .and_return(Time.new(2009,01,01))
@@ -83,6 +83,5 @@ module Stockboy
         subject.data.should be_nil
       end
     end
-
   end
 end

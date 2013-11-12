@@ -13,26 +13,26 @@ module Stockboy
   describe Filter do
 
     describe "#call" do
-      let(:empty_values) { stub.as_null_object }
+      let(:empty_values) { double.as_null_object }
       subject(:filter) { FishFilter.new }
 
       context "matching raw value" do
         it "returns true for match" do
-          filter.call(stub(species:"babylichtus"), empty_values).should be_true
+          filter.call(double(species:"babylichtus"), empty_values).should be_true
         end
 
         it "returns false for no match" do
-          filter.call(stub(species:"triceratops"), empty_values).should be_false
+          filter.call(double(species:"triceratops"), empty_values).should be_false
         end
       end
 
       context "matching translated value" do
         it "returns true for match" do
-          filter.call(empty_values, stub(species:"babelfish")).should be_true
+          filter.call(empty_values, double(species:"babelfish")).should be_true
         end
 
         it "returns false for no match" do
-          filter.call(empty_values, stub(species:"rhinoceros")).should be_false
+          filter.call(empty_values, double(species:"rhinoceros")).should be_false
         end
       end
     end

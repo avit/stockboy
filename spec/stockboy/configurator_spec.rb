@@ -58,7 +58,7 @@ module Stockboy
       end
 
       it "initializes arguments" do
-        reader_stub = stub(:reader)
+        reader_stub = double(:reader)
         reader_class.should_receive(:new).with(col_sep: '|').and_return(reader_stub)
         subject.reader reader_class, col_sep: '|'
         subject.config[:reader].should == reader_stub
@@ -67,7 +67,7 @@ module Stockboy
 
     describe "#attributes" do
       it "initializes a block" do
-        attribute_map = stub
+        attribute_map = double
         AttributeMap.should_receive(:new).and_return(attribute_map)
         subject.attributes &proc{}
         subject.config[:attributes].should be attribute_map
@@ -76,7 +76,7 @@ module Stockboy
 
     describe "#filter" do
       it "initializes a callable" do
-        filter_stub = stub(call: true)
+        filter_stub = double(call: true)
         subject.filter :pass, filter_stub
         subject.config[:filters][:pass].should == filter_stub
       end
