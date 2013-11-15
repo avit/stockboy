@@ -23,6 +23,12 @@ module Stockboy
         email from: 'email'
         updated_at from: 'statusDate', as: [:date]
       end
+      on :cleanup do |job|
+        job.provider.delete_data
+      end
+      on :cleanup do |job|
+        "log: " << job.all_records.size
+      end
       END
     }
 
@@ -74,6 +80,12 @@ module Stockboy
       it "assigns attributes from a block" do
         job = Job.define("test_job")
         job.attributes.map(&:to).should == [:name, :email, :updated_at]
+      end
+
+      it "assigns triggers into their associated array from a block" do
+        job = Job.define("test_job")
+        job.triggers[:cleanup].size.should == 2
+        job.triggers[:cleanup].each { |t| t.should be_a Proc }
       end
     end
 
@@ -179,5 +191,48 @@ module Stockboy
         job.processed?.should be_true
       end
     end
+
+    describe "#trigger" do
+
+      let(:provider_stub) { double(delete_data: true) }
+
+      subject(:job) do
+        Job.new(
+          provider: provider_stub,
+          triggers: {
+            success: [proc { |j| j.provider.delete_data },
+                      proc { |j, stats| stats[:count] = 1 if stats }]
+          }
+        )
+      end
+
+      it "should yield itself to each trigger" do
+        provider_stub.should_receive(:delete_data).once
+        job.trigger(:success)
+      end
+
+      it "should yield args to each trigger" do
+        stats = {}
+        job.trigger(:success, stats)
+        stats[:count].should == 1
+      end
+
+    end
+
+    describe "#method_missing" do
+
+      subject(:job) { Job.new(triggers: {cleanup: proc{|_|}})}
+
+      it "should call a named trigger" do
+        expect(job).to receive(:trigger).with(:cleanup, "trash")
+        job.cleanup("trash")
+      end
+
+      it "should raise an error for unknown trigger keys" do
+        expect { job.wobble }.to raise_error NoMethodError
+      end
+
+    end
+
   end
 end

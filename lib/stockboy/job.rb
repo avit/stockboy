@@ -51,6 +51,8 @@ module Stockboy
     #
     attr_reader :filters
 
+    attr_reader :triggers
+
     # Lists of records grouped by filter key
     #
     # @return [Hash{Symbol=>Array}]
@@ -83,6 +85,8 @@ module Stockboy
       @reader     = params[:reader]
       @attributes = params[:attributes]
       @filters    = FilterChain.new params[:filters]
+      @triggers   = Hash.new { |h,k| h[k] = [] }
+      @triggers.replace params[:triggers] if params[:triggers]
       yield self if block_given?
       reset
     end
@@ -128,6 +132,25 @@ module Stockboy
     #
     def record_counts
       @records.reduce(Hash.new) { |a, (k,v)| a[k] = v.size; a }
+    end
+
+    def triggers=(new_triggers)
+      @triggers.replace new_triggers
+    end
+
+    def trigger(key, *args)
+      return nil unless triggers.key?(key)
+      triggers[key].each do |c|
+        c.call(self, *args)
+      end
+    end
+
+    def method_missing(name, *args)
+      if triggers.key?(name)
+        trigger(name, *args)
+      else
+        super
+      end
     end
 
     # Replace existing filters

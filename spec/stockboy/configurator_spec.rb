@@ -74,6 +74,21 @@ module Stockboy
       end
     end
 
+    describe "#on" do
+
+      let(:job) { double(:job, reset: true, process: true) }
+
+      it "initializes a block" do
+        subject.on :reprocess do |job, *args|
+          job.reset
+          job.process
+        end
+
+        subject.config[:triggers][:reprocess][0].should be_a Proc
+      end
+
+    end
+
     describe "#filter" do
       it "initializes a callable" do
         filter_stub = double(call: true)

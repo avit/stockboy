@@ -31,6 +31,7 @@ module Stockboy
     #
     def initialize(dsl='', file=__FILE__, &block)
       @config = {}
+      @config[:triggers] = Hash.new { |hash, key| hash[key] = [] }
       @config[:filters] = {}
       if block_given?
         instance_eval(&block)
@@ -136,6 +137,31 @@ module Stockboy
       raise ArgumentError unless callable.respond_to?(:call) ^ block_given?
 
       @config[:filters][key] = block || callable
+    end
+
+    # DSL method to register a trigger to notify the job of an event
+    #
+    # Useful for adding generic control over the job's resources from your app.
+    # For example, if you need to record stats or clean up data after your
+    # application has successfully processed the records, these actions can be
+    # defined within the context of each job template.
+    #
+    # @param [Symbol] key Name of the trigger
+    # @param [Trigger, Proc, #call] trigger_class
+    #
+    # @example
+    #   trigger :cleanup do |job, *args|
+    #     job.provider.delete_data
+    #   end
+    #
+    #   # elsewhere:
+    #   if MyProjects.find(123).import_records(job.records[:valid])
+    #     job.cleanup
+    #   end
+    #
+    def on(key, &block)
+      raise(ArgumentError, "no block given") unless block_given?
+      @config[:triggers][key] << block
     end
 
     # Initialize a new job with the captured options
