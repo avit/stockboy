@@ -110,33 +110,56 @@ module Stockboy::Providers
       DSL.new(self).instance_eval(&block) if block_given?
     end
 
+    def client
+      return yield @open_client if @open_client
+
+      Net::FTP.open(host, username, password) do |ftp|
+        ftp.binary = binary
+        ftp.passive = passive
+        ftp.chdir file_dir if file_dir
+        @open_client = ftp
+        response = yield ftp
+        @open_client = nil
+        response
+      end
+    rescue Net::FTPError => e
+      errors.add :response, e.message
+      logger.warn e.message
+    end
+
+    def matching_file
+      return @matching_file if @matching_file
+      client do |ftp|
+        file_listing = ftp.nlst.sort
+        @matching_file = pick_from file_listing.select(&file_name_matcher)
+      end
+    end
+
+
+    def clear
+      super
+      @matching_file = nil
+      @data_time = nil
+      @data_size = nil
+    end
+
     private
+
+    def fetch_data
+      client do |ftp|
+        validate_file(matching_file)
+        if valid?
+          logger.info "FTP getting file #{host} #{file_dir}/#{matching_file}"
+          @data = ftp.get(matching_file, nil)
+          logger.info "FTP got file #{host} #{file_dir}/#{matching_file} (#{@data_size} bytes)"
+        end
+      end
+      !@data.nil?
+    end
 
     def validate
       errors.add_on_blank [:host, :file_name]
       errors.empty?
-    end
-
-    def fetch_data
-      Net::FTP.open(host, username, password) do |ftp|
-        begin
-          ftp.binary = binary
-          ftp.passive = passive
-          ftp.chdir file_dir if file_dir
-          file_listing = ftp.nlst.sort
-          matching_file = pick_from file_listing.select(&file_name_matcher)
-          validate_file(ftp, matching_file)
-          if valid?
-            logger.info "FTP getting file #{file_dir}/#{matching_file}"
-            @data = ftp.get(matching_file,nil)
-            logger.info "FTP got file #{file_dir}/#{matching_file} (#@data_size bytes)"
-          end
-        rescue Net::FTPError
-          errors.add :response, ftp.last_response
-          logger.warn ftp.last_response
-        end
-      end
-      !@data.nil?
     end
 
     def file_name_matcher
@@ -148,29 +171,29 @@ module Stockboy::Providers
       end
     end
 
-    def validate_file(ftp, data_file)
+    def validate_file(data_file)
       return errors.add :response, "No matching files" unless data_file
-      validate_file_newer(ftp, data_file)
-      validate_file_smaller(ftp, data_file)
-      validate_file_larger(ftp, data_file)
+      validate_file_newer(data_file)
+      validate_file_smaller(data_file)
+      validate_file_larger(data_file)
     end
 
-    def validate_file_newer(ftp, data_file)
-      @data_time = ftp.mtime(data_file)
+    def validate_file_newer(data_file)
+      @data_time ||= client { |ftp| ftp.mtime(data_file) }
       if file_newer and @data_time < file_newer
         errors.add :response, "No new files since #{file_newer}"
       end
     end
 
-    def validate_file_smaller(ftp, data_file)
-      @data_size = ftp.size(data_file)
+    def validate_file_smaller(data_file)
+      @data_size ||= client { |ftp| ftp.size(data_file) }
       if file_smaller and @data_size > file_smaller
         errors.add :response, "File size larger than #{file_smaller}"
       end
     end
 
-    def validate_file_larger(ftp, data_file)
-      @data_size = ftp.size(data_file)
+    def validate_file_larger(data_file)
+      @data_size ||= client { |ftp| ftp.size(data_file) }
       if file_larger and @data_size < file_larger
         errors.add :response, "File size smaller than #{file_larger}"
       end
