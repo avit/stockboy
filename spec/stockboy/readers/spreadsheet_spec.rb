@@ -17,25 +17,28 @@ module Stockboy
         reader = described_class.new(
           format:  :xlsx,
           sheet:   'Sheet 42',
-          header_line: 5
+          header_row: 5,
+          headers: %w(X Y Z)
         )
 
         reader.format.should == :xlsx
         reader.sheet.should  == 'Sheet 42'
-        reader.roo_options[:header_line].should == 5
+        reader.header_row.should == 5
+        reader.headers.should == %w(X Y Z)
       end
 
       it "configures with a block" do
         reader = described_class.new do
-          encoding 'ISO-8859-1'
           format :xlsx
           sheet 'Sheet 42'
-          header_line 5
+          header_row 5
+          headers %w(X Y Z)
         end
 
         reader.format.should == :xlsx
         reader.sheet.should  == 'Sheet 42'
-        reader.roo_options[:header_line].should == 5
+        reader.header_row.should == 5
+        reader.headers.should == %w(X Y Z)
       end
     end
 

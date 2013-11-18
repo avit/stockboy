@@ -5,7 +5,7 @@ require 'roo'
 module Stockboy::Readers
   class Spreadsheet < Stockboy::Reader
 
-    OPTIONS = [:format, :sheet, :header_line, :first_row, :last_row, :headers, :roo_options]
+    OPTIONS = [:format, :sheet, :header_row, :first_row, :last_row, :headers, :roo_options]
     attr_accessor *OPTIONS
 
     class DSL
@@ -24,6 +24,7 @@ module Stockboy::Readers
       @sheet  = opts[:sheet]  || :first
       @first_row = opts[:first_row]
       @last_row  = opts[:last_row]
+      @header_row  = opts[:header_row]
       @headers = opts[:headers]
       @roo_options = opts[:roo_options] || {}
       DSL.new(self).instance_eval(&block) if block_given?
@@ -80,10 +81,10 @@ module Stockboy::Readers
 
     def table_headers(table)
       return @headers if @headers
-      table.row(header_line(table)).map { |h| h.to_s unless h.nil? }
+      table.row(table_header_row(table)).map { |h| h.to_s unless h.nil? }
     end
 
-    def header_line(table)
+    def table_header_row(table)
       [table.header_line, table.first_row].max
     end
 
