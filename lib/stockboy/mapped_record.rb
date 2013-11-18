@@ -1,6 +1,9 @@
 module Stockboy
   class MappedRecord
 
+    # This module holds a pool of already-defined accessor methods for
+    # attribute maps. It avoids a dependency on method_missing.
+    #
     module AccessorMethods
       def self.for(attrs)
         @module_registry        ||= Hash.new
@@ -13,7 +16,6 @@ module Stockboy
             define_method key do
               @fields[key]
             end
-            # module_eval "def #{key}; @fields[:#{key}] end"
           end
         end
       end
