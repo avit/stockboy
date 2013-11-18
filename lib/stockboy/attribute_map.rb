@@ -16,9 +16,13 @@ module Stockboy
         opts = args.first || {}
         to = attr.to_sym
         from = opts.fetch(:from, attr)
-        from = from.to_sym if from.respond_to?(:to_sym)
+        from = from.to_s if from.is_a? Symbol
         translators = Array(opts[:as]).map { |t| Translations.translator_for(to, t) }
         @map[attr] = Attribute.new(to, from, translators)
+        define_attribute_method(attr)
+      end
+
+      def define_attribute_method(attr)
         (class << @instance; self end).send(:define_method, attr) { @map[attr] }
       end
     end
@@ -32,7 +36,7 @@ module Stockboy
     end
 
     def [](key)
-      @map[key.to_sym]
+      @map[key]
     end
 
     def each(*args, &block)

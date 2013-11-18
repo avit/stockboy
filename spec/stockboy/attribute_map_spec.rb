@@ -20,17 +20,17 @@ module Stockboy
     end
 
     it "captures same destination as default" do
-      subject[:email].should == Attribute.new(:email, :email, [])
+      subject[:email].should == Attribute.new(:email, "email", [])
     end
 
-    it "sets source from string to symbol" do
+    it "sets source from string to string" do
       map = AttributeMap.new { updated_at from: "statusDate" }
-      map[:updated_at].from.should == :statusDate
+      map[:updated_at].from.should == "statusDate"
     end
 
-    it "sets source from symbol to symbol" do
+    it "sets source from symbol to string" do
       map = AttributeMap.new { updated_at from: :statusDate }
-      map[:updated_at].from.should == :statusDate
+      map[:updated_at].from.should == "statusDate"
     end
 
     it "sets source from number to number" do
@@ -51,7 +51,7 @@ module Stockboy
     end
 
     it "is enumerable" do
-      subject.map(&:from).should == [:email, :statusDate]
+      subject.map(&:from).should == ["email", "statusDate"]
       subject.map(&:to).should == [:email, :updated_at]
     end
 

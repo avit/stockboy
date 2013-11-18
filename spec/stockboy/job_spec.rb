@@ -160,7 +160,7 @@ module Stockboy
           zeta:  proc{ |r| r.name =~ /^Z/ }
         }
 
-        job.reader = stub(parse: [{name: 'Arthur'}, {name: 'Abc'}, {name: 'Zaphod'}])
+        job.reader = stub(parse: [{'name'=>'Arthur'}, {'name'=>'Abc'}, {'name'=>'Zaphod'}])
         job.process
 
         job.record_counts.should == {alpha: 2, zeta: 1}

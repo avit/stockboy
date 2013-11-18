@@ -8,7 +8,7 @@ module Stockboy
     end
 
     def [](key)
-      key = key.to_sym if key.respond_to?(:to_sym)
+      key = key.to_s if key.is_a? Symbol
       @data_fields[key]
     end
   end

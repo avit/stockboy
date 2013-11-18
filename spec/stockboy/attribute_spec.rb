@@ -4,8 +4,8 @@ require 'stockboy/attribute'
 module Stockboy
   describe Attribute do
     it "describes its attrs" do
-      attr = Attribute.new :infield, :outfield, [:one, :two]
-      attr.inspect.should == "#<Stockboy::Attribute to=:infield, from=:outfield, translators=[:one, :two]>"
+      attr = Attribute.new :outfield, "infield", [:one, :two]
+      attr.inspect.should == %{#<Stockboy::Attribute to=:outfield, from="infield", translators=[:one, :two]>}
     end
   end
 end

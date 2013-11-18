@@ -8,7 +8,7 @@ module Stockboy
 
     def initialize(attrs, map)
       @map = map
-      @table = attrs.to_hash.symbolize_keys
+      @table = attrs.to_hash
       @tr_table = Hash.new
       freeze
     end
