@@ -3,6 +3,7 @@ require 'stockboy/exceptions'
 require 'stockboy/configurator'
 require 'stockboy/template_file'
 require 'stockboy/filter_chain'
+require 'stockboy/candidate_record'
 
 module Stockboy
   class Job

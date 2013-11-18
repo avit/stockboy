@@ -1,6 +1,7 @@
 require 'stockboy/job'
 require 'stockboy/providers'
 require 'stockboy/readers'
+require 'stockboy/filters'
 require 'stockboy/attribute_map'
 
 module Stockboy

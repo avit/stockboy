@@ -28,6 +28,9 @@ module Stockboy
 
     before do
       Stockboy.configuration.template_load_paths = [jobs_path]
+
+      Stockboy::Providers.stub!(:find => provider_stub)
+      Stockboy::Readers.stub!(:find => reader_stub)
     end
 
     its(:filters) { should be_a Hash }
@@ -56,9 +59,6 @@ module Stockboy
       end
 
       it "assigns a registered provider from a symbol" do
-        Stockboy::Providers.should_receive(:find)
-                           .with(:ftp)
-                           .and_return(provider_stub)
         job = Job.define("test_job")
         job.provider.should == provider_stub
       end
@@ -117,13 +117,12 @@ module Stockboy
       end
 
       it "resets filters between runs" do
-        class CountingFilter < Filter
+
+        class CountingFilter
           attr_reader :matches
-          def initialize(pattern); @pattern, @matches = /A/, 0 end
-          def reset; @matches = 0 end
-          def filter(raw,output)
-            @matches += 1 if output.name =~ @pattern
-          end
+          define_method(:initialize) { |pattern| @pattern, @matches = /A/, 0 }
+          define_method(:call)       { |_, output| @matches += 1 if output.name =~ @pattern }
+          define_method(:reset)      { @matches = 0 }
         end
 
         job.reader = stub(parse: [{"name"=>"A"},{"name"=>"Z"}])

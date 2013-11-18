@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'stockboy/filters'
+require 'stockboy/filter_chain'
 
 module Stockboy
   describe FilterChain do
