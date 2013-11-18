@@ -13,7 +13,7 @@ module Stockboy
       end
 
       it "strips trailing & leading whitespace" do
-        result = subject.call id: " Arthur \n"
+        result = subject.call name: " Arthur \n"
         result.should == "Arthur"
       end
     end
