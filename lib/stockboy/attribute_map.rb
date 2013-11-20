@@ -16,7 +16,7 @@ module Stockboy
         opts = args.first || {}
         to = attr.to_sym
         from = opts.fetch(:from, attr)
-        from = from.to_s if from.is_a? Symbol
+        from = from.to_s.freeze if from.is_a? Symbol
         translators = Array(opts[:as]).map { |t| Translations.translator_for(to, t) }
         @map[attr] = Attribute.new(to, from, translators)
         define_attribute_method(attr)
@@ -29,6 +29,7 @@ module Stockboy
 
     def initialize(rows={}, &block)
       @map = rows
+      @unmapped = Hash.new
       if block_given?
         DSL.new(self).instance_eval(&block)
       end
@@ -37,6 +38,10 @@ module Stockboy
 
     def [](key)
       @map[key]
+    end
+
+    def attribute_from(key)
+      find { |a| a.from == key } or @unmapped[key] ||= Attribute.new(nil, key, nil)
     end
 
     def each(*args, &block)

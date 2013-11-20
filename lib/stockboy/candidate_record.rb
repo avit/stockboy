@@ -8,7 +8,7 @@ module Stockboy
 
     def initialize(attrs, map)
       @map = map
-      @table = attrs.to_hash
+      @table = use_frozen_keys(attrs, map)
       @tr_table = Hash.new
       freeze
     end
@@ -71,6 +71,14 @@ module Stockboy
 
     def sanitize(value)
       value.is_a?(String) ? value.to_s : value
+    end
+
+    def use_frozen_keys(attrs, map)
+      attrs.reduce(Hash.new) do |new_hash, (field, value)|
+        key = map.attribute_from(field).from
+        new_hash[key] = value
+        new_hash
+      end
     end
 
   end
