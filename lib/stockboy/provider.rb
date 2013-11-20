@@ -33,10 +33,7 @@ module Stockboy #:nodoc:
     attr_reader :data_time
 
     def inspect
-    <<-EOF.gsub(/^ {6}/,'')
-    #<#{self.class}:#{self.object_id} @data_size=#{@data_size or 'nil'}
-     @errors=#{@errors.full_messages}>
-    EOF
+    "#<#{self.class}:#{self.object_id} data_size=#{@data_size or 'nil'} errors=#{@errors.full_messages}>"
     end
 
     # Initialize should be called by subclasses to set up dependencies
