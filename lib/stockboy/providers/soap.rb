@@ -35,6 +35,7 @@ module Stockboy::Providers
       elsif endpoint
         {endpoint: endpoint}
       end
+      opts[:convert_response_tags_to] = ->(tag) { tag.snakecase.freeze }
       opts[:namespace] = namespace if namespace
       opts[:namespace_identifier] = namespace_id if namespace_id
       opts[:headers] = headers if headers

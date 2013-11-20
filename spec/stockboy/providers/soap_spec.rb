@@ -78,6 +78,7 @@ module Stockboy
         response = soap.data
 
         response.should be_a Hash
+        response.keys.all? { |k| k.should be_a String }
       end
     end
   end
