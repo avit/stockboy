@@ -58,11 +58,11 @@ module Stockboy
     end
 
     describe "#data" do
-      let(:xml_success_fixture) {
+      let(:xml_success_fixture) do
         File.read(RSpec.configuration.fixture_path.join "soap/get_list/success.xml")
-      }
+      end
 
-      subject(:soap) do
+      let(:soap) do
         Providers::SOAP.new do |s|
           s.endpoint = "http://api.example.com/v1"
           s.namespace = ''
@@ -71,15 +71,27 @@ module Stockboy
         end
       end
 
-      it "returns hash data on success" do
+      subject(:response) do
         savon.expects(:get_list)
              .with(message: {username: 'user', password: 'pass'})
              .returns(xml_success_fixture)
-        response = soap.data
-
-        response.should be_a Hash
-        response.keys.all? { |k| k.should be_a String }
+        soap.data
       end
+
+      it "returns hash data on success" do
+        should be_a Hash
+      end
+
+      it "uses string keys" do
+        response.keys.each { |k| k.should be_a String }
+      end
+
+      it "shares key string objects from a common pool" do
+        cases = response["MultiNamespacedEntryResponse"]["history"]["case"]
+        text_keys = cases.map { |c| c.keys[c.keys.index("logText")] }
+        text_keys[0].should be text_keys[1]
+      end
+
     end
   end
 end

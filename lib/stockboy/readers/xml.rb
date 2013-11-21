@@ -1,7 +1,9 @@
 require 'stockboy/reader'
+require 'stockboy/string_pool'
 
 module Stockboy::Readers
   class XML < Stockboy::Reader
+    include Stockboy::StringPool
 
     XML_OPTIONS = [:strip_namespaces,
                    :convert_tags_to,
@@ -24,7 +26,7 @@ module Stockboy::Readers
 
     def initialize(opts={}, &block)
       super
-      @elements    = opts.delete(:elements)
+      self.elements = opts.delete(:elements)
       @xml_options = opts
       DSL.new(self).instance_eval(&block) if block_given?
     end
@@ -33,32 +35,66 @@ module Stockboy::Readers
       @xml_options
     end
 
+    def elements=(schema)
+      return @elements = [] unless schema
+      raise(ArgumentError, "expected an array of XML tag strings") unless schema.is_a? Array
+      @elements = schema.map(&:to_s)
+    end
+
+    def elements
+      convert_tags_to ? @elements.map(&convert_tags_to) : @elements
+    end
+
     def parse(data)
-      if data.is_a? Hash
-        hash = data
+      hash = if data.is_a? Hash
+        data
       else
-        hash = if data.respond_to? :to_xml
-          Nori.new(@xml_options).parse(data.to_xml("UTF-8"))
+        if data.respond_to? :to_xml
+          data.to_xml("UTF-8")
+          nori.parse(data)
         elsif data.respond_to? :to_hash
           data.to_hash
         else
           data.encode!("UTF-8", encoding) if encoding
-          Nori.new(@xml_options).parse(data)
+          nori.parse(data)
         end
       end
 
-      extract hash
+      with_string_pool do
+        remap_keys hash
+        extract hash
+      end
     end
 
     private
 
+    def nori
+      @nori ||= Nori.new(options)
+    end
+
     def extract(hash)
-      result = Array(@elements).inject hash do |memo, key|
+      result = elements.inject hash do |memo, key|
         return [] if memo[key].nil?
         memo[key]
       end
 
-      Array(result).compact
+      result = [result] unless result.is_a? Array
+      result.compact!
+      result
+    end
+
+    def remap_keys(node)
+      mapper = convert_tags_to || ->(tag) { tag }
+      case node
+      when Hash
+        node.keys.each do |k|
+          tag = string_pool(mapper.call(k))
+          node[tag] = remap_keys(node.delete(k))
+        end
+      when Array
+        node.each { |value| remap_keys(value) }
+      end
+      node
     end
 
   end

@@ -1,8 +1,10 @@
 require 'stockboy/provider'
+require 'stockboy/string_pool'
 require 'savon'
 
 module Stockboy::Providers
   class SOAP < Stockboy::Provider
+    include Stockboy::StringPool
 
     OPTIONS = [:wsdl,
                :request,
@@ -35,7 +37,7 @@ module Stockboy::Providers
       elsif endpoint
         {endpoint: endpoint}
       end
-      opts[:convert_response_tags_to] = ->(tag) { tag.snakecase.freeze }
+      opts[:convert_response_tags_to] = ->(tag) { string_pool(tag) }
       opts[:namespace] = namespace if namespace
       opts[:namespace_identifier] = namespace_id if namespace_id
       opts[:headers] = headers if headers
@@ -48,7 +50,10 @@ module Stockboy::Providers
     end
 
     def fetch_data
-      @data = client.call(@request, message: message).body
+      with_string_pool do
+        @data = client.call(@request, message: message).body
+      end
     end
+
   end
 end
