@@ -1,5 +1,4 @@
 require 'stockboy/reader'
-require 'stockboy/candidate_record'
 require 'csv'
 
 module Stockboy::Readers
@@ -30,7 +29,10 @@ module Stockboy::Readers
     end
 
     def parse(data)
-      records = ::CSV.parse(sanitize(data), options).map &:to_hash
+      chain = options[:header_converters] || []
+      chain << proc{ |h| h.freeze }
+      opts = options.merge(header_converters: chain)
+      ::CSV.parse(sanitize(data), opts).map &:to_hash
     end
 
     def options

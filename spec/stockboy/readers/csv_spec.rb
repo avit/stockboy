@@ -58,6 +58,11 @@ module Stockboy
 
         records[0].should == {"id" => "42", "name" => "Arthur Dent"}
       end
+
+      it "shares hash key instances between records" do
+        records = reader.parse "id,name\n42,Arthur Dent\n999,Zaphod"
+        records[0].keys[0].should be records[1].keys[0]
+      end
     end
   end
 end
