@@ -15,10 +15,6 @@ module Stockboy
       its(:errors) { should be_empty }
     end
 
-    describe "#stats" do
-      its(:stats) { should be_empty }
-    end
-
     describe "#logger" do
       its(:logger) { should respond_to :error }
     end

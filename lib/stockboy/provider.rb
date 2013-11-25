@@ -27,9 +27,6 @@ module Stockboy #:nodoc:
     # See ActiveModel::Errors
     attr_reader :errors
 
-    # List of received/filtered records as they are processed
-    attr_reader :stats
-
     attr_reader :data_time
 
     def inspect
@@ -56,7 +53,6 @@ module Stockboy #:nodoc:
       @data = nil
       @data_time = nil
       @data_size = nil
-      @stats = {}
       @errors = ActiveModel::Errors.new(self)
       true
     end
