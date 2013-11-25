@@ -1,3 +1,4 @@
+require 'logger'
 require 'active_model/errors'
 require 'active_model/naming'
 require 'stockboy/dsl'
@@ -19,7 +20,7 @@ module Stockboy #:nodoc:
     extend ActiveModel::Naming # Required by ActiveModel::Errors
 
     def self.logger
-      Log4r::Logger.new("stockboy::provider")
+      Logger.new(STDERR)
     end
 
     attr_reader :logger

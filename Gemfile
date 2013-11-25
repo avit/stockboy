@@ -6,11 +6,7 @@ group :debug do
   gem "pry-debugger"
 end
 
-group :test do
-  gem "guard-rspec"
-
-  unless ENV['CI']
-    gem "rb-fsevent"
-    gem "ruby_gntp"
-  end
+group :quality do
+  gem "yard"
+  gem "yardstick"
 end

@@ -1,5 +1,3 @@
-require 'log4r'
-
 require 'stockboy/version'
 require 'stockboy/exceptions'
 require 'stockboy/dsl'
