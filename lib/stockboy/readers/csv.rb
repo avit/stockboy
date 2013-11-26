@@ -1,24 +1,72 @@
+require 'stockboy/configuration'
 require 'stockboy/reader'
 require 'csv'
 
 module Stockboy::Readers
+
+  # Parse data from CSV into hashes
+  #
+  # All standard ::CSV options are respected and passed through
+  #
+  # @see
+  #   http://www.ruby-doc.org/stdlib-2.0.0/libdoc/csv/rdoc/CSV.html#DEFAULT_OPTIONS
+  #
   class CSV < Stockboy::Reader
 
-    OPTIONS = [:skip_header_rows, :skip_footer_rows]
-    attr_accessor *OPTIONS
+    # @!group Options
 
+    # Override source file encoding
+    #
+    # @!attribute [rw] encoding
+    # @return [String]
+    #
+    dsl_attr :encoding
+
+    # Skip number of rows at start of file before data starts
+    #
+    # @!attribute [rw] skip_header_rows
+    # @return [Fixnum]
+    #
+    dsl_attr :skip_header_rows
+
+    # Skip number of rows at end of file after data ends
+    #
+    # @!attribute [rw] skip_footer_rows
+    # @return [Fixnum]
+    #
+    dsl_attr :skip_footer_rows
+
+    # @!attribute [rw] col_sep
+    #   @macro dsl_attr
+    #   @return [String]
+    #
+    # @!attribute [rw] row_sep
+    #   @macro dsl_attr
+    #   @return [String]
+    #
+    # @!attribute [rw] quote_char
+    #   @macro dsl_attr
+    #   @return [String]
+    #
+    # @!attribute [rw] headers
+    #   @macro dsl_attr
+    #   @return [Array, String]
+    #
     ::CSV::DEFAULT_OPTIONS.keys.each do |opt|
+      dsl_attr opt, attr_accessor: false
       define_method(opt)        { @csv_options[opt] }
       define_method(:"#{opt}=") { |value| @csv_options[opt] = value }
     end
 
-    class DSL
-      include Stockboy::DSL
-      dsl_attrs :encoding
-      dsl_attrs *OPTIONS
-      dsl_attrs *::CSV::DEFAULT_OPTIONS.keys
-    end
+    # @!endgroup
 
+    # Initialize a new CSV reader
+    #
+    # All stdlib ::CSV options are respected.
+    # @see http://ruby-doc.org/stdlib-2.0.0/libdoc/csv/rdoc/CSV.html#method-c-new
+    #
+    # @param [Hash] opts
+    #
     def initialize(opts={}, &block)
       super
       @csv_options = opts.reject {|k,v| !::CSV::DEFAULT_OPTIONS.keys.include?(k) }
@@ -35,6 +83,11 @@ module Stockboy::Readers
       ::CSV.parse(sanitize(data), opts).map &:to_hash
     end
 
+    # Hash of all CSV-specific options
+    #
+    # @!attribute [r] options
+    #   @return [Hash]
+    #
     def options
       @csv_options
     end

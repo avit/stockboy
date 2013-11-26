@@ -3,21 +3,61 @@ require 'tempfile'
 require 'roo'
 
 module Stockboy::Readers
+
+  # Parse an Excel spreadsheet
+  #
+  # Backed by Roo gem. See roo for other configuration options.
+  #
   class Spreadsheet < Stockboy::Reader
 
-    OPTIONS = [:format, :sheet, :header_row, :first_row, :last_row, :headers, :roo_options]
-    attr_accessor *OPTIONS
+    # Spreadsheet format
+    #
+    # @!attribute [rw] format
+    # @return [Symbol] +:xls+ or +:xslx+
+    #
+    dsl_attr :format
 
-    class DSL
-      include Stockboy::DSL
-      dsl_attrs *OPTIONS
-    end
+    # Spreadsheet sheet number, defaults to first
+    #
+    # @!attribute [rw] sheet
+    # @return [Fixnum]
+    #
+    dsl_attr :sheet
 
-    class << self
-      def tmp_dir; @tmp_dir ||= Stockboy.configuration.tmp_dir end
-      attr_writer :tmp_dir
-    end
+    # Line number to look for headers, starts counting at 1, like in Excel
+    #
+    # @!attribute [rw] header_row
+    # @return [Fixnum]
+    #
+    dsl_attr :header_row
 
+    # Line number of first data row, starts counting at 1, like in Excel
+    #
+    # @!attribute [rw] first_row
+    # @return [Fixnum]
+    #
+    dsl_attr :first_row
+
+    # Line number of last data row, use negative numbers to count back from end
+    #
+    # @!attribute [rw] last_row
+    # @return [Fixnum]
+    #
+    dsl_attr :last_row
+
+    # Override to set headers manually
+    #
+    # @!attribute [rw] headers
+    # @return [Array]
+    #
+    dsl_attr :headers
+
+    # @!endgroup
+
+    # Initialize a new Spreadsheet reader
+    #
+    # @param [Hash] opts
+    #
     def initialize(opts={}, &block)
       super
       @format = opts[:format] || :xls
@@ -40,14 +80,23 @@ module Stockboy::Readers
       end
     end
 
+    # Roo-specific options hash passed to underlying spreadsheet parser
+    #
+    # @!attribute [r] options
+    # @return [Hash]
+    #
+    def options
+      @roo_options
+    end
+
     private
 
     def enum_data_rows(table)
-      first_row(table).upto last_row(table)
+      first_table_row(table).upto last_table_row(table)
     end
 
     def with_spreadsheet_tempfile(content)
-      Tempfile.open(tmp_name) do |file|
+      Tempfile.open(tmp_name, Stockboy.configuration.tmp_dir) do |file|
         file.binmode
         file.write content
         table = Roo::Spreadsheet.open(file.path, @roo_options)
@@ -65,11 +114,11 @@ module Stockboy::Readers
       end
     end
 
-    def first_row(table)
+    def first_table_row(table)
       @first_row || table.first_row
     end
 
-    def last_row(table)
+    def last_table_row(table)
       if @last_row.to_i < 0
         table.last_row + @last_row + 1
       elsif @last_row.to_i > 0

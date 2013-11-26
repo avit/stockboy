@@ -1,39 +1,68 @@
 module Stockboy
-  module DSL
 
-    def self.included(base)
-      base.extend ClassMethods
-    end
 
+  # @api private
+  #
+  class ConfiguratorBlock
+
+    # Initialize a DSL context around an instance
+    #
     def initialize(instance)
       @instance = instance
     end
 
-    module ClassMethods
-      private
-      # Define ambiguous attr reader/writers for dsl readability
-      #
-      # self.some_option = "new value" # => some_option = "new value"
-      # self.some_option "new value"   # => some_option = "new value"
-      # self.some_option               # => some_option
-      #
-      def dsl_attrs(*args)
-        args = args.first if args.first.is_a? Array
-        args.each do |attr|
-          writer = :"#{attr}="
-          define_method writer do |arg|
-            @instance.public_send(writer, arg)
-          end
-          define_method attr do |*arg|
-            if arg.empty?
-              @instance.public_send(attr)
-            else
-              @instance.public_send(writer, arg.first)
-            end
+  end
+
+  # Mixin for defining DSL methods
+  #
+  module DSL
+
+    # Define ambiguous attr reader/writers for DSL readability
+    #
+    # @example
+    #   dsl.some_option = "new value" # => some_option = "new value"
+    #   dsl.some_option "new value"   # => some_option = "new value"
+    #   dsl.some_option               # => some_option
+    #
+    # @visibility private
+    # @scope class
+    #
+    def dsl_attr(attr, options={})
+      if options.fetch(:attr_accessor, true)
+        attr_reader attr if options.fetch(:attr_reader, true)
+        attr_writer attr if options.fetch(:attr_writer, true)
+      end
+
+      class_eval <<-___, __FILE__, __LINE__
+      class DSL < Stockboy::ConfiguratorBlock
+        def #{attr}(*arg)
+          if arg.empty?
+            @instance.#{attr}
+          else
+            @instance.#{attr} = arg.first
           end
         end
+        def #{attr}=(arg)
+          @instance.#{attr} = arg
+        end
       end
+      ___
+
+      if attr_alias = options[:alias]
+        alias_method attr_alias, attr
+        alias_method :"#{attr_alias}=", :"#{attr}="
+
+        class_eval <<-___, __FILE__, __LINE__
+        class DSL < Stockboy::ConfiguratorBlock
+          alias_method :#{attr_alias}, :#{attr}
+          alias_method :#{attr_alias}=, :#{attr}=
+        end
+        ___
+      end
+
+      attr
     end
 
   end
+
 end

@@ -6,6 +6,8 @@ module Stockboy
 
     include Enumerable
 
+    # @visibility private
+    #
     class DSL
       def initialize(instance)
         @instance = instance
@@ -27,6 +29,8 @@ module Stockboy
       end
     end
 
+    # Initialize a new attribute map
+    #
     def initialize(rows={}, &block)
       @map = rows
       @unmapped = Hash.new
@@ -36,14 +40,29 @@ module Stockboy
       freeze
     end
 
+    # Retrieve an attribute by symbolic name
+    #
+    # @param [Symbol] key
+    # @return [Attribute]
+    #
     def [](key)
       @map[key]
     end
 
+    # Fetch the attribute corresponding to the source field name
+    #
+    # @param [String] key
+    # @return [Attribute]
+    #
     def attribute_from(key)
       find { |a| a.from == key } or @unmapped[key] ||= Attribute.new(nil, key, nil)
     end
 
+    # Enumerate over attributes
+    #
+    # @return [Enumerator]
+    # @yieldparam [Attribute]
+    #
     def each(*args, &block)
       @map.values.each(*args, &block)
     end

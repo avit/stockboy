@@ -58,7 +58,6 @@ module Stockboy
     register :spreadsheet, Spreadsheet
   end
 
-  # Register default included translators
   module Translations
     register :or_nil,   DefaultNil
     register :or_empty, DefaultEmptyString

@@ -1,0 +1,7 @@
+--hide-void-return
+--protected
+--no-private
+-
+README.md
+LICENSE
+lib/**/*.rb

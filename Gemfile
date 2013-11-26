@@ -7,6 +7,6 @@ group :debug do
 end
 
 group :quality do
+  gem "redcarpet", "~> 1.0"
   gem "yard"
-  gem "yardstick"
 end

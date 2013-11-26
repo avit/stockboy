@@ -1,25 +1,40 @@
 require 'stockboy/provider'
 
 module Stockboy::Providers
+
+  # Get data from a local file
+  #
+  # Allows for selecting the appropriate file to be read from the given
+  # directory by glob pattern or regex pattern. By default the +:last+ file in
+  # the list is used, but can be controlled by sorting and reducing with the
+  # {#pick} option.
+  #
+  # == Job template DSL
+  #
+  #   provider :file do
+  #     file_dir '/data'
+  #     file_name /report-[0-9]+\.csv/
+  #     pick ->(list) { list[-2] }
+  #   end
+  #
   class File < Stockboy::Provider
 
-    OPTIONS = [:file_name,
-               :file_dir,
-               :file_newer,
-               :file_smaller,
-               :file_larger,
-               :pick]
-    attr_accessor *OPTIONS
-    alias :since :file_newer
-    alias :since= :file_newer=
+    # @!group Options
 
-    class DSL
-      include Stockboy::DSL
-      dsl_attrs *OPTIONS
-      alias :since :file_newer
-      alias :since= :file_newer=
-    end
+    # @macro provider.file_options
+    dsl_attr :file_name
+    dsl_attr :file_dir
+    dsl_attr :file_newer, alias: :since
+    dsl_attr :file_smaller
+    dsl_attr :file_larger
 
+    # @macro provider.pick_option
+    dsl_attr :pick
+
+    # @!endgroup
+
+    # Initialize a File provider
+    #
     def initialize(opts={}, &block)
       super(opts, &block)
       @file_dir     = opts[:file_dir]

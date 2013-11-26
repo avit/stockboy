@@ -3,28 +3,87 @@ require 'stockboy/string_pool'
 require 'savon'
 
 module Stockboy::Providers
+
+  # Fetch data from a SOAP endpoint
+  #
+  # Backed by Savon gem, see savon for full configuration options: extra
+  # options are passed through.
+  #
   class SOAP < Stockboy::Provider
     include Stockboy::StringPool
 
-    OPTIONS = [:wsdl,
-               :request,
-               :namespace,
-               :namespace_id,
-               :endpoint,
-               :message,
-               :headers]
-    attr_accessor *OPTIONS
+    # @!group Options
+    #
+    # These options correspond to Savon client options
 
-    class DSL
-      include Stockboy::DSL
-      dsl_attrs *OPTIONS
-    end
+    # URL with the WSDL document
+    #
+    # @!attribute [rw] wsdl
+    # @return [String]
+    # @example
+    #   wsdl "http://example.com/api/soap?wsdl"
+    #
+    dsl_attr :wsdl
 
+    # The name of the request, see your SOAP documentation
+    #
+    # @!attribute [rw] request
+    # @return [String]
+    # @example
+    #   request "allItemsDetails"
+    #
+    dsl_attr :request
+
+    # @return [String]
+    # @!attribute [rw] namespace
+    #   Optional if specified in WSDL
+    #
+    dsl_attr :namespace
+
+    # @return [String]
+    # @!attribute [rw] namespace_id
+    #   Optional if specified in WSDL
+    #
+    dsl_attr :namespace_id
+
+    # @return [String]
+    # @!attribute [rw] endpoint
+    #   Optional if specified in WSDL
+    #
+    dsl_attr :endpoint
+
+    # Hash of message options passed in the request, often includes
+    # credentials and query options.
+    #
+    # @!attribute [rw] message
+    # @return [Hash]
+    # @example
+    #   message "clientId" => "12345", "updatedSince" => "2012-12-12"
+    #
+    dsl_attr :message
+
+    # Hash of optional HTTP request headers
+    #
+    # @!attribute [rw] headers
+    # @return [Hash]
+    # @example
+    #   headers "X-ClientKey" => "12345"
+    #
+    dsl_attr :headers
+
+    # @!endgroup
+
+    # Initialize a new SOAP provider
+    #
     def initialize(opts={}, &block)
       super
       DSL.new(self).instance_eval(&block) if block_given?
     end
 
+    # Connection object to the configured SOAP endpoint
+    #
+    # @return [Savon::Client]
+    #
     def client
       @client ||= Savon.client(client_options)
     end

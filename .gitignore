@@ -1,7 +1,9 @@
-.rvmrc
+.ruby-version
 *.gem
-.bundle
-Gemfile.lock
-pkg/*
+/.bundle
+/.yardoc
+/Gemfile.lock
+/pkg/*
+/doc
 /tags
 /tmp

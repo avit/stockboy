@@ -2,30 +2,98 @@ require 'stockboy/provider'
 require 'net/ftp'
 
 module Stockboy::Providers
+
+  # Get data from a remote FTP server
+  #
+  # Allows for selecting the appropriate file to be read from the given
+  # directory by glob pattern or regex pattern (glob string is more efficient
+  # for listing files from FTP). By default the +:last+ file in the list is
+  # used, but can be controlled by sorting and reducing with the {#pick}
+  # option.
+  #
+  # == Job template DSL
+  #
+  #   provider :ftp do
+  #     host      'ftp.example.com'
+  #     username  'example'
+  #     password  '424242'
+  #     file_dir  'data/daily'
+  #     file_name /report-[0-9]+\.csv/
+  #     pick      ->(list) { list[-2] }
+  #   end
+  #
   class FTP < Stockboy::Provider
 
-    OPTIONS = [:host,
-               :passive,
-               :username,
-               :password,
-               :binary,
-               :file_name,
-               :file_dir,
-               :file_newer,
-               :file_smaller,
-               :file_larger,
-               :pick]
-    attr_accessor *OPTIONS
-    alias :since :file_newer
-    alias :since= :file_newer=
+    # @!group Options
 
-    class DSL
-      include Stockboy::DSL
-      dsl_attrs *OPTIONS
-      alias :since :file_newer
-      alias :since= :file_newer=
-    end
+    # Host name or IP address for FTP server connection
+    #
+    # @!attribute [rw] host
+    # @return [String]
+    # @example
+    #   host "ftp.example.com"
+    #
+    dsl_attr :host
 
+    # Use a passive or active connection
+    #
+    # @!attribute [rw] passive
+    # @return [Boolean]
+    # @example
+    #   passive true
+    #
+    dsl_attr :passive
+
+    # User name for connection credentials
+    #
+    # @!attribute [rw] username
+    # @return [String]
+    # @example
+    #   username "arthur"
+    #
+    dsl_attr :username
+
+    # Password for connection credentials
+    #
+    # @!attribute [rw] password
+    # @return [String]
+    # @example
+    #   password "424242"
+    #
+    dsl_attr :password
+
+    # Use binary mode for file transfers
+    #
+    # @!attribute [rw] binary
+    # @return [Boolean]
+    # @example
+    #   binary true
+    #
+    dsl_attr :binary
+
+    # @macro provider.file_options
+    dsl_attr :file_name
+    dsl_attr :file_dir
+    dsl_attr :file_newer, alias: :since
+    dsl_attr :file_smaller
+    dsl_attr :file_larger
+
+    # @macro provider.pick_option
+    dsl_attr :pick
+
+    # @!endgroup
+
+    # Initialize a new FTP provider
+    #
+    # @param [Hash] opts
+    # @option opts :host     [String]
+    # @option opts :username [String]
+    # @option opts :password [String]
+    # @option opts :passive  [Boolean]
+    # @option opts :binary   [Boolean]
+    # @macro provider.initialize.file_options
+    # @yield instance for configuration
+    #
     def initialize(opts={}, &block)
       super(opts, &block)
       @host         = opts[:host]

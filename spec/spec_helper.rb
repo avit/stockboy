@@ -12,6 +12,14 @@ RSpec.configure do |config|
   config.mock_with :rspec
   spec_fixtures = File.expand_path("fixtures", File.dirname(__FILE__))
   config.add_setting :fixture_path, default: Pathname(spec_fixtures)
+
+  config.before :suite do
+    require 'stockboy/configuration'
+    Stockboy.configure do |c|
+      c.logger = Logger.new(StringIO.new)
+    end
+  end
+
 end
 
 # VCR.configure do |c|

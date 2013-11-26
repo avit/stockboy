@@ -2,10 +2,21 @@ require 'stockboy/exceptions'
 require 'stockboy/translator'
 
 module Stockboy
+
+  # Registry of available {Translator} classes for lookup by symbolic name in the
+  # job template DSL.
+  #
   module Translations
 
     @registry ||= {}
 
+    # Register a translator under a convenient symbolic name
+    #
+    # @param [Symbol] name
+    #   Symbolic name of the class
+    # @param [Translator, #call] callable
+    #   Translator class or any callable object
+    #
     def self.register(name, callable)
       if callable.respond_to?(:call) or callable < Stockboy::Translator
         @registry[name.to_sym] = callable
@@ -14,10 +25,25 @@ module Stockboy
       end
     end
 
+    # Calls a named translator for the raw value
+    #
+    # @param [Symbol, Translator, #call] func_name
+    #   Symbol representing a registered translator, or an actual translator
+    # @param [SourceRecord, MappedRecord, Hash, String] context
+    #   Collection of fields or the raw value to which the translation is applied
+    #
     def self.translate(func_name, context)
       translator_for(:value, func_name).call(context)
     end
 
+    # Prepare a translator for a given attribute
+    #
+    # @param [Symbol] attr
+    #   Name of the mapped record attribute to address for translation
+    # @param [Symbol, #call] lookup
+    #   Symbolic translator name or callable object
+    # @return [Translator] instance
+    #
     def self.translator_for(attr, lookup)
       if lookup.respond_to?(:call)
         lookup
@@ -28,6 +54,11 @@ module Stockboy
       end
     end
 
+    # Look up a translation and return it by symbolic name
+    #
+    # @param [Symbol] func_name
+    # @return [Translator]
+    #
     def self.find(func_name)
       @registry[func_name]
     end

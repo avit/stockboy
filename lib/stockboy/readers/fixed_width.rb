@@ -1,31 +1,72 @@
 require 'stockboy/reader'
+require 'stockboy/configuration'
 
 module Stockboy::Readers
 
   # For reading fixed-width data split by column widths
   #
-  # @example
-  #   # return columns as numeric indexes
-  #   reader.headers = [10, 5, 10, 42]
-  #   # return columns as named indexes
-  #   reader.headers = {name: 10, age: 5, planet: 10, notes: 42}
-  #
   class FixedWidth < Stockboy::Reader
 
-    OPTIONS = [
-      :skip_header_rows,
-      :skip_footer_rows,
-      :headers,
-      :row_format
-    ]
-    attr_accessor *OPTIONS
+    # @!group Options
 
-    class DSL
-      include Stockboy::DSL
-      dsl_attrs :encoding
-      dsl_attrs *OPTIONS
-    end
+    # Widths of data columns with optional names
+    #
+    # Array format will use numeric indexes for field keys. Hash will use the
+    # keys for naming the fields.
+    #
+    # @return [Array<Fixnum>, Hash{Object=>Fixnum}]
+    # @example
+    #   reader.headers = [10, 5, 10, 42]
+    #   reader.parse(data)
+    #   #=> [{0=>"Arthur", 1=>"42", 2=>"Earth", 3=>""}]
+    #
+    #   reader.headers = {name: 10, age: 5, planet: 10, notes: 42}
+    #   reader.parse(data)
+    #   #=> [{name: "Arthur", age: "42", planet: "Earth", notes: ""}]
+    #
+    dsl_attr :headers
 
+    # String format used for unpacking rows
+    #
+    # This is read from the {#headers} attribute by default but can be
+    # overridden
+    #
+    # @return [String]
+    #
+    dsl_attr :skip_header_rows
+
+    # Number of file rows to skip from start of file
+    #
+    # Useful if the file starts with a preamble or header metadata
+    #
+    # @return [Fixnum]
+    #
+    dsl_attr :skip_footer_rows
+
+    # Number of file rows to skip at end of file
+    #
+    # Useful if the file ends with a summary or notice
+    #
+    # @return [Fixnum]
+    #
+    dsl_attr :row_format
+
+    # Override original file encoding
+    #
+    # @return [String]
+    #
+    dsl_attr :encoding
+
+    # @!endgroup
+
+    # Initialize a new fixed-width reader
+    #
+    # @param [Hash] opts
+    # @option opts [Array<Fixnum>, Hash<Fixnum>] headers
+    # @option opts [Fixnum] skip_header_rows
+    # @option opts [Fixnum] skip_footer_rows
+    # @option opts [String] encoding
+    #
     def initialize(opts={}, &block)
       super
       @headers          = opts[:headers]
@@ -35,6 +76,8 @@ module Stockboy::Readers
     end
 
     def parse(data)
+      @column_widths, @column_keys = nil, nil
+      data.force_encoding!(encoding) if encoding
       data = StringIO.new(data) unless data.is_a? StringIO
       skip_header_rows.times { data.readline }
       records = data.reduce([]) do |a, row|
@@ -44,10 +87,15 @@ module Stockboy::Readers
       records
     end
 
+    def row_format
+      @row_format ||= (?A << column_widths.join(?A)).freeze
+    end
+
     private
 
     def column_widths
-      case headers
+      return @column_widths if @column_widths
+      @column_widths = case headers
       when Hash then headers.values
       when Array then headers
       else
@@ -56,8 +104,9 @@ module Stockboy::Readers
     end
 
     def column_keys
-      case headers
-      when Hash then headers.keys
+      return @column_keys if @column_keys
+      @column_keys = case headers
+      when Hash then headers.keys.map(&:freeze)
       when Array then (0 ... headers.length).to_a
       else
         raise "Invalid headers set for #{self.class}"
@@ -68,8 +117,5 @@ module Stockboy::Readers
       Hash[column_keys.zip(row.unpack(row_format))]
     end
 
-    def row_format
-      @row_format || ?A << column_widths.join(?A)
-    end
   end
 end

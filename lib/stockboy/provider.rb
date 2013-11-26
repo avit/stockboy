@@ -3,46 +3,80 @@ require 'active_model/errors'
 require 'active_model/naming'
 require 'stockboy/dsl'
 
-module Stockboy #:nodoc:
+module Stockboy
 
   # Provider objects handle the connection and capture of data from remote
-  # sources. Stockboy::Providers::Provider is an abstract class for
-  # implementing different providers.
+  # sources. This is an abstract superclass to help implement different
+  # providers.
   #
   # == Interface
   #
-  # A provider object must implement the following methods:
+  # A provider object must implement the following (private) methods:
   #
-  # [validate]  Verify the parameters required for connection
-  # [fetch_data] Populate @data from source
+  # [validate]
+  #   Verify the parameters required for the data source are set to
+  #   ensure a connection can be established.
+  # [fetch_data]
+  #   Populate the object's +@data+ with raw content from source. This will
+  #   usually be a raw string, and should not be parsed at this stage.
+  #   Depending on the implementation, this may involve any of:
+  #   * Establishing a connection
+  #   * Navigating to a directory
+  #   * Listing available files matching the configuration
+  #   * Picking the appropriate file
+  #   * And finally, reading/downloading data
+  #   This should also capture the timestamp of the data resource into
+  #   +@data_time+. This should be the actual created or updated time of the
+  #   data file from the source.
+  #
+  # @abstract
   #
   class Provider
+    extend Stockboy::DSL
     extend ActiveModel::Naming # Required by ActiveModel::Errors
 
+    # Default logger if none is provided to the instance
+    #
+    # @return [Logger]
+    #
     def self.logger
       Logger.new(STDERR)
     end
 
-    attr_reader :logger
+    # @return [Logger]
+    #
+    attr_accessor :logger
 
-    # See ActiveModel::Errors
+    # @return [ActiveModel::Errors]
+    #
     attr_reader :errors
 
+    # Timestamp of the received data
+    #
+    # @return [Time]
+    #
     attr_reader :data_time
 
+    # @return [String]
+    #
     def inspect
     "#<#{self.class}:#{self.object_id} data_size=#{@data_size or 'nil'} errors=#{@errors.full_messages}>"
     end
 
-    # Initialize should be called by subclasses to set up dependencies
+    # Must be called by subclasses via +super+ to set up dependencies
+    #
+    # @param [Hash] opts
+    # @yield DSL context for configuration
+    #
     def initialize(opts={}, &block)
-      @logger = opts.delete(:logger) || self.class.logger
+      @logger = opts.delete(:logger) || Stockboy.configuration.logger
       clear
-      # TODO: register callback for success?
-      # TODO: register callback for failures
     end
 
-    # Return provided data as an array of key-value hashes
+    # Raw input data from the source
+    #
+    # @!attribute [r] data
+    #
     def data
       return @data if @data
       fetch_data if validate_config?
@@ -50,6 +84,9 @@ module Stockboy #:nodoc:
     end
 
     # Reset received data
+    #
+    # @return [Boolean] Always true
+    #
     def clear
       @data = nil
       @data_time = nil
@@ -57,36 +94,44 @@ module Stockboy #:nodoc:
       @errors = ActiveModel::Errors.new(self)
       true
     end
-    alias :reset :clear
+    alias_method :reset, :clear
 
     # Reload provided data
+    #
+    # @return [String] Raw data
+    #
     def reload
       clear
       fetch_data if validate_config?
       @data
     end
 
-    ## Returns true if valid
+    # Does the provider have what it needs for fetching data?
+    #
+    # @return [Boolean]
+    #
     def valid?
       validate
     end
 
     private
 
-    # Abstract method to be implemented by subclasses
+    # Subclass should assign +@data+ with raw input, usually a string
+    #
+    # @abstract
     #
     def fetch_data
       raise NoMethodError, "#{self.class}#fetch_data needs implementation"
     end
 
-    # Abstract method to be implemented by subclasses
-    #
     # Use errors.add(:attribute, "Message") provided by ActiveModel
     # for validating required provider parameters before attempting
     # to make connections and retrieve data.
     #
+    # @abstract
+    #
     def validate
-      raise NoMethodError, "#{self.class}#fetch_data needs implementation"
+      raise NoMethodError, "#{self.class}#validate needs implementation"
     end
 
     def validate_config?
@@ -98,26 +143,23 @@ module Stockboy #:nodoc:
       validation
     end
 
-    # :nodoc:
     # Required by ActiveModel::Errors
-    def read_attribute_for_validation(attr) # :nodoc:
+    def read_attribute_for_validation(attr)
       send(attr)
     end
 
-    # :nodoc:
     # Required by ActiveModel::Errors
-    def self.human_attribute_name(attr, options = {}) # :nodoc:
+    def self.human_attribute_name(attr, options = {})
       attr
     end
 
-    # :nodoc:
     # Required by ActiveModel::Errors
-    def self.lookup_ancestors # :nodoc:
+    def self.lookup_ancestors
       [self]
     end
 
-    # When picking files from a list you can supply :first or :last to the
-    # provider's pick option or else a block that can reduce to a single
+    # When picking files from a list you can supply +:first+ or +:last+ to the
+    # provider's +pick+ option, or else a block that can reduce to a single
     # value, like:
     #
     #     proc do |best_match, current_match|
@@ -135,4 +177,61 @@ module Stockboy #:nodoc:
     end
 
   end
+
+  # @!macro [new] provider.pick_validation
+  #   This validation option is applied after a matching file is picked.
+
+  # @!macro [new] provider.pick_option
+  #   @group Options
+  #
+  #   @!attribute [rw] pick
+  #     Method for choosing which file to process from potential matches.
+  #       @example
+  #         pick :last
+  #         pick :first
+  #         pick ->(list) {
+  #           list.max_by { |name| Time.strptime(name[/\d+/], "%m%d%Y").to_i }
+  #         }
+
+  # @!macro [new] provider.file_options
+  #   @group Options
+  #
+  #   @!attribute [rw] file_name
+  #     A string (glob) or regular expression matching files. E.g. one of:
+  #     @return [String, Regexp]
+  #     @example
+  #       file_name "export-latest.csv"
+  #       file_name "export-*.csv"
+  #       file_name /export-\d{4}-\d{2}-\d{2}.csv/
+  #
+  #   @!attribute [rw] file_dir
+  #     Path where data files can be found. This should be an absolute path.
+  #     @return [String]
+  #     @example
+  #       file_dir "/data"
+  #
+  #   @!attribute [rw] file_newer
+  #     Validates that the file to be processed is recent enough. To guard
+  #     against processing an old file (even if it's the latest one), this should
+  #     be set to the frequency you expect to receive new files for periodic
+  #     processing.
+  #     @macro provider.pick_validation
+  #     @return [Time, Date]
+  #     @example
+  #       since Date.today
+  #
+  #   @!attribute [rw] file_smaller
+  #     Validates the maximum data size for the matched file, in bytes
+  #     @return [Fixnum]
+  #     @macro provider.pick_validation
+  #     @example
+  #       file_smaller 1024^3
+  #
+  #   @!attribute [rw] file_larger
+  #     Validates the minimum file size for the matched file, in bytes. This can # help guard against processing zero-byte or truncated files.
+  #     @return [Fixnum]
+  #     @macro provider.pick_validation
+  #     @example
+  #       file_larger 1024
+
 end
