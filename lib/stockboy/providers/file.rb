@@ -41,7 +41,10 @@ module Stockboy::Providers
     def fetch_data
       errors.add(:base, "File #{file_name} not found") unless data_file = find_matching_file
       validate_file(data_file)
-      @data = data_file.read if valid?
+      if valid?
+        @data_time = data_file.mtime
+        @data = data_file.read
+      end
     end
 
     def find_matching_file
