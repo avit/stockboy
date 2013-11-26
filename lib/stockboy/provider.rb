@@ -57,6 +57,7 @@ module Stockboy #:nodoc:
       @errors = ActiveModel::Errors.new(self)
       true
     end
+    alias :reset :clear
 
     # Reload provided data
     def reload
