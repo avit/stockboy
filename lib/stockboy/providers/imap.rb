@@ -154,43 +154,63 @@ module Stockboy::Providers
       DSL.new(self).instance_eval(&block) if block_given?
     end
 
-    # Connection to the configured IMAP server
-    #
-    # @!attribute [r] client
-    # @return [Net::IMAP]
-    #
     def client
-      @client ||= ::Net::IMAP.new(host).tap do |i|
+      raise(ArgumentError, "no block given") unless block_given?
+      return yield @open_client if @open_client
+
+      @open_client = ::Net::IMAP.new(host).tap do |i|
         i.login(username, password)
         i.examine(mailbox)
       end
+      yield @open_client
+      client.disconnect
+      @open_client = nil
+    rescue ::Net::IMAP::Error => e
+      errors.add :response, "IMAP connection error"
+      client.disconnect
+      @open_client = nil
+    end
+
+
+    def matching_message
+      return @matching_message if @matching_message
+      keys = fetch_imap_message_keys
+      @matching_message = pick_from(keys) unless keys.empty?
+    end
+
+    def clear
+      super
+      @matching_message = nil
+      @data_time = nil
+      @data_size = nil
     end
 
     private
+
+    def fetch_data
+      client do |imap|
+        return false unless matching_message
+        mail = ::Mail.new(imap.fetch(matching_message, 'RFC822')[0].attr['RFC822'])
+        if part = mail.attachments.detect { |part| validate_attachment(part) }
+          validate_file(part.decoded)
+          if valid?
+            logger.info "Getting file from message #{matching_message}"
+            @data = part.decoded
+            @data_time = normalize_imap_datetime(mail.date)
+            logger.info "Got file from message #{matching_message}"
+          end
+        end
+      end
+      !@data.nil?
+    end
 
     def validate
       errors.add_on_blank [:host, :username, :password]
       errors.empty?
     end
 
-    def fetch_data
-      unless (imap_message_keys = fetch_imap_message_keys).empty?
-        mail = ::Mail.new(client.fetch(pick_from(imap_message_keys),'RFC822')[0].attr['RFC822'])
-        if part = mail.attachments.detect { |part| validate_attachment(part) }
-          @data = part.decoded
-          @data_time = normalize_imap_datetime(mail.date)
-        end
-      end
-      !@data.nil?
-    rescue ::Net::IMAP::Error => e
-      errors.add :response, "IMAP connection error"
-    ensure
-      client.disconnect
-      @client = nil
-    end
-
     def fetch_imap_message_keys
-      client.sort(['DATE'], search_keys, 'UTF-8')
+      client { |imap| imap.sort(['DATE'], search_keys, 'UTF-8') }
     end
 
     def validate_attachment(part)
