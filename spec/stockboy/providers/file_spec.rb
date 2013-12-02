@@ -31,6 +31,19 @@ module Stockboy
       end
     end
 
+    describe "#matching_file" do
+      subject(:provider) do
+        Providers::File.new do |f|
+          f.file_dir = RSpec.configuration.fixture_path.join("files")
+        end
+      end
+
+      it "returns the full path to the matching file name" do
+        provider.file_name = "test_data-*"
+        provider.matching_file.should end_with "fixtures/files/test_data-20120202.csv"
+      end
+    end
+
     describe "#data" do
       subject do
         Providers::File.new do |f|

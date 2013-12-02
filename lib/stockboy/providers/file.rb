@@ -46,32 +46,43 @@ module Stockboy::Providers
       DSL.new(self).instance_eval(&block) if block_given?
     end
 
+
+    def matching_file
+      return @matching_file if @matching_file
+      files = case file_name
+      when Regexp
+        Dir.entries(file_dir)
+                   .select { |i| i =~ file_name }
+                   .map { |i| ::File.join(file_dir, i) }
+      when String
+        Dir[::File.join(file_dir, file_name)]
+      end
+      @matching_file = pick_file_from(files) if files.any?
+    end
+
+    def clear
+      super
+      @matching_file = nil
+      @data_size = nil
+      @data_time = nil
+    end
+
     private
+
+    def fetch_data
+      errors.add(:base, "File #{file_name} not found") unless matching_file
+      data_file = ::File.new(matching_file, 'r') if matching_file
+      validate_file(data_file)
+      if valid?
+        logger.info "Getting file #{file_dir}/#{matching_file}"
+        @data = data_file.read
+        logger.info "Got file #{file_dir}/#{matching_file} (#{@data_size} bytes)"
+      end
+    end
 
     def validate
       errors.add_on_blank [:file_dir, :file_name]
       errors.empty?
-    end
-
-    def fetch_data
-      errors.add(:base, "File #{file_name} not found") unless data_file = find_matching_file
-      validate_file(data_file)
-      if valid?
-        @data_time = data_file.mtime
-        @data = data_file.read
-      end
-    end
-
-    def find_matching_file
-      case file_name
-      when Regexp
-        files = Dir.entries(file_dir)
-                   .select { |i| i =~ file_name }
-                   .map { |i| ::File.join(file_dir, i) }
-      when String
-        files = Dir[::File.join(file_dir, file_name)]
-      end
-      ::File.new(pick_file_from(files), 'r') if files.any?
     end
 
     def pick_file_from(list)
@@ -84,25 +95,29 @@ module Stockboy::Providers
     end
 
     def validate_file(data_file)
+      return errors.add :response, "No matching files" unless data_file
       validate_file_newer(data_file)
       validate_file_smaller(data_file)
       validate_file_larger(data_file)
     end
 
-    def validate_file_newer(file)
-      if file_newer && file.mtime < file_newer
+    def validate_file_newer(data_file)
+      @data_time ||= data_file.mtime
+      if file_newer && @data_time < file_newer
         errors.add :response, "No new files since #{file_newer}"
       end
     end
 
-    def validate_file_smaller(file)
-      if file_smaller && file.size > file_smaller
+    def validate_file_smaller(data_file)
+      @data_size ||= data_file.size
+      if file_smaller && @data_size > file_smaller
         errors.add :response, "File size larger than #{file_smaller}"
       end
     end
 
-    def validate_file_larger(file)
-      if file_larger && file.size < file_larger
+    def validate_file_larger(data_file)
+      @data_size ||= data_file.size
+      if file_larger && @data_size < file_larger
         errors.add :response, "File size smaller than #{file_larger}"
       end
     end
