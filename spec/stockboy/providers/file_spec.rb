@@ -73,6 +73,20 @@ module Stockboy
         subject.file_name = /test_data/
         subject.data.should == "2012-02-02\n"
       end
+
+      context "with :since validation" do
+        let(:recently) { Time.now - 60 }
+
+        it "skips old files" do
+          expect_any_instance_of(::File).to receive(:mtime).and_return Time.now - 86400
+          subject.file_dir = RSpec.configuration.fixture_path.join("files")
+          subject.file_name = '*.csv'
+          subject.since = recently
+
+          subject.data.should be_nil
+          subject.errors[:response].should include "No new files since #{recently}"
+        end
+      end
     end
 
   end
