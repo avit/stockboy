@@ -93,19 +93,20 @@ module Stockboy
     describe ".delete_data" do
       let(:target)       { ::Tempfile.new(['delete', '.csv']) }
       let(:target_dir)   { File.dirname(target) }
-      subject(:provider) { Providers::File.new(file_name: 'delete*.csv', file_dir: target_dir) }
+      let(:pick_same)    { ->(best, this) { this == target.path ? this : best } }
 
-      after do
-        target.unlink
+      subject(:provider) do
+        Providers::File.new(file_name: 'delete*.csv', file_dir: target_dir, pick: pick_same)
       end
 
       it "should raise an error when called blindly" do
-        expect_any_instance_of(::File).to_not receive(:delete)
         expect { provider.delete_data }.to raise_error Stockboy::OutOfSequence
       end
 
       it "should call delete on the matched file" do
         provider.matching_file
+
+        non_matching_duplicate = ::Tempfile.new(['delete', '.csv'])
 
         expect(::File).to receive(:delete).with(target.path)
         provider.delete_data

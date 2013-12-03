@@ -63,7 +63,7 @@ module Stockboy::Providers
       when String
         Dir[::File.join(file_dir, file_name)]
       end
-      @matching_file = pick_file_from(files.sort) if files.any?
+      @matching_file = pick_from(files) if files.any?
     end
 
     def clear
@@ -89,15 +89,6 @@ module Stockboy::Providers
     def validate
       errors.add_on_blank [:file_dir, :file_name]
       errors.empty?
-    end
-
-    def pick_file_from(list)
-      case @pick
-      when Symbol
-        list.public_send @pick
-      when Proc
-        list.detect &@pick
-      end
     end
 
     def picked_matching_file?

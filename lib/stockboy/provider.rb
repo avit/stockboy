@@ -168,7 +168,7 @@ module Stockboy
     #           current_match : best_match
     #     end
     #
-    def pick_from(list, &block)
+    def pick_from(list)
       case @pick
       when Symbol
         list.public_send @pick
