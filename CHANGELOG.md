@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.1 / 2013-12-03
+
+[ENHANCEMENT] Link to full documentation and license
+[ENHANCEMENT] Add CI test environment and code metrics
+
 ## 0.5.0 / 2013-12-03
 
 [FEATURE]     YARD documentation throughout
