@@ -11,8 +11,10 @@ require 'stockboy/filters'
 
 # Translations
 require 'stockboy/translations/default_empty_string'
-require 'stockboy/translations/default_zero'
+require 'stockboy/translations/default_false'
+require 'stockboy/translations/default_true'
 require 'stockboy/translations/default_nil'
+require 'stockboy/translations/default_zero'
 require 'stockboy/translations/boolean'
 require 'stockboy/translations/integer'
 require 'stockboy/translations/decimal'
@@ -59,6 +61,8 @@ module Stockboy
   end
 
   module Translations
+    register :or_false, DefaultFalse
+    register :or_true,  DefaultTrue
     register :or_nil,   DefaultNil
     register :or_empty, DefaultEmptyString
     register :or_zero,  DefaultZero

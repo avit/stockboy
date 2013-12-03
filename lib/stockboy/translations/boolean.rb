@@ -5,8 +5,8 @@ module Stockboy::Translations
   # Convert common false-like and true-like values to proper boolean +true+ or
   # +false+.
   #
-  # Biased towards +true+ for unrecognized values. See {FALSY_VALUES} for the
-  # recognized list of values.
+  # Returns nil for indeterminate values. This should be chained with a
+  # default value translator like [DefaultFalse] or [DefaultTrue].
   #
   # == Job template DSL
   #
@@ -37,15 +37,21 @@ module Stockboy::Translations
   #   record.active = 'n'
   #   bool.translate(record, :active) # => false
   #
+  #   record.active = '?'
+  #   bool.translate(record, :active) # => nil
+  #
   class Boolean < Stockboy::Translator
-    FALSY_VALUES = [0, '', '0', 'f', 'F', 'false', 'FALSE', 'n', 'N', 'no', 'NO']
+    TRUTHY_VALUES = [true, 1, '1', 't', 'T', 'true', 'TRUE', 'y', 'Y', 'yes', 'YES']
+    FALSY_VALUES = [false, 0, '0', 'f', 'F', 'false', 'FALSE', 'n', 'N', 'no', 'NO']
 
     # @return [Boolean]
     #
     def translate(context)
       value = field_value(context, field_key)
 
-      return !! value && !FALSY_VALUES.include?(value)
+      return true if TRUTHY_VALUES.include?(value)
+      return false if FALSY_VALUES.include?(value)
+      return nil
     end
 
   end

@@ -8,7 +8,7 @@ module Stockboy
       def self.it_should_be(actual, arg)
         it "returns #{actual.inspect} for #{arg[:for].inspect}" do
           result = subject.call arg[:for]
-          result.should be actual
+          result.should eq actual
         end
       end
 
@@ -17,8 +17,6 @@ module Stockboy
       it_should_be false, for: {bool: false}
       it_should_be true,  for: {bool:  true}
 
-      it_should_be false, for: {bool: nil}
-      it_should_be false, for: {bool: '' }
       it_should_be false, for: {bool:  0 }
       it_should_be false, for: {bool: '0'}
       it_should_be false, for: {bool: 'f'}
@@ -41,7 +39,9 @@ module Stockboy
       it_should_be true,  for: {bool: 'true'}
       it_should_be true,  for: {bool: 'TRUE'}
 
-      it_should_be true,  for: {bool: 'anything else'}
+      it_should_be nil,   for: {bool: nil}
+      it_should_be nil,   for: {bool: '' }
+      it_should_be nil,   for: {bool: 'anything else'}
     end
 
   end
