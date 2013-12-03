@@ -52,5 +52,25 @@ module Stockboy
 
     end
 
+    describe "#delete_data" do
+      let(:imap) { double(:imap) }
+
+      it "should raise an error when called blindly" do
+        expect { provider.delete_data }.to raise_error Stockboy::OutOfSequence
+      end
+
+      it "should call delete on the matching message" do
+        allow(provider).to receive(:client).and_yield(imap)
+        allow(provider).to receive(:fetch_imap_message_keys) { [5] }
+
+        provider.matching_message
+
+        expect(imap).to receive(:uid_store).with(5, "+FLAGS", [:Deleted])
+        expect(imap).to receive(:expunge)
+
+        provider.delete_data
+      end
+    end
+
   end
 end

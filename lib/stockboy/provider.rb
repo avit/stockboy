@@ -2,6 +2,7 @@ require 'logger'
 require 'active_model/errors'
 require 'active_model/naming'
 require 'stockboy/dsl'
+require 'stockboy/exceptions'
 
 module Stockboy
 

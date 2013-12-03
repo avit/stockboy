@@ -90,5 +90,27 @@ module Stockboy
       end
     end
 
+    describe ".delete_data" do
+      let(:target)       { ::Tempfile.new(['delete', '.csv']) }
+      let(:target_dir)   { File.dirname(target) }
+      subject(:provider) { Providers::File.new(file_name: 'delete*.csv', file_dir: target_dir) }
+
+      after do
+        target.unlink
+      end
+
+      it "should raise an error when called blindly" do
+        expect_any_instance_of(::File).to_not receive(:delete)
+        expect { provider.delete_data }.to raise_error Stockboy::OutOfSequence
+      end
+
+      it "should call delete on the matched file" do
+        provider.matching_file
+
+        expect(::File).to receive(:delete).with(target.path)
+        provider.delete_data
+      end
+    end
+
   end
 end

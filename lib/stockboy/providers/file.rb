@@ -46,14 +46,20 @@ module Stockboy::Providers
       DSL.new(self).instance_eval(&block) if block_given?
     end
 
+    def delete_data
+      raise Stockboy::OutOfSequence, "must confirm #matching_file or calling #data" unless picked_matching_file?
+
+      logger.info "Deleting file #{file_dir}/#{matching_file}"
+      ::File.delete matching_file
+    end
 
     def matching_file
       return @matching_file if @matching_file
       files = case file_name
       when Regexp
         Dir.entries(file_dir)
-                   .select { |i| i =~ file_name }
-                   .map { |i| ::File.join(file_dir, i) }
+            .select { |i| i =~ file_name }
+            .map { |i| ::File.join(file_dir, i) }
       when String
         Dir[::File.join(file_dir, file_name)]
       end
@@ -92,6 +98,10 @@ module Stockboy::Providers
       when Proc
         list.detect &@pick
       end
+    end
+
+    def picked_matching_file?
+      !!@matching_file
     end
 
     def validate_file(data_file)

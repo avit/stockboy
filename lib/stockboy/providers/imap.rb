@@ -171,6 +171,15 @@ module Stockboy::Providers
       @open_client = nil
     end
 
+    def delete_data
+      raise Stockboy::OutOfSequence, "must confirm #matching_message or calling #data" unless picked_matching_message?
+
+      logger.info "Deleting message #{username}:#{host} message_uid: #{matching_message}"
+      client do |imap|
+        imap.uid_store(matching_message, "+FLAGS", [:Deleted])
+        imap.expunge
+      end
+    end
 
     def matching_message
       return @matching_message if @matching_message
@@ -194,10 +203,10 @@ module Stockboy::Providers
         if part = mail.attachments.detect { |part| validate_attachment(part) }
           validate_file(part.decoded)
           if valid?
-            logger.info "Getting file from message #{matching_message}"
+            logger.info "Getting file from #{username}:#{host} message_uid #{matching_message}"
             @data = part.decoded
             @data_time = normalize_imap_datetime(mail.date)
-            logger.info "Got file from message #{matching_message}"
+            logger.info "Got file from #{username}:#{host} message_uid #{matching_message}"
           end
         end
       end
@@ -213,6 +222,10 @@ module Stockboy::Providers
       client { |imap| imap.sort(['DATE'], search_keys, 'UTF-8') }
     end
 
+    def picked_matching_message?
+      !!@matching_message
+    end
+
     def validate_attachment(part)
       case attachment
       when String
@@ -226,10 +239,10 @@ module Stockboy::Providers
 
     def search_keys
       keys = []
-      keys += ['SUBJECT', subject]  if subject
-      keys += ['FROM', from]        if from
-      keys += ['SINCE', date_format(since)] if since
-      keys += search if search
+      keys.concat ['SUBJECT', subject]  if subject
+      keys.concat ['FROM', from]        if from
+      keys.concat ['SINCE', date_format(since)] if since
+      keys.concat search if search
       keys
     end
 
@@ -260,14 +273,14 @@ module Stockboy::Providers
     end
 
     def validate_file_smaller(data_file)
-      @data_size = data_file.bytesize
+      @data_size ||= data_file.bytesize
       if file_smaller && @data_size > file_smaller
         errors.add :response, "File size larger than #{file_smaller}"
       end
     end
 
     def validate_file_larger(data_file)
-      @data_size = data_file.bytesize
+      @data_size ||= data_file.bytesize
       if file_larger && @data_size < file_larger
         errors.add :response, "File size smaller than #{file_larger}"
       end

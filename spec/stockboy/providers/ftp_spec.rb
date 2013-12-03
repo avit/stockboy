@@ -114,6 +114,25 @@ module Stockboy
       end
     end
 
+    describe "#delete_data" do
+      it "should raise an error when called blindly" do
+        expect_any_instance_of(Net::FTP).to_not receive(:delete)
+        expect { provider.delete_data }.to raise_error Stockboy::OutOfSequence
+      end
+
+      it "should delete the matching file" do
+        net_ftp = expect_connection
+        expect(net_ftp).to receive(:nlst).and_return ["1.csv", "2.csv"]
+
+        provider.matching_file.should == "2.csv"
+
+        net_ftp = expect_connection
+        expect(net_ftp).to receive(:delete).with("2.csv")
+
+        provider.delete_data.should == "2.csv"
+      end
+    end
+
     def expect_connection(host="localhost.test", user="a", pass="b")
       net_ftp = Net::FTP.new
       expect(Net::FTP).to receive(:open).with(host, user, pass).and_yield(net_ftp)

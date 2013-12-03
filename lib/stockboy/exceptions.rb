@@ -1,3 +1,3 @@
 module Stockboy
-  # class MyFault < StandardError; end
+  class OutOfSequence < StandardError; end
 end

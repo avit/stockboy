@@ -135,6 +135,14 @@ module Stockboy::Providers
       end
     end
 
+    def delete_data
+      raise Stockboy::OutOfSequence, "must confirm #matching_file or calling #data" unless picked_matching_file?
+      client do |ftp|
+        logger.info "FTP deleting file #{host} #{file_dir}/#{matching_file}"
+        ftp.delete matching_file
+        matching_file
+      end
+    end
 
     def clear
       super
@@ -155,6 +163,10 @@ module Stockboy::Providers
         end
       end
       !@data.nil?
+    end
+
+    def picked_matching_file?
+      !!@matching_file
     end
 
     def validate
