@@ -6,7 +6,7 @@ group :debug do
   gem "pry-debugger"
 end
 
-group :quality do
+group :doc do
   gem "redcarpet", "~> 1.0"
   gem "yard"
 end

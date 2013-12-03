@@ -1,4 +1,7 @@
 language: ruby
+bundler_args: --without debug --without doc
+env:
+  - CI=true
 rvm:
   - "1.9.3"
   - "2.0.0"
