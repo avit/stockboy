@@ -1,5 +1,5 @@
 language: ruby
-bundler_args: --without debug --without doc
+bundler_args: --without debug
 env:
   - CI=true
 rvm:
@@ -7,3 +7,4 @@ rvm:
   - "2.0.0"
   - "jruby-19mode"
   - "rbx"
+script: bundle exec rspec spec
