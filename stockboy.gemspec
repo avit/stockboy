@@ -7,7 +7,8 @@ Gem::Specification.new do |s|
   s.version     = Stockboy::VERSION
   s.authors     = ["Andrew Vit"]
   s.email       = ["andrew@avit.ca"]
-  s.homepage    = ""
+  s.homepage    = "https://github.com/avit/stockboy"
+  s.license     = "MIT"
   s.summary     = %q{Multi-source data normalization library}
   s.description = %q{Supports importing data over various transports with key-value remapping & normalization}
 

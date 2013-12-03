@@ -10,4 +10,4 @@ rvm:
 script: bundle exec rspec spec
 matrix:
   allow_failures:
-    - "rbx"
+    - rvm: "rbx"

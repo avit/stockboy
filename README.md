@@ -8,6 +8,7 @@ consider using it to synchronize data exported from external sources, or
 migrating your own data from legacy systems. (TL;DR, Stockboy is a Ruby
 [DSL][dsl] for doing [ETL][etl].)
 
+Full documentation available at [rdoc.info/gems/stockboy][rdoc]
 
 ## Goals
 
@@ -315,3 +316,4 @@ Contributions and pull requests are welcome.
 [dsl]: https://en.wikipedia.org/wiki/Domain-specific_language
 [travis]: https://travis-ci.org/avit/stockboy
 [climate]: https://codeclimate.com/github/avit/stockboy
+[rdoc]: http://rdoc.info/gems/stockboy/frames
