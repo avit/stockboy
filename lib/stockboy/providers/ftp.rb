@@ -85,15 +85,6 @@ module Stockboy::Providers
 
     # Initialize a new FTP provider
     #
-    # @param [Hash] opts
-    # @option opts :host     [String]
-    # @option opts :username [String]
-    # @option opts :password [String]
-    # @option opts :passive  [Boolean]
-    # @option opts :binary   [Boolean]
-    # @macro provider.initialize.file_options
-    # @yield instance for configuration
-    #
     def initialize(opts={}, &block)
       super(opts, &block)
       @host         = opts[:host]

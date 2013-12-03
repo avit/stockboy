@@ -2,6 +2,9 @@ require 'stockboy/attribute'
 require 'stockboy/translations'
 
 module Stockboy
+
+  # Table of attributes for finding corresponding field/attribute translations
+  #
   class AttributeMap
 
     include Enumerable

@@ -2,9 +2,9 @@ require 'stockboy/translator'
 
 module Stockboy::Translations
 
-  # Translate missing values to empty string
+  # Translate missing values to nil
   #
-  # This is a useful fallback for translation errors.
+  # This is a useful fallback for empty values that should be cleared to nil.
   #
   # == Job template DSL
   #
