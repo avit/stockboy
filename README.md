@@ -242,6 +242,25 @@ output values from the second block parameter:
       input["RawEmailAddress"] =~ /gmail/ or output.bounce_count > 1
     end
 
+### 5. Trigger it with actions
+
+Also optional, triggers let you define an action in the job template context
+that can be called from your application. This lets you separate your app
+interface from the implementation details of each data source.
+
+A typical use case might be to clean up stale data after a successful import:
+
+    on :cleanup do |job, timestamp|
+      next unless job.processed?
+      job.provider.client do |ftp|
+        ftp.put(StringIO.new(timestamp.to_s), "LAST_RUN")
+      end
+      job.provider.delete_data # deletes the last matching file used
+    end
+
+The action blocks receive the job instance, and any additional arguments when
+called via `job.trigger(:cleanup, Time.now)` or simply `job.cleanup(Time.now)`.
+
 ---
 
 ## Installation 
