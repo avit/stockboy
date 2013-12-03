@@ -1,9 +1,11 @@
 source 'https://rubygems.org'
 gemspec
 
-group :debug do
-  gem "pry"
-  gem "pry-debugger"
+unless ENV["CI"]
+  group :debug do
+    gem "pry"
+    gem "pry-debugger"
+  end
 end
 
 group :doc do
