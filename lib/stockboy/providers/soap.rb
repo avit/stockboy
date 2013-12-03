@@ -86,6 +86,8 @@ module Stockboy::Providers
     #
     def client
       @client ||= Savon.client(client_options)
+      return @client unless block_given?
+      yield @client
     end
 
     private
