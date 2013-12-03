@@ -8,3 +8,6 @@ rvm:
   - "jruby-19mode"
   - "rbx"
 script: bundle exec rspec spec
+matrix:
+  allow_failures:
+    - "rbx"

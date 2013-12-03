@@ -12,3 +12,9 @@ group :doc do
   gem "redcarpet", "~> 1.0"
   gem "yard"
 end
+
+platforms :rbx do
+  gem "rubysl-tracer", "~> 2.0"
+  gem "rubysl", "~> 2.0"
+  gem "racc"
+end
