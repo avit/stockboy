@@ -1,3 +1,5 @@
+require 'logger'
+
 module Stockboy
 
   # Global Stockboy configuration options
