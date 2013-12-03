@@ -1,5 +1,8 @@
 # Stockboy
 
+[![Build Status](https://travis-ci.org/avit/stockboy.png)][travis]
+[![Code Climate](https://codeclimate.com/github/avit/stockboy.png)][climate]
+
 Stockboy helps you receive and unpack data onto your shelves. You might
 consider using it to synchronize data exported from external sources, or
 migrating your own data from legacy systems. (TL;DR, Stockboy is a Ruby
@@ -291,3 +294,5 @@ Contributions and pull requests are welcome.
 [gf]:  http://guestfolio.com/
 [etl]: https://en.wikipedia.org/wiki/Extract,_transform,_load 
 [dsl]: https://en.wikipedia.org/wiki/Domain-specific_language
+[travis]: https://travis-ci.org/avit/stockboy
+[climate]: https://codeclimate.com/github/avit/stockboy
