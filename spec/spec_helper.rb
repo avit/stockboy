@@ -1,5 +1,8 @@
-require 'pry'
-require 'pry-debugger'
+unless ENV['CI']
+  require 'pry'
+  require 'pry-debugger'
+end
+
 require 'ostruct'
 require 'savon'
 require 'savon/mock/spec_helper'
