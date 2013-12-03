@@ -63,7 +63,7 @@ module Stockboy::Providers
       when String
         Dir[::File.join(file_dir, file_name)]
       end
-      @matching_file = pick_from(files) if files.any?
+      @matching_file = pick_from(files.sort) if files.any?
     end
 
     def clear
