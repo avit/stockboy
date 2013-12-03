@@ -42,6 +42,15 @@ module Stockboy::Providers
     #
     dsl_attr :method, attr_writer: false
 
+    def uri
+      return nil if @uri.nil? || @uri.empty?
+      URI(@uri).tap { |u| u.query = URI.encode_www_form(@query) }
+    end
+
+    def uri=(uri)
+      @uri = uri
+    end
+
     # HTTP host and path to the data resource
     #
     # @!attribute [rw] uri
@@ -61,15 +70,8 @@ module Stockboy::Providers
     dsl_attr :query
 
     def method=(http_method)
-      @method = http_method.downcase.to_sym
-    end
-
-    def uri
-      URI(@uri).tap { |u| u.query = URI.encode_www_form(@query) }
-    end
-
-    def uri=(uri)
-      @uri = uri
+      return @method = nil unless %w(get post).include? http_method.to_s.downcase
+      @method = http_method.to_s.downcase.to_sym
     end
 
     def get=(uri)
@@ -92,6 +94,11 @@ module Stockboy::Providers
       self.method = opts[:method] || :get
       self.query  = opts[:query]  || Hash.new
       DSL.new(self).instance_eval(&block) if block_given?
+    end
+
+    def client
+      return HTTPI unless block_given?
+      yield HTTPI
     end
 
     private
