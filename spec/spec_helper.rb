@@ -1,4 +1,4 @@
-unless ENV['CI']
+if $DEBUG && !ENV['CI']
   require 'pry'
   require 'pry-debugger'
 end
