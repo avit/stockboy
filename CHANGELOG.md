@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.2 / 2013-12-04
+
+[BUGFIX]      Registered :string translation that was missed
+[BUGFIX]      All date translators handle String / Date / Time correctly
+
 ## 0.5.1 / 2013-12-03
 
 [ENHANCEMENT] Link to full documentation and license
