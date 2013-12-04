@@ -1,5 +1,6 @@
 # Stockboy
 
+[![Gem Version](https://badge.fury.io/rb/stockboy.png)][gem]
 [![Build Status](https://travis-ci.org/avit/stockboy.png)][travis]
 [![Code Climate](https://codeclimate.com/github/avit/stockboy.png)][climate]
 
@@ -317,3 +318,4 @@ Contributions and pull requests are welcome.
 [travis]: https://travis-ci.org/avit/stockboy
 [climate]: https://codeclimate.com/github/avit/stockboy
 [rdoc]: http://rdoc.info/gems/stockboy/frames
+[gem]: http://rubygems.org/gems/stockboy
