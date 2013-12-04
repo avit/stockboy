@@ -30,12 +30,28 @@ module Stockboy::Translations
       return nil if value.blank?
 
       case value
-      when ::String then ::Date.parse(value)
+      when ::String then parse_date(value.strip)
       when ::Time, ::DateTime then ::Date.new(value.year, value.month, value.day)
       when ::Date then value
       else nil
       end
     end
+
+    private
+
+    # Generic parse action, overridden by subclasses
+    # @return [Date]
+    #
+    def parse_date(value)
+      ::Date.parse(value)
+    end
+
+    def separator(value)
+      value.include?(?/) ? ?/ : ?-
+    end
+
+    # Match date strings with 2-digit year
+    MATCH_YYYY = %r"\A\d{1,2}(/|-)\d{1,2}\1\d{4}\z"
 
   end
 end

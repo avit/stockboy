@@ -1,4 +1,5 @@
 require 'stockboy/translator'
+require 'stockboy/translations/date'
 
 module Stockboy::Translations
 
@@ -25,26 +26,19 @@ module Stockboy::Translations
   #   record.check_in = "2-1-12"
   #   date.translate(record, :check_in) # => #<Date 2012-02-01>
   #
-  class USDate < Stockboy::Translator
-
-    # @return [Date]
-    #
-    def translate(context)
-      value = field_value(context, field_key)
-      return nil if value.blank?
-
-      ::Date.strptime(value, date_format(value))
-    end
+  class USDate < Stockboy::Translations::Date
 
     private
 
+    # @return [Date]
+    #
+    def parse_date(value)
+      ::Date.strptime(value, date_format(value))
+    end
+
     def date_format(value)
-      x = value.include?(?/) ? ?/ : ?-
-      if value =~ %r"\d{1,2}(?:/|-)\d{1,2}(?:/|-)\d{4}"
-        "%m#{x}%d#{x}%Y"
-      else
-        "%m#{x}%d#{x}%y"
-      end
+      x = separator(value)
+      value =~ MATCH_YYYY ?  "%m#{x}%d#{x}%Y" : "%m#{x}%d#{x}%y"
     end
 
   end
