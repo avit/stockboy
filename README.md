@@ -1,6 +1,7 @@
 # Stockboy
 
 [![Gem Version](https://badge.fury.io/rb/stockboy.png)][gem]
+[![Dependency Status](https://gemnasium.com/avit/stockboy.png)][gemnasium]
 [![Build Status](https://travis-ci.org/avit/stockboy.png)][travis]
 [![Code Climate](https://codeclimate.com/github/avit/stockboy.png)][climate]
 
@@ -316,6 +317,7 @@ Contributions and pull requests are welcome.
 [etl]: https://en.wikipedia.org/wiki/Extract,_transform,_load 
 [dsl]: https://en.wikipedia.org/wiki/Domain-specific_language
 [travis]: https://travis-ci.org/avit/stockboy
+[gemnasium]: https://gemnasium.com/avit/stockboy
 [climate]: https://codeclimate.com/github/avit/stockboy
 [rdoc]: http://rdoc.info/gems/stockboy/frames
 [gem]: http://rubygems.org/gems/stockboy
