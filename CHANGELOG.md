@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.3 / 2013-12-04
+
+[BUGFIX]      Fix missing IMAP attachment validation DSL options
+
 ## 0.5.2 / 2013-12-04
 
 [BUGFIX]      Registered :string translation that was missed
