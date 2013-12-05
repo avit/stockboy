@@ -2,6 +2,7 @@
 
 ## 0.5.3 / 2013-12-04
 
+[BUGFIX]      Fix broken encoding option in fixed-width reader
 [BUGFIX]      Fix missing IMAP attachment validation DSL options
 
 ## 0.5.2 / 2013-12-04
