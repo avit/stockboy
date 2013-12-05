@@ -77,7 +77,7 @@ module Stockboy::Readers
 
     def parse(data)
       @column_widths, @column_keys = nil, nil
-      data.force_encoding!(encoding) if encoding
+      data.force_encoding(encoding) if encoding
       data = StringIO.new(data) unless data.is_a? StringIO
       skip_header_rows.times { data.readline }
       records = data.reduce([]) do |a, row|
