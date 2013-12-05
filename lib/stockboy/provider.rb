@@ -221,6 +221,10 @@ module Stockboy
   #     @example
   #       since Date.today
   #
+
+  # @!macro [new] provider.file_size_options
+  #   @group Options
+  #
   #   @!attribute [rw] file_smaller
   #     Validates the maximum data size for the matched file, in bytes
   #     @return [Fixnum]

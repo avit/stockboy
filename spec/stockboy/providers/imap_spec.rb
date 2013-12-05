@@ -13,6 +13,8 @@ module Stockboy
       provider.subject = %r{New Records 20[1-9][0-9]-(0[1-9]|1[0-2])-([0-2][1-9]|3[0-1])}
       provider.since = Date.new(2012,12,1)
       provider.attachment = %r{data-[0-9]+\.csv}
+      provider.file_smaller = 1024**3
+      provider.file_larger = 1024
 
       provider.host.should == "mail.localhost.test"
       provider.username.should == "uuu"
@@ -21,13 +23,18 @@ module Stockboy
       provider.subject.should == %r{New Records 20[1-9][0-9]-(0[1-9]|1[0-2])-([0-2][1-9]|3[0-1])}
       provider.attachment.should == %r{data-[0-9]+\.csv}
       provider.since.should == Date.new(2012,12,1)
+      provider.file_smaller.should == 1024**3
+      provider.file_larger.should == 1024
     end
 
-    describe "deprecated options", pending: "implement deprecated_alias" do
-      it "promotes since instead of newer_than" do
-        provider = Providers::IMAP.new{ |f| f.newer_than Date.new(2012,12,1) }
-        provider.since.should == Date.new(2012,12,1)
-      end
+    it "aliases since to newer_than" do
+      provider = Providers::IMAP.new{ |f| f.newer_than Date.new(2012,12,1) }
+      provider.since.should == Date.new(2012,12,1)
+    end
+
+    it "aliases file_smaller to smaller_than" do
+      provider = Providers::IMAP.new{ |f| f.smaller_than 1024**3 }
+      provider.file_smaller.should == 1024**3
     end
 
     describe ".new" do
@@ -36,8 +43,16 @@ module Stockboy
       end
 
       it "accepts block initialization" do
-        provider = Providers::IMAP.new{ |f| f.host 'mail.test2.local' }
+        provider = Providers::IMAP.new do
+          host 'mail.test2.local'
+          attachment 'report.csv'
+          file_smaller 1024**3
+          file_larger 1024
+        end
         provider.host.should == 'mail.test2.local'
+        provider.attachment.should == 'report.csv'
+        provider.file_smaller.should == 1024**3
+        provider.file_larger.should == 1024
       end
     end
 

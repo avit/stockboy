@@ -106,7 +106,11 @@ module Stockboy::Providers
     #   attachment "daily-report.csv"
     #   attachment /daily-report-[0-9]+.csv/
     #
-    dsl_attr :attachment
+    dsl_attr :attachment, alias: :file_name
+
+    # @macro file_size_options
+    dsl_attr :file_smaller, alias: :smaller_than
+    dsl_attr :file_larger,  alias: :larger_than
 
     # Method for choosing which email message to process from potential
     # matches. Default is last by date sent.

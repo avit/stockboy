@@ -25,6 +25,8 @@ module Stockboy::Providers
     dsl_attr :file_name
     dsl_attr :file_dir
     dsl_attr :file_newer, alias: :since
+
+    # @macro provider.file_size_options
     dsl_attr :file_smaller
     dsl_attr :file_larger
 
