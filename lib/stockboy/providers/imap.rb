@@ -167,11 +167,11 @@ module Stockboy::Providers
         i.examine(mailbox)
       end
       yield @open_client
-      client.disconnect
+      @open_client.disconnect
       @open_client = nil
     rescue ::Net::IMAP::Error => e
       errors.add :response, "IMAP connection error"
-      client.disconnect
+      @open_client.disconnect
       @open_client = nil
     end
 
