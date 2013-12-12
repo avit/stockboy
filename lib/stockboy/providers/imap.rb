@@ -145,6 +145,13 @@ module Stockboy::Providers
       DSL.new(self).instance_eval(&block) if block_given?
     end
 
+    # Direct access to the configured +Net::IMAP+ connection
+    #
+    # @example
+    #   provider.client do |imap|
+    #     imap.search("FLAGGED")
+    #   end
+    #
     def client
       raise(ArgumentError, "no block given") unless block_given?
       first_connection = @open_client.nil?
@@ -163,6 +170,11 @@ module Stockboy::Providers
       end
     end
 
+    # Purge the email from the mailbox corresponding to the [#matching_file]
+    #
+    # This can only be called after selecting the matching file to confirm the
+    # selected item, or after fetching the data
+    #
     def delete_data
       raise Stockboy::OutOfSequence, "must confirm #matching_message or calling #data" unless picked_matching_message?
 
@@ -173,12 +185,16 @@ module Stockboy::Providers
       end
     end
 
+    # IMAP message id for the email that contains the selected data to process
+    #
     def matching_message
       return @matching_message if @matching_message
       message_ids = search(default_search_options)
       @matching_message = pick_from(message_ids) unless message_ids.empty?
     end
 
+    # Clear received data and allow for selecting a new item from the server
+    #
     def clear
       super
       @matching_message = nil
@@ -186,10 +202,26 @@ module Stockboy::Providers
       @data_size = nil
     end
 
+    # Search the selected mailbox for matching messages
+    #
+    # By default, the configured options are used,
+    # @param [Hash, Array, String] options
+    #   Override default configured search options
+    #
+    # @example
+    #   provider.search(subject: "Daily Report", before: Date.today)
+    #   provider.search(["SUBJECT", "Daily Report", "BEFORE", "21-DEC-12"])
+    #   provider.search("FLAGGED BEFORE 21-DEC-12")
+    #
     def search(options=nil)
       client { |imap| imap.sort(['DATE'], search_keys(options), 'UTF-8') }
     end
 
+    # Normalize a hash of search options into an array of IMAP search keys
+    #
+    # @param [Hash] options If none are given, the configured options are used
+    # @return [Array]
+    #
     def search_keys(options=nil)
       case options
       when Array, String then options

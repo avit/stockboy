@@ -147,7 +147,8 @@ module Stockboy
     # defined within the context of each job template.
     #
     # @param [Symbol] key Name of the trigger
-    # @param [Trigger, Proc, #call] trigger_class
+    # @yieldparam [Stockboy::Job]
+    # @yieldparam [Array] Arguments passed to the action when called
     #
     # @example
     #   trigger :cleanup do |job, *args|
