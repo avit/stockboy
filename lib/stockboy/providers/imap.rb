@@ -191,8 +191,10 @@ module Stockboy::Providers
     end
 
     def search_keys(options=nil)
-      return options if options.is_a?(Array)
-      SearchOptions.new(options || default_search_options).to_imap
+      case options
+      when Array, String then options
+      else SearchOptions.new(options || default_search_options).to_imap
+      end
     end
 
     private
