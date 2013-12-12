@@ -76,7 +76,7 @@ module Stockboy
 
       it "should call delete on the matching message" do
         allow(provider).to receive(:client).and_yield(imap)
-        allow(provider).to receive(:fetch_imap_message_keys) { [5] }
+        allow(provider).to receive(:search) { [5] }
 
         provider.matching_message
 
@@ -111,6 +111,30 @@ module Stockboy
         provider.errors[:response].should include "IMAP connection error"
       end
 
+    end
+
+    describe "#search_keys" do
+      it "uses configured options by default" do
+        provider.since = Date.new(2012, 12, 21)
+        provider.subject = "Earth"
+        provider.from = "me@example.com"
+
+        provider.search_keys.should == [
+          "SUBJECT", "Earth",
+          "FROM", "me@example.com",
+          "SINCE", "21-Dec-2012"
+        ]
+      end
+
+      it "replaces defaults with given options" do
+        provider.since = Date.new(2012, 12, 21)
+        provider.subject = "Earth"
+        provider.search_keys(subject: "Improbability").should == ["SUBJECT", "Improbability"]
+      end
+
+      it "returns the same array given" do
+        provider.search_keys(["SINCE", "21-DEC-12"]).should == ["SINCE", "21-DEC-12"]
+      end
     end
 
     def expect_connection(host, user, pass, mailbox)

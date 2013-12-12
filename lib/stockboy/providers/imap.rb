@@ -1,4 +1,5 @@
 require 'stockboy/provider'
+require 'stockboy/providers/imap/search_options'
 require 'net/imap'
 require 'mail'
 
@@ -19,9 +20,6 @@ module Stockboy::Providers
   #   end
   #
   class IMAP < Stockboy::Provider
-
-    # Corresponds to %v mode in +DateTime#strftime+
-    VMS_DATE = /\A\d{2}-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d{2}\z/i
 
     # @!group Options
 
@@ -177,8 +175,8 @@ module Stockboy::Providers
 
     def matching_message
       return @matching_message if @matching_message
-      keys = fetch_imap_message_keys
-      @matching_message = pick_from(keys) unless keys.empty?
+      message_ids = search(default_search_options)
+      @matching_message = pick_from(message_ids) unless message_ids.empty?
     end
 
     def clear
@@ -188,7 +186,20 @@ module Stockboy::Providers
       @data_size = nil
     end
 
+    def search(options=nil)
+      client { |imap| imap.sort(['DATE'], search_keys(options), 'UTF-8') }
+    end
+
+    def search_keys(options=nil)
+      return options if options.is_a?(Array)
+      SearchOptions.new(options || default_search_options).to_imap
+    end
+
     private
+
+    def default_search_options
+      {subject: subject, from: from, since: since}
+    end
 
     def fetch_data
       client do |imap|
@@ -212,10 +223,6 @@ module Stockboy::Providers
       errors.empty?
     end
 
-    def fetch_imap_message_keys
-      client { |imap| imap.sort(['DATE'], search_keys, 'UTF-8') }
-    end
-
     def picked_matching_message?
       !!@matching_message
     end
@@ -228,27 +235,6 @@ module Stockboy::Providers
         part.filename =~ attachment
       else
         true
-      end
-    end
-
-    def search_keys
-      keys = []
-      keys.concat ['SUBJECT', subject]  if subject
-      keys.concat ['FROM', from]        if from
-      keys.concat ['SINCE', date_format(since)] if since
-      keys.concat search if search
-      keys
-    end
-
-    def date_format(value)
-      case value
-      when Date, Time, DateTime
-        value.strftime('%v')
-      when Numeric
-        Time.at(value).strftime('%v')
-      when String
-        return value if value =~ VMS_DATE
-        Date.parse(value).strftime('%v')
       end
     end
 
