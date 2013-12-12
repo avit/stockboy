@@ -128,17 +128,6 @@ module Stockboy::Providers
 
     # @!endgroup
 
-    # Library for connection, defaults to +Net::IMAP+
-    #
-    # @!attribute [rw] imap_client
-    #
-    def self.imap_client
-      @imap_client ||= Net::IMAP
-    end
-    class << self
-      attr_writer :imap_client
-    end
-
     # Initialize a new IMAP reader
     #
     def initialize(opts={}, &block)
@@ -160,19 +149,20 @@ module Stockboy::Providers
 
     def client
       raise(ArgumentError, "no block given") unless block_given?
-      return yield @open_client if @open_client
-
-      @open_client = ::Net::IMAP.new(host).tap do |i|
-        i.login(username, password)
-        i.examine(mailbox)
+      first_connection = @open_client.nil?
+      if first_connection
+        @open_client = ::Net::IMAP.new(host)
+        @open_client.login(username, password)
+        @open_client.examine(mailbox)
       end
       yield @open_client
-      @open_client.disconnect
-      @open_client = nil
     rescue ::Net::IMAP::Error => e
       errors.add :response, "IMAP connection error"
-      @open_client.disconnect
-      @open_client = nil
+    ensure
+      if first_connection
+        @open_client.disconnect
+        @open_client = nil
+      end
     end
 
     def delete_data

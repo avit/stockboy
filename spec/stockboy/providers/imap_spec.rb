@@ -87,5 +87,40 @@ module Stockboy
       end
     end
 
+    describe "#client" do
+
+      before do
+        provider.host, provider.username, provider.password = "hhh", "uuu", "ppp"
+        provider.mailbox = "UNBOX"
+      end
+
+      it "reuses open connections in nested contexts" do
+        net_imap = expect_connection("hhh", "uuu", "ppp", "UNBOX")
+
+        provider.client do |connection|
+          expect(connection).to be net_imap
+          provider.client do |i|
+            expect(connection).to be net_imap
+          end
+        end
+      end
+
+      it "closes connections when catching exceptions" do
+        net_imap = expect_connection("hhh", "uuu", "ppp", "UNBOX")
+        provider.client { |i| raise Net::IMAP::Error }
+        provider.errors[:response].should include "IMAP connection error"
+      end
+
+    end
+
+    def expect_connection(host, user, pass, mailbox)
+      net_imap = double("IMAP")
+      expect(Net::IMAP).to receive(:new).with(host) { net_imap }
+      expect(net_imap).to receive(:login).with(user, pass)
+      expect(net_imap).to receive(:examine).with(mailbox)
+      expect(net_imap).to receive(:disconnect)
+      net_imap
+    end
+
   end
 end
