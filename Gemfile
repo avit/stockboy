@@ -4,7 +4,8 @@ gemspec
 unless ENV["CI"]
   group :debug do
     gem "pry"
-    gem "pry-debugger"
+    gem "pry-debugger" if RUBY_VERSION.start_with? "1.9"
+    gem "pry-byebug" if RUBY_VERSION.start_with? "2."
   end
 end
 
