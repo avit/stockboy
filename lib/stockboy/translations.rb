@@ -1,4 +1,5 @@
 require 'stockboy/exceptions'
+require 'stockboy/registry'
 require 'stockboy/translator'
 
 module Stockboy
@@ -7,8 +8,7 @@ module Stockboy
   # job template DSL.
   #
   module Translations
-
-    @registry ||= {}
+    extend Stockboy::Registry
 
     # Register a translator under a convenient symbolic name
     #
@@ -52,18 +52,6 @@ module Stockboy
       else
         ->(context) { context.public_send attr } # no-op
       end
-    end
-
-    # Look up a translation and return it by symbolic name
-    #
-    # @param [Symbol] func_name
-    # @return [Translator]
-    #
-    def self.find(func_name)
-      @registry[func_name]
-    end
-    class << self
-      alias_method :[], :find
     end
 
   end
