@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.5 / 2013-12-12
+
+* [BUGFIX]      Ensure IMAP connections are reused and closed
+* [ENHANCEMENT] Expose IMAP search options for reuse
+
 ## 0.5.4 / 2013-12-04
 
 * [BUGFIX]      Fixed broken IMAP client
