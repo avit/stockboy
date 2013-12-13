@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.6 / 2013-12-12
+
+* [BUGFIX]      Fix requiring of nested module
+
 ## 0.5.5 / 2013-12-12
 
 * [BUGFIX]      Ensure IMAP connections are reused and closed
