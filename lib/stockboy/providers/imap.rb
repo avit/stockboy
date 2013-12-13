@@ -229,11 +229,11 @@ module Stockboy::Providers
       end
     end
 
-    private
-
     def default_search_options
-      {subject: subject, from: from, since: since}
+      {subject: subject, from: from, since: since}.reject { |k,v| v.nil? }
     end
+
+    private
 
     def fetch_data
       client do |imap|

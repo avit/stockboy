@@ -137,6 +137,23 @@ module Stockboy
       end
     end
 
+    describe "#default_search_options" do
+      it "includes configured SUBJECT option" do
+        provider.subject = "Life"
+        provider.default_search_options.should == {subject: "Life"}
+      end
+
+      it "includes configured SINCE option" do
+        provider.since = Date.today
+        provider.default_search_options.should == {since: Date.today}
+      end
+
+      it "includes configured FROM option" do
+        provider.from = "me@example.com"
+        provider.default_search_options.should == {from: "me@example.com"}
+      end
+    end
+
     def expect_connection(host, user, pass, mailbox)
       net_imap = double("IMAP")
       expect(Net::IMAP).to receive(:new).with(host) { net_imap }
