@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.7 / 2013-12-13
+
+* [BUGFIX]      Fix IMAP search with missing search defaults
+
 ## 0.5.6 / 2013-12-12
 
 * [BUGFIX]      Fix requiring of nested module
