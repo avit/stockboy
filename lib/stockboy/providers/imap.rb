@@ -1,5 +1,4 @@
 require 'stockboy/provider'
-require 'stockboy/providers/imap/search_options'
 require 'net/imap'
 require 'mail'
 
@@ -129,6 +128,7 @@ module Stockboy::Providers
     # Initialize a new IMAP reader
     #
     def initialize(opts={}, &block)
+      require 'stockboy/providers/imap/search_options'
       super(opts, &block)
       @host         = opts[:host]
       @username     = opts[:username]
