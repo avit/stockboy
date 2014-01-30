@@ -62,7 +62,7 @@ module Stockboy::Providers
 
     def uri
       return nil if @uri.nil? || @uri.empty?
-      URI(@uri).tap { |u| u.query = URI.encode_www_form(@query) }
+      URI(@uri).tap { |u| u.query = URI.encode_www_form(@query) if @query }
     end
 
     def uri=(uri)
