@@ -108,9 +108,11 @@ module Stockboy::Providers
     #
     def initialize(opts={}, &block)
       super(opts, &block)
-      self.uri    = opts[:uri]
-      self.method = opts[:method] || :get
-      self.query  = opts[:query]  || Hash.new
+      self.uri      = opts[:uri]
+      self.method   = opts[:method] || :get
+      self.query    = opts[:query]  || Hash.new
+      self.username = opts[:username]
+      self.password = opts[:password]
       DSL.new(self).instance_eval(&block) if block_given?
     end
 

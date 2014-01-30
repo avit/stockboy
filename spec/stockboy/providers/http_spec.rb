@@ -33,6 +33,14 @@ module Stockboy
       provider.method.should == :post
     end
 
+    it "should assign basic auth parameters" do
+      provider.username = "username"
+      provider.password = "password"
+
+      provider.username.should == "username"
+      provider.password.should == "password"
+    end
+
     describe ".new" do
       its(:errors) { should be_empty }
 
