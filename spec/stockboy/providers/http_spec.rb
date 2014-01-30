@@ -78,6 +78,16 @@ module Stockboy
 
         provider.data.should == '{"success":true}'
       end
+
+      it "should setup basic auth if a username and password are supplied" do
+        provider.username = "username"
+        provider.password = "password"
+
+        allow(HTTPI).to receive(:request) { response }
+        expect_any_instance_of(HTTPI::Auth::Config).to receive(:basic).with("username", "password")
+
+        provider.data.should == '{"success":true}'
+      end
     end
 
     describe "#client" do

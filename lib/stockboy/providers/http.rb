@@ -42,6 +42,24 @@ module Stockboy::Providers
     #
     dsl_attr :method, attr_writer: false
 
+    # User name for basic auth connection credentials
+    #
+    # @!attribute [rw] username
+    # @return [String]
+    # @example
+    #   username "arthur"
+    #
+    dsl_attr :username
+
+    # Password for basic auth connection credentials
+    #
+    # @!attribute [rw] password
+    # @return [String]
+    # @example
+    #   password "424242"
+    #
+    dsl_attr :password
+
     def uri
       return nil if @uri.nil? || @uri.empty?
       URI(@uri).tap { |u| u.query = URI.encode_www_form(@query) }
@@ -111,6 +129,7 @@ module Stockboy::Providers
     def fetch_data
       request = HTTPI::Request.new
       request.url = uri
+      request.auth.basic(username, password) if username && password
       response = HTTPI.send(method, request)
       if response.error?
         errors.add :response, "HTTP respone error: #{response.code}"
