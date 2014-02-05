@@ -17,7 +17,7 @@ module Stockboy
     #
     def initialize(attrs, map)
       @map = map
-      @table = use_frozen_keys(attrs, map)
+      @table = reuse_frozen_hash_keys(attrs, map)
       @tr_table = Hash.new
       freeze
     end
@@ -118,7 +118,13 @@ module Stockboy
       value.is_a?(String) ? value.to_s : value
     end
 
-    def use_frozen_keys(attrs, map)
+    # Optimization to reuse the same hash key string instances
+    #
+    # The need for this is fixed for CSV in: https://bugs.ruby-lang.org/issues/9143
+    # (ruby >= 2.1) and can be managed by applying str.freeze in other readers.
+    #
+    def reuse_frozen_hash_keys(attrs, map)
+      return attrs unless attrs.is_a? Hash
       attrs.reduce(Hash.new) do |new_hash, (field, value)|
         key = map.attribute_from(field).from
         new_hash[key] = value
