@@ -114,8 +114,15 @@ module Stockboy
       @tr_table[col.to] = translated.public_send(col.to)
     end
 
+    # Clean output values that are a subclass of a standard type
+    #
     def sanitize(value)
-      value.is_a?(String) ? value.to_s : value
+      case value
+      when String # e.g. Nori::StringWithAttributes
+        value.to_s
+      else
+        value
+      end
     end
 
     # Optimization to reuse the same hash key string instances
