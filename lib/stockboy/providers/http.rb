@@ -42,9 +42,27 @@ module Stockboy::Providers
     #
     dsl_attr :method, attr_writer: false
 
+    # User name for basic auth connection credentials
+    #
+    # @!attribute [rw] username
+    # @return [String]
+    # @example
+    #   username "arthur"
+    #
+    dsl_attr :username
+
+    # Password for basic auth connection credentials
+    #
+    # @!attribute [rw] password
+    # @return [String]
+    # @example
+    #   password "424242"
+    #
+    dsl_attr :password
+
     def uri
       return nil if @uri.nil? || @uri.empty?
-      URI(@uri).tap { |u| u.query = URI.encode_www_form(@query) }
+      URI(@uri).tap { |u| u.query = URI.encode_www_form(@query) if @query }
     end
 
     def uri=(uri)
@@ -84,15 +102,25 @@ module Stockboy::Providers
       @uri = uri
     end
 
+    def username=(username)
+      @username = username
+    end
+
+    def password=(password)
+      @password = password
+    end
+
     # @!endgroup
 
     # Initialize an HTTP provider
     #
     def initialize(opts={}, &block)
       super(opts, &block)
-      self.uri    = opts[:uri]
-      self.method = opts[:method] || :get
-      self.query  = opts[:query]  || Hash.new
+      self.uri      = opts[:uri]
+      self.method   = opts[:method] || :get
+      self.query    = opts[:query]  || Hash.new
+      self.username = opts[:username]
+      self.password = opts[:password]
       DSL.new(self).instance_eval(&block) if block_given?
     end
 
@@ -111,6 +139,7 @@ module Stockboy::Providers
     def fetch_data
       request = HTTPI::Request.new
       request.url = uri
+      request.auth.basic(username, password) if username && password
       response = HTTPI.send(method, request)
       if response.error?
         errors.add :response, "HTTP respone error: #{response.code}"

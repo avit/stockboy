@@ -33,6 +33,14 @@ module Stockboy
       provider.method.should == :post
     end
 
+    it "should assign basic auth parameters" do
+      provider.username = "username"
+      provider.password = "password"
+
+      provider.username.should == "username"
+      provider.password.should == "password"
+    end
+
     describe ".new" do
       its(:errors) { should be_empty }
 
@@ -75,6 +83,16 @@ module Stockboy
 
       it "returns string body on success" do
         expect(HTTPI).to receive(:request) { response }
+
+        provider.data.should == '{"success":true}'
+      end
+
+      it "should setup basic auth if a username and password are supplied" do
+        provider.username = "username"
+        provider.password = "password"
+
+        allow(HTTPI).to receive(:request) { response }
+        expect_any_instance_of(HTTPI::Auth::Config).to receive(:basic).with("username", "password")
 
         provider.data.should == '{"success":true}'
       end
