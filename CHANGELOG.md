@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.0 / 2014-02-06
+
+* [FEATURE]     Support HTTP basic authentication (@markedmondson)
+* [ENHANCEMENT] Accept any duck-typed hash-like input when building a record
+
 ## 0.5.7 / 2013-12-13
 
 * [BUGFIX]      Fix IMAP search with missing search defaults
