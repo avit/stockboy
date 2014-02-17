@@ -88,8 +88,13 @@ module Stockboy
         provider.data
       end
 
-      it "returns hash data on success" do
+      it "returns hash data on success by default" do
         should be_a Hash
+      end
+
+      it "returns xml data on success with an xml response_format" do
+        provider.response_format = :xml
+        should be_a String
       end
 
       it "uses string keys" do

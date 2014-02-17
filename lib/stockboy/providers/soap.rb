@@ -36,7 +36,7 @@ module Stockboy::Providers
 
     # @return [Symbol]
     # @example
-    #   soap_action :soapenv
+    #   env_namespace :soapenv
     #
     dsl_attr :env_namespace
 
@@ -94,7 +94,7 @@ module Stockboy::Providers
     # @!attribute [rw] soap_header
     # @return [String]
     # @example
-    #   soap_action "<soapenv:Header xmlns:wsa="http://www.w3.org/2005/08/addressing">..."
+    #   soap_header "<soapenv:Header xmlns:wsa="http://www.w3.org/2005/08/addressing">..."
     #
     dsl_attr :soap_header
 
@@ -184,7 +184,12 @@ module Stockboy::Providers
           soap_header:     soap_header,
           attributes:      attributes
         )
-        @data = response.send(response_format)
+        @data = case response_format
+        when :xml
+          response.xml
+        else
+          response.body
+        end
       end
     end
   end
