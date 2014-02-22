@@ -132,7 +132,8 @@ module Stockboy::Providers
     private
 
     def validate
-      errors.add_on_blank [:uri, :method]
+      errors << "uri must be specified" if uri.blank?
+      errors << "method (:get, :post) must be specified" if method.blank?
       errors.empty?
     end
 
@@ -142,7 +143,7 @@ module Stockboy::Providers
       request.auth.basic(username, password) if username && password
       response = HTTPI.send(method, request)
       if response.error?
-        errors.add :response, "HTTP respone error: #{response.code}"
+        errors << "HTTP response error: #{response.code}"
       else
         @data = response.body
       end

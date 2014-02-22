@@ -162,7 +162,7 @@ module Stockboy::Providers
       end
       yield @open_client
     rescue ::Net::IMAP::Error => e
-      errors.add :response, "IMAP connection error"
+      errors << "IMAP connection error"
     ensure
       if first_connection
         @open_client.disconnect
@@ -253,7 +253,9 @@ module Stockboy::Providers
     end
 
     def validate
-      errors.add_on_blank [:host, :username, :password]
+      errors << "host must be specified" if host.blank?
+      errors << "username must be specified" if username.blank?
+      errors << "password must be specified" if password.blank?
       errors.empty?
     end
 
@@ -281,7 +283,7 @@ module Stockboy::Providers
     end
 
     def validate_file(data_file)
-      return errors.add :response, "No matching attachments" unless data_file
+      return errors << "No matching attachments" unless data_file
       validate_file_smaller(data_file)
       validate_file_larger(data_file)
     end
@@ -289,14 +291,14 @@ module Stockboy::Providers
     def validate_file_smaller(data_file)
       @data_size ||= data_file.bytesize
       if file_smaller && @data_size > file_smaller
-        errors.add :response, "File size larger than #{file_smaller}"
+        errors << "File size larger than #{file_smaller}"
       end
     end
 
     def validate_file_larger(data_file)
       @data_size ||= data_file.bytesize
       if file_larger && @data_size < file_larger
-        errors.add :response, "File size smaller than #{file_larger}"
+        errors << "File size smaller than #{file_larger}"
       end
     end
   end

@@ -58,15 +58,17 @@ module Stockboy
 
     describe "validation" do
       it "should not be valid without a method" do
+        provider.uri = "http://example.com"
         provider.method = nil
         provider.should_not be_valid
-        provider.errors.keys.should include(:method)
+        provider.errors.first.should match /method/
       end
 
       it "should not be valid without a uri" do
         provider.uri = ""
+        provider.method = :get
         provider.should_not be_valid
-        provider.errors.keys.should include(:uri)
+        provider.errors.first.should match /uri/
       end
     end
 

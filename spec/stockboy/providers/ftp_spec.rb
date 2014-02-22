@@ -32,7 +32,7 @@ module Stockboy
 
     describe ".new" do
       it "has no errors" do
-        subject.errors.messages.should be_empty
+        subject.errors.should be_empty
       end
 
       it "accepts block initialization" do
@@ -67,14 +67,14 @@ module Stockboy
         provider.host = nil
         provider.data
 
-        provider.errors.include?(:host).should be_true
+        provider.errors.first.should match /host/
       end
 
       it "adds an error on missing file_name" do
         provider.file_name = nil
         provider.data
 
-        provider.errors.include?(:file_name).should be_true
+        provider.errors.first.should match /file_name/
       end
 
       it "downloads the last matching file" do

@@ -1,6 +1,4 @@
 require 'logger'
-require 'active_model/errors'
-require 'active_model/naming'
 require 'stockboy/dsl'
 require 'stockboy/exceptions'
 
@@ -34,7 +32,6 @@ module Stockboy
   #
   class Provider
     extend Stockboy::DSL
-    extend ActiveModel::Naming # Required by ActiveModel::Errors
 
     # Default logger if none is provided to the instance
     #
@@ -48,7 +45,7 @@ module Stockboy
     #
     attr_accessor :logger
 
-    # @return [ActiveModel::Errors]
+    # @return [Array]
     #
     attr_reader :errors
 
@@ -61,7 +58,9 @@ module Stockboy
     # @return [String]
     #
     def inspect
-    "#<#{self.class}:#{self.object_id} data_size=#{@data_size or 'nil'} errors=#{@errors.full_messages}>"
+      "#<#{self.class}:#{self.object_id} "\
+      "data_size=#{@data_size.inspect} "\
+      "errors=[#{errors.join(", ")}]>"
     end
 
     # Must be called by subclasses via +super+ to set up dependencies
@@ -92,7 +91,7 @@ module Stockboy
       @data = nil
       @data_time = nil
       @data_size = nil
-      @errors = ActiveModel::Errors.new(self)
+      @errors = []
       true
     end
     alias_method :reset, :clear
@@ -125,7 +124,7 @@ module Stockboy
       raise NoMethodError, "#{self.class}#fetch_data needs implementation"
     end
 
-    # Use errors.add(:attribute, "Message") provided by ActiveModel
+    # Use errors << "'option' is required"
     # for validating required provider parameters before attempting
     # to make connections and retrieve data.
     #
@@ -138,25 +137,10 @@ module Stockboy
     def validate_config?
       unless validation = valid?
         logger.error do
-          "Invalid #{self.class} provider configuration: #{errors.full_messages}"
+          "Invalid #{self.class} provider configuration: #{errors.join(', ')}"
         end
       end
       validation
-    end
-
-    # Required by ActiveModel::Errors
-    def read_attribute_for_validation(attr)
-      send(attr)
-    end
-
-    # Required by ActiveModel::Errors
-    def self.human_attribute_name(attr, options = {})
-      attr
-    end
-
-    # Required by ActiveModel::Errors
-    def self.lookup_ancestors
-      [self]
     end
 
     # When picking files from a list you can supply +:first+ or +:last+ to the

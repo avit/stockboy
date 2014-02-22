@@ -78,7 +78,7 @@ module Stockboy::Providers
     private
 
     def fetch_data
-      errors.add(:base, "File #{file_name} not found") unless matching_file
+      errors << "file #{file_name} not found" unless matching_file
       data_file = ::File.new(matching_file, 'r') if matching_file
       validate_file(data_file)
       if valid?
@@ -89,7 +89,8 @@ module Stockboy::Providers
     end
 
     def validate
-      errors.add_on_blank [:file_dir, :file_name]
+      errors << "file_dir must be specified" if file_dir.blank?
+      errors << "file_name must be specified" if file_name.blank?
       errors.empty?
     end
 
@@ -98,7 +99,7 @@ module Stockboy::Providers
     end
 
     def validate_file(data_file)
-      return errors.add :response, "No matching files" unless data_file
+      return errors << "no matching files" unless data_file
       validate_file_newer(data_file)
       validate_file_smaller(data_file)
       validate_file_larger(data_file)
@@ -107,21 +108,21 @@ module Stockboy::Providers
     def validate_file_newer(data_file)
       @data_time ||= data_file.mtime
       if file_newer && @data_time < file_newer
-        errors.add :response, "No new files since #{file_newer}"
+        errors << "no new files since #{file_newer}"
       end
     end
 
     def validate_file_smaller(data_file)
       @data_size ||= data_file.size
       if file_smaller && @data_size > file_smaller
-        errors.add :response, "File size larger than #{file_smaller}"
+        errors << "file size larger than #{file_smaller}"
       end
     end
 
     def validate_file_larger(data_file)
       @data_size ||= data_file.size
       if file_larger && @data_size < file_larger
-        errors.add :response, "File size smaller than #{file_larger}"
+        errors << "file size smaller than #{file_larger}"
       end
     end
   end

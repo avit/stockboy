@@ -170,7 +170,7 @@ module Stockboy::Providers
     end
 
     def validate
-      errors.add_on_blank(:endpoint) unless wsdl
+      errors << "endpoint or wsdl must be specified" if endpoint.blank? unless wsdl
       errors.blank?
     end
 

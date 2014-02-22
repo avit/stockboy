@@ -114,7 +114,7 @@ module Stockboy::Providers
         response
       end
     rescue Net::FTPError => e
-      errors.add :response, e.message
+      errors << e.message
       logger.warn e.message
     end
 
@@ -161,7 +161,8 @@ module Stockboy::Providers
     end
 
     def validate
-      errors.add_on_blank [:host, :file_name]
+      errors << "host must be specified" if host.blank?
+      errors << "file_name must be specified" if file_name.blank?
       errors.empty?
     end
 
@@ -175,7 +176,7 @@ module Stockboy::Providers
     end
 
     def validate_file(data_file)
-      return errors.add :response, "No matching files" unless data_file
+      return errors << "No matching files" unless data_file
       validate_file_newer(data_file)
       validate_file_smaller(data_file)
       validate_file_larger(data_file)
@@ -184,21 +185,21 @@ module Stockboy::Providers
     def validate_file_newer(data_file)
       @data_time ||= client { |ftp| ftp.mtime(data_file) }
       if file_newer and @data_time < file_newer
-        errors.add :response, "No new files since #{file_newer}"
+        errors << "No new files since #{file_newer}"
       end
     end
 
     def validate_file_smaller(data_file)
       @data_size ||= client { |ftp| ftp.size(data_file) }
       if file_smaller and @data_size > file_smaller
-        errors.add :response, "File size larger than #{file_smaller}"
+        errors << "File size larger than #{file_smaller}"
       end
     end
 
     def validate_file_larger(data_file)
       @data_size ||= client { |ftp| ftp.size(data_file) }
       if file_larger and @data_size < file_larger
-        errors.add :response, "File size smaller than #{file_larger}"
+        errors << "File size smaller than #{file_larger}"
       end
     end
   end

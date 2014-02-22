@@ -29,5 +29,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "savon", ">= 2.3.0"
   s.add_runtime_dependency "httpi"
   s.add_runtime_dependency "mail"
-  s.add_runtime_dependency "activemodel", ">= 3.0"
+  s.add_runtime_dependency "activesupport", ">= 3.0"
 end

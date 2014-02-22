@@ -23,7 +23,7 @@ module Stockboy
 
     describe ".new" do
       it "has no errors" do
-        provider.errors.messages.should be_empty
+        provider.errors.should be_empty
       end
 
       it "accepts block initialization" do
@@ -55,8 +55,8 @@ module Stockboy
       it "fails with an error if the file doesn't exist" do
         provider.file_name = "missing-file.csv"
         provider.data.should be_nil
-        provider.valid?.should == false
-        provider.errors[:base].should_not be_empty
+        provider.valid?.should be_false
+        provider.errors.first.should match /not found/
       end
 
       it "finds last matching file from string glob" do
@@ -85,7 +85,7 @@ module Stockboy
           provider.since = recently
 
           provider.data.should be_nil
-          provider.errors[:response].should include "No new files since #{recently}"
+          provider.errors.first.should match "no new files since #{recently}"
         end
       end
     end

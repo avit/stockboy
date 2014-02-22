@@ -39,7 +39,7 @@ module Stockboy
 
     describe ".new" do
       it "has no errors" do
-        provider.errors.messages.should be_empty
+        provider.errors.should be_empty
       end
 
       it "accepts block initialization" do
@@ -108,7 +108,7 @@ module Stockboy
       it "closes connections when catching exceptions" do
         net_imap = expect_connection("hhh", "uuu", "ppp", "UNBOX")
         provider.client { |i| raise Net::IMAP::Error }
-        provider.errors[:response].should include "IMAP connection error"
+        provider.errors.first.should match /IMAP connection error/
       end
 
     end

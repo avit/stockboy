@@ -52,7 +52,7 @@ module Stockboy
       context "without a WSDL document" do
         it "has error for blank endpoint & WSDL namespace" do
           provider.valid?
-          provider.errors.keys.should include(:endpoint)
+          provider.errors.first.should match /endpoint/
         end
       end
     end
