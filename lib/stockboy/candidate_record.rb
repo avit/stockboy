@@ -97,21 +97,20 @@ module Stockboy
     private
 
     def translate(col)
-      return sanitize(@table[col.from]) if col.translators.empty?
-      return @tr_table[col.to] if @tr_table.has_key? col.to
-      fields = self.raw_hash.dup
-      translated = col.translators.inject(input) do |m,t|
-        begin
-          new_value = t.call(m)
-        rescue
-          fields[col.to] = nil
-          break SourceRecord.new(fields, @table)
+      @tr_table.fetch(col.to) do |key|
+        return @tr_table[key] = sanitize(@table[col.from]) if col.translators.empty?
+        fields = raw_hash
+        tr_input = col.translators.reduce(input) do |value, tr|
+          begin
+            fields[col.to] = tr[value]
+            SourceRecord.new(fields, @table)
+          rescue
+            fields[col.to] = nil
+            break SourceRecord.new(fields, @table)
+          end
         end
-
-        fields[col.to] = new_value
-        SourceRecord.new(fields, @table)
+        @tr_table[col.to] = tr_input.public_send(col.to)
       end
-      @tr_table[col.to] = translated.public_send(col.to)
     end
 
     # Clean output values that are a subclass of a standard type
