@@ -76,16 +76,16 @@ module Stockboy
       end
 
       context "with :since validation" do
-        let(:recently) { Time.now - 60 }
+        let(:recently)  { Time.now - 60 }
+        let(:last_week) { Time.now - 86400 }
 
         it "skips old files" do
-          expect_any_instance_of(::File).to receive(:mtime).and_return Time.now - 86400
-          provider.file_dir = RSpec.configuration.fixture_path.join("files")
+          expect_any_instance_of(::File).to receive(:mtime).and_return last_week
           provider.file_name = '*.csv'
           provider.since = recently
 
           provider.data.should be_nil
-          provider.errors.first.should match "no new files since #{recently}"
+          provider.errors.first.should == "no new files since #{recently}"
         end
       end
     end
