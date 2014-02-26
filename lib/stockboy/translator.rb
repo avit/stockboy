@@ -45,6 +45,7 @@ module Stockboy
       context = OpenStruct.new(context) if context.is_a? Hash
       translate(context)
     end
+    alias_method :[], :call
 
     # String representation for a more helpful representation
     #
