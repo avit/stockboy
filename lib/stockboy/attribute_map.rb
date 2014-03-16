@@ -13,22 +13,11 @@ module Stockboy
     #
     class DSL
       def initialize(instance)
-        @instance = instance
-        @map = @instance.instance_variable_get(:@map)
+        @attribute_map = instance
       end
 
       def method_missing(attr, *args)
-        opts = args.first || {}
-        to = attr.to_sym
-        from = opts.fetch(:from, attr)
-        from = from.to_s.freeze if from.is_a? Symbol
-        translators = Array(opts[:as]).map { |t| Translations.translator_for(to, t) }
-        @map[attr] = Attribute.new(to, from, translators)
-        define_attribute_method(attr)
-      end
-
-      def define_attribute_method(attr)
-        (class << @instance; self end).send(:define_method, attr) { @map[attr] }
+        @attribute_map.insert(attr, *args)
       end
     end
 
@@ -40,7 +29,6 @@ module Stockboy
       if block_given?
         DSL.new(self).instance_eval(&block)
       end
-      freeze
     end
 
     # Retrieve an attribute by symbolic name
@@ -50,6 +38,22 @@ module Stockboy
     #
     def [](key)
       @map[key]
+    end
+
+    # Add or replace a mapped attribute
+    #
+    # @param [Symbol] key The output attribute name
+    # @param [Hash] opts
+    # @option opts [String] from Name of input field from reader
+    # @option opts [Array,Proc,Translator] as One or more translators
+    #
+    def insert(key, opts={})
+      to = key.to_sym
+      from = opts.fetch(:from, key)
+      from = from.to_s.freeze if from.is_a? Symbol
+      translators = Array(opts[:as]).map { |t| Translations.translator_for(to, t) }
+      define_singleton_method(key) { @map[key] }
+      @map[key] = Attribute.new(to, from, translators)
     end
 
     # Fetch the attribute corresponding to the source field name

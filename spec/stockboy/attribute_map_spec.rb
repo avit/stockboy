@@ -12,14 +12,15 @@ module Stockboy
     end
 
     describe ".new" do
+      let(:row) { Attribute.new(:email, "email", []) }
+
       it "initializes from hash attribute" do
-        row = Attribute.new(:email, "email", [])
         map = AttributeMap.new(:email => row)
         map[:email].should == row
       end
     end
 
-    it "captures same destination as default" do
+    it "sets same destination as default" do
       subject[:email].should == Attribute.new(:email, "email", [])
     end
 
@@ -53,6 +54,16 @@ module Stockboy
     it "is enumerable" do
       subject.map(&:from).should == ["email", "statusDate"]
       subject.map(&:to).should == [:email, :updated_at]
+    end
+
+    describe "#insert" do
+      subject(:map) { AttributeMap.new }
+
+      it "sets options from hash" do
+        upcase = ->(r) { r.upcase }
+        map.insert :test, from: "Test", as: upcase
+        map[:test].should == Attribute.new(:test, "Test", [upcase])
+      end
     end
 
   end
