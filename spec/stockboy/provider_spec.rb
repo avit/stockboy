@@ -2,9 +2,11 @@ require 'spec_helper'
 require 'stockboy/provider'
 
 class ProviderSubclass < Stockboy::Provider
-  attr_accessor :foo
   def validate
-    errors.add_on_empty(:foo, "Foo is empty")
+    true
+  end
+  def fetch_data
+    @data = "TEST,DATA"
   end
 end
 
@@ -30,5 +32,17 @@ module Stockboy
         expect{ subject.send :fetch_data }.to raise_error(NoMethodError)
       end
     end
+
+    describe "#data" do
+      subject(:provider) { ProviderSubclass.new(foo: true) }
+
+      it "fetches data when there is none" do
+        expect(provider).to receive(:fetch_data).once.and_call_original
+        2.times do
+          provider.data.should == "TEST,DATA"
+        end
+      end
+    end
+
   end
 end
