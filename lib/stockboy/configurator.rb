@@ -100,6 +100,8 @@ module Stockboy
 
     # DSL method for configuring the attribute map in a block
     #
+    # This will replace any existing attributes with a new set.
+    #
     # @example
     #   attributes do
     #     first_name as: ->(raw){ raw["FullName"].split(" ").first }
@@ -111,6 +113,19 @@ module Stockboy
       raise ArgumentError unless block_given?
 
       @config[:attributes] = AttributeMap.new(&block)
+    end
+
+    # DSL method for adding individual attributes
+    #
+    # @param [Symbol] key Name of the output attribute
+    # @param [Hash] opts
+    # @option opts [String] from Name of input field from reader
+    # @option opts [Array,Proc,Translator] as One or more translators
+    #
+    #
+    def attribute(key, opts={})
+      @config[:attributes] ||= AttributeMap.new
+      @config[:attributes].insert(key, opts)
     end
 
     # DSL method to add a filter to the filter chain

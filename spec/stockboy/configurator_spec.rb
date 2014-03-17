@@ -72,6 +72,27 @@ module Stockboy
         subject.attributes &proc{}
         subject.config[:attributes].should be attribute_map
       end
+
+      it "replaces existing attributes" do
+        subject.attribute :first_name
+        subject.attributes do last_name end
+        subject.config[:attributes][:first_name].should be_nil
+        subject.config[:attributes][:last_name].should be_an Attribute
+      end
+    end
+
+    describe "#attribute" do
+      it "inserts a single attribute" do
+        subject.attribute :test, from: "Test"
+        subject.config[:attributes][:test].should == Attribute.new(:test, "Test", [])
+      end
+
+      it "respects existing attributes added first" do
+        subject.attributes do first_name end
+        subject.attribute :last_name
+        subject.config[:attributes][:first_name].should be_an Attribute
+        subject.config[:attributes][:last_name].should be_an Attribute
+      end
     end
 
     describe "#on" do
