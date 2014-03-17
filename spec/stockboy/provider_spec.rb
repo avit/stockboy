@@ -42,6 +42,12 @@ module Stockboy
           provider.data.should == "TEST,DATA"
         end
       end
+
+      it "yields data to a block" do
+        provider.data do |data|
+          data.should == "TEST,DATA"
+        end
+      end
     end
 
   end

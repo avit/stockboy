@@ -78,8 +78,8 @@ module Stockboy
     # @!attribute [r] data
     #
     def data
-      return @data if @data
-      fetch_data if validate_config?
+      fetch_data if @data.nil? && validate_config?
+      yield @data if block_given?
       @data
     end
 
