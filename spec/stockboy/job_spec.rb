@@ -1,11 +1,31 @@
 require 'spec_helper'
 require 'stockboy/job'
 
+class TestProvider
+  attr_reader :data, :errors
+  def initialize(opts)
+    @data = opts[:data] || ""
+    @errors = opts[:errors] || []
+  end
+  def clear
+    @data = nil
+  end
+end
+
+class TestReader
+  def initialize(opts)
+    @parse = opts[:parse] || []
+  end
+  def parse(data)
+    @parse
+  end
+end
+
 module Stockboy
   describe Job do
     let(:jobs_path) { RSpec.configuration.fixture_path.join('jobs') }
-    let(:provider_stub) { double(:ftp).as_null_object }
-    let(:reader_stub)   { double(:csv).as_null_object }
+    let(:provider)  { provider_double }
+    let(:reader)    { reader_double }
 
     let(:job_template) {
       <<-END.gsub(/^ {6}/,'')
@@ -35,8 +55,8 @@ module Stockboy
     before do
       Stockboy.configuration.template_load_paths = [jobs_path]
 
-      allow(Stockboy::Providers).to receive(:find) { provider_stub }
-      allow(Stockboy::Readers).to receive(:find) { reader_stub }
+      allow(Stockboy::Providers).to receive(:find) { TestProvider }
+      allow(Stockboy::Readers).to receive(:find)   { TestReader }
     end
 
     its(:filters) { should be_a Hash }
@@ -65,16 +85,19 @@ module Stockboy
       end
 
       it "assigns a registered provider from a symbol" do
+        Stockboy::Providers.should_receive(:find)
+                           .with(:ftp)
+                           .and_return(TestProvider)
         job = Job.define("test_job")
-        job.provider.should == provider_stub
+        job.provider.should be_a TestProvider
       end
 
       it "assigns a registered reader from a symbol" do
         Stockboy::Readers.should_receive(:find)
                          .with(:csv)
-                         .and_return(reader_stub)
+                         .and_return(TestReader)
         job = Job.define("test_job")
-        job.reader.should == reader_stub
+        job.reader.should be_a TestReader
       end
 
       it "assigns attributes from a block" do
@@ -93,12 +116,11 @@ module Stockboy
       let(:attribute_map) { AttributeMap.new { name } }
 
       subject(:job) do
-        Job.new(provider: double(:provider, data:"", errors:[]),
-                attributes: attribute_map)
+        Job.new(provider: provider, attributes: attribute_map)
       end
 
       it "records total received record count" do
-        job.reader = double(parse: [{"name"=>"A"},{"name"=>"B"}])
+        job.reader = reader_double(parse: [{"name"=>"A"},{"name"=>"B"}])
 
         job.process
         job.total_records.should == 2
@@ -155,8 +177,7 @@ module Stockboy
       let(:attribute_map) { AttributeMap.new { name } }
 
       subject(:job) do
-        Job.new(provider: double(:provider, data:"", errors:[]),
-                attributes: attribute_map)
+        Job.new(provider: provider, attributes: attribute_map)
       end
 
       context "before processing" do
@@ -180,9 +201,7 @@ module Stockboy
 
     describe "#processed?" do
       subject(:job) do
-        Job.new(provider: provider_stub,
-                reader: reader_stub,
-                attributes: AttributeMap.new)
+        Job.new(provider: provider, reader: reader, attributes: AttributeMap.new)
       end
 
       it "indicates if the job has been processed" do
@@ -194,11 +213,9 @@ module Stockboy
 
     describe "#trigger" do
 
-      let(:provider_stub) { double(delete_data: true) }
-
       subject(:job) do
         Job.new(
-          provider: provider_stub,
+          provider: provider,
           triggers: {
             success: [proc { |j| j.provider.delete_data },
                       proc { |j, stats| stats[:count] = 1 if stats }]
@@ -207,11 +224,12 @@ module Stockboy
       end
 
       it "should yield itself to each trigger" do
-        provider_stub.should_receive(:delete_data).once
+        expect(job.provider).to receive(:delete_data).once
         job.trigger(:success)
       end
 
       it "should yield args to each trigger" do
+        expect(job.provider).to receive(:delete_data).once
         stats = {}
         job.trigger(:success, stats)
         stats[:count].should == 1
@@ -234,5 +252,12 @@ module Stockboy
 
     end
 
+    def provider_double(opts={})
+      TestProvider.new(opts)
+    end
+
+    def reader_double(opts={})
+      TestReader.new(opts)
+    end
   end
 end
