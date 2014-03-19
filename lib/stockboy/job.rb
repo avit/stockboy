@@ -109,7 +109,6 @@ module Stockboy
     # @return [Boolean] Success or failure
     #
     def process
-      reset
       with_query_caching do
         load_records
         yield @records if block_given?
@@ -208,17 +207,41 @@ module Stockboy
     end
 
     def load_records
-      return unless provider.data
+      reset
+      load_all_records
+      partition_all_records
+      @processed = true
+    end
 
-      @all_records = reader.parse(provider.data).map do |row|
-        CandidateRecord.new(row, @attributes)
+    def load_all_records
+      each_reader_row do |row|
+        @all_records << CandidateRecord.new(row, @attributes)
       end
+    end
 
+    def partition_all_records
       @all_records.each do |record|
         record_partition(record) << record
       end
+    end
 
-      @processed = true
+    def each_reader_row
+      return to_enum(__method__) unless block_given?
+      with_provider_data do |data|
+        reader.parse(data).each do |row|
+          yield row
+        end
+      end
+    end
+
+    def with_provider_data
+      return to_enum(__method__) unless block_given?
+      yielded = nil
+      provider.data do |data|
+        yielded = true
+        yield data
+      end
+      yield provider.data unless yielded
     end
 
     def record_partition(record)
