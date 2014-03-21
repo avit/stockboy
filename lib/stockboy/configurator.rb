@@ -70,6 +70,42 @@ module Stockboy
     end
     alias_method :connection, :provider
 
+    # Configure repeating the provider for fetching multiple parts
+    #
+    # If the provider needs to give us all the data as a series of requests,
+    # for example multiple HTTP pages or FTP files, the repeat block can be
+    # used to define the iteration for fetching each item.
+    #
+    # The `<<` interface used here is defined by Ruby's Enumerator.new block
+    # syntax. For each page that needs to be fetched, the provider options need
+    # to be altered and pushed on to the output. Control will be yielded to the
+    # reader at each iteration.
+    #
+    # @example
+    #   repeat do |output, provider|
+    #     loop do
+    #       output << provider
+    #       break if provider.data.split("\n").size < 100
+    #       provider.query_params["page"] += 1
+    #     end
+    #   end
+    #
+    # @example
+    #   repeat do |output, provider|
+    #     1.upto 10 do |i|
+    #       provider.file_name = "example-#{i}.log"
+    #       output << provider
+    #     end
+    #   end
+    #
+    def repeat(&block)
+      unless block_given? && block.arity == 2
+        raise ArgumentError, "repeat block must accept |output, provider| arguments"
+      end
+
+      @config[:repeat] = block
+    end
+
     # DSL method for configuring the reader
     #
     # @param [Symbol, Class, Reader] reader_class
@@ -185,7 +221,18 @@ module Stockboy
     # @return [Job]
     #
     def to_job
-      Job.new(@config)
+      Job.new(config_for_job)
+    end
+
+    private
+
+    def config_for_job
+      config.dup.tap { |config| wrap_provider(config) }
+    end
+
+    def wrap_provider(config)
+      return unless (repeat = config.delete(:repeat))
+      config[:provider] = ProviderRepeater.new(config[:provider], &repeat)
     end
 
   end
