@@ -38,5 +38,16 @@ module Stockboy
       @registry
     end
 
+    def build(key, options, block)
+      case key
+      when Symbol
+        find(key).new(options, &block)
+      when Class
+        key.new(options, &block)
+      else
+        key
+      end
+    end
+
   end
 end

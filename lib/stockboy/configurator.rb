@@ -44,7 +44,7 @@ module Stockboy
     #
     # The optional block is evaluated in the provider's own DSL context.
     #
-    # @param [Symbol, Class, Provider] provider_class
+    # @param [Symbol, Class, Provider] key
     #   The registered symbol name for the provider, or actual provider
     # @param [Hash] opts
     #   Provider-specific options passed to the provider initializer
@@ -56,17 +56,8 @@ module Stockboy
     #
     # @return [Provider]
     #
-    def provider(provider_class, opts={}, &block)
-      raise ArgumentError unless provider_class
-
-      @config[:provider] = case provider_class
-      when Symbol
-        Providers.find(provider_class).new(opts, &block)
-      when Class
-        provider_class.new(opts, &block)
-      else
-        provider_class
-      end
+    def provider(key, opts={}, &block)
+      @config[:provider] = Providers.build(key, opts, block)
     end
     alias_method :connection, :provider
 
@@ -108,8 +99,8 @@ module Stockboy
 
     # Configure the reader for parsing data
     #
-    # @param [Symbol, Class, Reader] reader_class
-    #   The registered symbol name for the reader, or actual reader
+    # @param [Symbol, Class, Reader] key
+    #   The registered symbol name for the reader, or actual reader instance
     # @param [Hash] opts
     #   Provider-specific options passed to the provider initializer
     #
@@ -120,17 +111,8 @@ module Stockboy
     #
     # @return [Reader]
     #
-    def reader(reader_class, opts={}, &block)
-      raise ArgumentError unless reader_class
-
-      @config[:reader] = case reader_class
-      when Symbol
-        Readers.find(reader_class).new(opts, &block)
-      when Class
-        reader_class.new(opts, &block)
-      else
-        reader_class
-      end
+    def reader(key, opts={}, &block)
+      @config[:reader] = Readers.build(key, opts, block)
     end
     alias_method :format, :reader
 
@@ -180,14 +162,7 @@ module Stockboy
     #   filter :update, proc{ true } # capture all remaining items
     #
     def filter(key, callable=nil, *args, &block)
-      raise ArgumentError unless key
-      if callable.is_a?(Symbol)
-        callable = Filters.find(callable)
-        callable = callable.new(*args) if callable.is_a? Class
-      end
-      raise ArgumentError unless callable.respond_to?(:call) ^ block_given?
-
-      @config[:filters][key] = block || callable
+      @config[:filters][key] = block || Filters.build(callable, args)
     end
 
     # Register a trigger to notify the job of external events
