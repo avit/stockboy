@@ -99,10 +99,11 @@ Writing a job template requires you to declare three parts:
       file_pick  :first
     end
 
-    reader :csv do
-      headers true
-      col_sep "|"
-      encoding "Windows-1252"
+    repeat do |inputs, provider|
+      0.upto 12 do |m|
+        provider.file_dir = "reports/#{Date.today << 12-m}"
+        inputs << provider
+      end
     end
 
     attributes do
@@ -129,6 +130,29 @@ The provider block describes the connection parameters for finding and fetching
 data, which is returned as a raw string blob. It can handle some complexity to
 determine which file to pick from an email attachment or FTP directory, for
 example.
+
+#### Fetching paginated data
+
+If the provider requires multiple queries to fetch all the data (e.g. http
+`?page=1` query params or a list of files), you can use an optional repeat
+block to specify how to iterate over the data source, and when to stop.
+Although it's possible to process each page as an individual job, the repeat
+option is useful when you need to have all the data in hand before making
+downstream processing decisions such as purging records that are not in the
+data set.
+
+    repeat do |inputs, http_provider|
+      loop do
+        inputs << http_provider
+        break if http_provider.data.split("\n").size < 100
+        http_provider.query["page"] += 1 
+      end
+    end
+
+For each iteration, increment the provider settings and push it onto the list
+of inputs. (This uses an Enumerator to yield each iteration's data before
+processing the next one, so it should be memory-efficient for long series of
+data sets.)
 
 See: [File][file], [FTP][ftp], [HTTP][http], [IMAP][imap], [SOAP][soap]
 
@@ -208,6 +232,9 @@ so it's a good idea to have default values at the end of the chain.
   Returns `nil` for blank values
 * [`:or_zero`][dzer]
   Returns `0` for blank values
+
+Attributes can be defined in a block as described, or added
+individually as `attribute :name`.
 
 [bool]: lib/stockboy/translators/boolean.rb
 [date]: lib/stockboy/translators/date.rb

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.0 / 2014-03-21
+
+* [FEATURE]     Add individual attribute mappings
+* [FEATURE]     Repeat provider requests to fetch paginated data
+* [ENHANCEMENT] More configurable SOAP options (@markedmondson)
+* Removed ActiveModel errors, configuration errors are simple arrays now
+
 ## 0.6.0 / 2014-02-06
 
 * [FEATURE]     Support HTTP basic authentication (@markedmondson)
