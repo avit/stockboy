@@ -42,7 +42,7 @@ module Stockboy
 
     # Add or replace a mapped attribute
     #
-    # @param [Symbol] key The output attribute name
+    # @param [Symbol] key Name of the output attribute
     # @param [Hash] opts
     # @option opts [String] from Name of input field from reader
     # @option opts [Array,Proc,Translator] as One or more translators

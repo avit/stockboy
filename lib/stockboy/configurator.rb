@@ -40,7 +40,7 @@ module Stockboy
       end
     end
 
-    # DSL method for configuring the provider
+    # Configure the provider for fetching data
     #
     # The optional block is evaluated in the provider's own DSL context.
     #
@@ -106,7 +106,7 @@ module Stockboy
       @config[:repeat] = block
     end
 
-    # DSL method for configuring the reader
+    # Configure the reader for parsing data
     #
     # @param [Symbol, Class, Reader] reader_class
     #   The registered symbol name for the reader, or actual reader
@@ -134,7 +134,7 @@ module Stockboy
     end
     alias_method :format, :reader
 
-    # DSL method for configuring the attribute map in a block
+    # Configure the attribute map for data records
     #
     # This will replace any existing attributes with a new set.
     #
@@ -151,7 +151,7 @@ module Stockboy
       @config[:attributes] = AttributeMap.new(&block)
     end
 
-    # DSL method for adding individual attributes
+    # Add individual attribute mapping rules
     #
     # @param [Symbol] key Name of the output attribute
     # @param [Hash] opts
@@ -164,7 +164,7 @@ module Stockboy
       @config[:attributes].insert(key, opts)
     end
 
-    # DSL method to add a filter to the filter chain
+    # Add a filter to the processing filter chain
     #
     # * Must be called with either a callable argument (proc) or a block.
     # * Must be called in the order that filters should be applied.
@@ -190,7 +190,7 @@ module Stockboy
       @config[:filters][key] = block || callable
     end
 
-    # DSL method to register a trigger to notify the job of an event
+    # Register a trigger to notify the job of external events
     #
     # Useful for adding generic control over the job's resources from your app.
     # For example, if you need to record stats or clean up data after your
@@ -213,6 +213,7 @@ module Stockboy
     #
     def on(key, &block)
       raise(ArgumentError, "no block given") unless block_given?
+
       @config[:triggers][key] << block
     end
 
