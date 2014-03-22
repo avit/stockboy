@@ -56,16 +56,7 @@ module Stockboy::Providers
     end
 
     def matching_file
-      return @matching_file if @matching_file
-      files = case file_name
-      when Regexp
-        Dir.entries(file_dir)
-            .select { |i| i =~ file_name }
-            .map { |i| ::File.join(file_dir, i) }
-      when String
-        Dir[::File.join(file_dir, file_name)]
-      end
-      @matching_file = pick_from(files.sort) if files.any?
+      @matching_file ||= pick_from(file_list.sort)
     end
 
     def clear
@@ -94,6 +85,21 @@ module Stockboy::Providers
       !!@matching_file
     end
 
+    def file_list
+      case file_name
+      when Regexp
+        Dir.entries(file_dir)
+           .select { |i| i =~ file_name }
+           .map    { |i| full_path(i) }
+      when String
+        Dir[full_path(file_name)]
+      end
+    end
+
+    def full_path(file_name)
+      ::File.join(file_dir, file_name)
+    end
+
     def validate_file(data_file)
       return errors << "no matching files" unless data_file
       validate_file_newer(data_file)
@@ -102,24 +108,33 @@ module Stockboy::Providers
     end
 
     def validate_file_newer(data_file)
-      @data_time ||= data_file.mtime
-      if file_newer && @data_time < file_newer
+      read_data_time(data_file)
+      if file_newer && data_time < file_newer
         errors << "no new files since #{file_newer}"
       end
     end
 
     def validate_file_smaller(data_file)
-      @data_size ||= data_file.size
-      if file_smaller && @data_size > file_smaller
+      read_data_size(data_file)
+      if file_smaller && data_size > file_smaller
         errors << "file size larger than #{file_smaller}"
       end
     end
 
     def validate_file_larger(data_file)
-      @data_size ||= data_file.size
-      if file_larger && @data_size < file_larger
+      read_data_size(data_file)
+      if file_larger && data_size < file_larger
         errors << "file size smaller than #{file_larger}"
       end
     end
+
+    def read_data_size(file)
+      @data_size ||= file.size
+    end
+
+    def read_data_time(file)
+      @data_time ||= file.mtime
+    end
+
   end
 end

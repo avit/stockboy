@@ -36,9 +36,23 @@ module Stockboy
       let(:provider) { Providers::File.new(file_dir: fixture_path("files")) }
       subject(:matching_file) { provider.matching_file }
 
-      it "returns the full path to the matching file name" do
-        provider.file_name = "test_data-*"
-        provider.matching_file.should end_with "fixtures/files/test_data-20120202.csv"
+      context "with a matching string" do
+        before { provider.file_name = "test_data-*" }
+        it "returns the full path to the matching file name" do
+          should end_with "fixtures/files/test_data-20120202.csv"
+        end
+      end
+
+      context "with a matching regex" do
+        before { provider.file_name = /^test_data-\d+/ }
+        it "returns the full path to the matching file name" do
+          should end_with "fixtures/files/test_data-20120202.csv"
+        end
+      end
+
+      context "with an unmatched string" do
+        before { provider.file_name = "missing" }
+        it { should be_nil }
       end
     end
 
@@ -97,9 +111,9 @@ module Stockboy
     end
 
     describe ".delete_data" do
-      let(:target)       { ::Tempfile.new(['delete', '.csv']) }
-      let(:target_dir)   { File.dirname(target) }
-      let(:pick_same)    { ->(best, this) { this == target.path ? this : best } }
+      let(:target)     { ::Tempfile.new(['delete', '.csv']) }
+      let(:target_dir) { File.dirname(target) }
+      let(:pick_same)  { ->(best, this) { this == target.path ? this : best } }
 
       subject(:provider) do
         Providers::File.new(file_name: 'delete*.csv', file_dir: target_dir, pick: pick_same)
