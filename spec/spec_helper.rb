@@ -3,6 +3,9 @@ if $DEBUG && !ENV['CI']
   require 'pry-debugger'
 end
 
+require "codeclimate-test-reporter"
+CodeClimate::TestReporter.start
+
 require 'ostruct'
 require 'savon'
 require 'savon/mock/spec_helper'

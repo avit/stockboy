@@ -14,6 +14,10 @@ group :doc do
   gem "yard"
 end
 
+group :test do
+  gem "codeclimate-test-reporter", require: nil
+end
+
 platforms :rbx do
   gem "rubysl-tracer", "~> 2.0"
   gem "rubysl", "~> 2.0"

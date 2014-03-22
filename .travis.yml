@@ -12,3 +12,6 @@ script: bundle exec rspec spec
 matrix:
   allow_failures:
     - rvm: "rbx"
+addons:
+  code_climate:
+    repo_token: 7591072ad04d7a8ee788ce9259baa284724740cab1ae9ca94c162a583acd8f10
