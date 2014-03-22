@@ -41,6 +41,31 @@ module Stockboy
       end
     end
 
+    describe ".translator_for" do
+      it "returns a translator for a registered proc" do
+        Translations.register :test, ->(i){ i.message.upcase }
+        tr = Translations.translator_for(:message, :test)
+        tr.call(double message: "no!").should == "NO!"
+      end
+
+      it "returns a translator for a registered class" do
+        Translations.register :test, Translations::Integer
+        tr = Translations.translator_for :id, :test
+        tr.call(double id: "42").should == 42
+      end
+
+      it "returns a translator for a registered instance" do
+        Translations.register :test, Translations::Integer.new(:id)
+        tr = Translations.translator_for :anything, :test
+        tr.call(double id: "42").should == 42
+      end
+
+      it "returns a no-op for unrecognized translators" do
+        tr = Translations.translator_for :id, :fail
+        tr.call(double id: "42").should == "42"
+      end
+    end
+
     describe ".find" do
       it "returns a callable translator" do
         callable = ->(i){ i.upcase }
