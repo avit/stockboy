@@ -49,6 +49,12 @@ module Stockboy
     #
     attr_reader :errors
 
+    # Size of the received data
+    #
+    # @return [Time]
+    #
+    attr_reader :data_size
+
     # Timestamp of the received data
     #
     # @return [Time]

@@ -170,34 +170,35 @@ module Stockboy::Providers
       end
     end
 
-    # Purge the email from the mailbox corresponding to the [#matching_file]
+    # Purge the email from the mailbox corresponding to the [#message_key]
     #
-    # This can only be called after selecting the matching file to confirm the
-    # selected item, or after fetching the data
+    # This can only be called after selecting the message_key to confirm the
+    # selected item, or after fetching the data.
     #
     def delete_data
-      raise Stockboy::OutOfSequence, "must confirm #matching_message or calling #data" unless picked_matching_message?
+      picked_message_key? or raise Stockboy::OutOfSequence,
+        "must confirm #message_key or calling #data"
 
-      logger.info "Deleting message #{username}:#{host} message_uid: #{matching_message}"
       client do |imap|
-        imap.uid_store(matching_message, "+FLAGS", [:Deleted])
+        logger.info "Deleting message #{inspect_message_key}"
+        imap.uid_store(message_key, "+FLAGS", [:Deleted])
         imap.expunge
       end
     end
 
     # IMAP message id for the email that contains the selected data to process
     #
-    def matching_message
-      return @matching_message if @matching_message
+    def message_key
+      return @message_key if @message_key
       message_ids = search(default_search_options)
-      @matching_message = pick_from(message_ids) unless message_ids.empty?
+      @message_key = pick_from(message_ids) unless message_ids.empty?
     end
 
     # Clear received data and allow for selecting a new item from the server
     #
     def clear
       super
-      @matching_message = nil
+      @message_key = nil
       @data_time = nil
       @data_size = nil
     end
@@ -237,19 +238,33 @@ module Stockboy::Providers
 
     def fetch_data
       client do |imap|
-        return false unless matching_message
-        mail = ::Mail.new(imap.fetch(matching_message, 'RFC822')[0].attr['RFC822'])
-        if part = mail.attachments.detect { |part| validate_attachment(part) }
-          validate_file(part.decoded)
-          if valid?
-            logger.info "Getting file from #{username}:#{host} message_uid #{matching_message}"
-            @data = part.decoded
+        open_message(message_key) do |mail|
+          open_attachment(mail) do |part|
+            logger.debug "Getting file from #{inspect_message_key}"
+            @data = part
             @data_time = normalize_imap_datetime(mail.date)
-            logger.info "Got file from #{username}:#{host} message_uid #{matching_message}"
+            logger.debug "Got file from #{inspect_message_key}"
           end
         end
       end
       !@data.nil?
+    end
+
+    def open_message(id)
+      return unless id
+      client do |imap|
+        imap_message = imap.fetch(id, 'RFC822').first or return
+        mail = ::Mail.new(imap_message.attr['RFC822'])
+        yield mail if block_given?
+        mail
+      end
+    end
+
+    def open_attachment(mail)
+      part = mail.attachments.detect { |part| validate_attachment(part) }
+      validate_file(part) if part or return
+      yield part.decoded if valid?
+      part
     end
 
     def validate
@@ -259,8 +274,8 @@ module Stockboy::Providers
       errors.empty?
     end
 
-    def picked_matching_message?
-      !!@matching_message
+    def picked_message_key?
+      !!@message_key
     end
 
     def validate_attachment(part)
@@ -289,17 +304,25 @@ module Stockboy::Providers
     end
 
     def validate_file_smaller(data_file)
-      @data_size ||= data_file.bytesize
-      if file_smaller && @data_size > file_smaller
+      read_data_size(data_file)
+      if file_smaller && data_size > file_smaller
         errors << "File size larger than #{file_smaller}"
       end
     end
 
     def validate_file_larger(data_file)
-      @data_size ||= data_file.bytesize
-      if file_larger && @data_size < file_larger
+      read_data_size(data_file)
+      if file_larger && data_size < file_larger
         errors << "File size smaller than #{file_larger}"
       end
+    end
+
+    def read_data_size(data_file)
+      @data_size ||= data_file.body.raw_source.bytesize
+    end
+
+    def inspect_message_key
+      "#{username}:#{host} message_uid #{message_key}"
     end
   end
 

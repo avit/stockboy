@@ -1,0 +1,20 @@
+Date: Fri, 21 Mar 2014 12:34:56 -0700 (PDT)
+From: The Server <server@example.com>
+To: The App <app@example.com>
+Subject: Daily Report
+Content-Type: multipart/mixed; boundary="----=_Part_Boundary_"
+
+------=_Part_Boundary_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+Here's the daily report.=20
+
+------=_Part_Boundary_
+Content-Type: text/csv; name="daily_report.csv"
+Content-Disposition: attachment; filename="daily_report.csv"
+
+LAST_NAME,FIRST_NAME
+Dent,Arthur
+Ford,Prefect
+------=_Part_Boundary_--

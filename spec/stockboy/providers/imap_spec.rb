@@ -57,14 +57,92 @@ module Stockboy
     end
 
     describe "#data" do
+      let(:imap) { double("Net::IMAP") }
+      let(:provider) { described_class.new(host: 'h', username: 'u', password: 'p') }
+      subject(:data) { provider.data }
+      before { allow(provider).to receive(:client).and_yield imap }
 
       context "with no messages found" do
-        it "should be nil" do
-          allow(provider).to receive(:fetch_imap_message_keys).and_return []
-          provider.data.should be_nil
+        before { mock_imap_search [] => [] }
+        it { should be_nil }
+      end
+
+      context "with a found message" do
+        let(:rfc_email) { File.read(fixture_path "email/csv_attachment.eml") }
+        before { mock_imap_search [] => [1] and mock_imap_fetch 1 => rfc_email }
+        it { should match "LAST_NAME,FIRST_NAME" }
+
+        context "validating correct filename string" do
+          before { provider.attachment = "daily_report.csv" }
+          it { should match "LAST_NAME,FIRST_NAME" }
+        end
+
+        context "validating incorrect filename string" do
+          before { provider.attachment = "wrong_report.csv" }
+          it { should be_nil }
+        end
+
+        context "validating correct filename pattern" do
+          before { provider.attachment = /^daily.*\.csv$/ }
+          it { should match "LAST_NAME,FIRST_NAME" }
+        end
+
+        context "validating incorrect filename pattern" do
+          before { provider.attachment = /^wrong.*\.csv$/ }
+          it { should be_nil }
+        end
+
+        context "validating correct smaller size" do
+          before { provider.smaller_than = 2048 }
+          it { should match "LAST_NAME,FIRST_NAME" }
+        end
+
+        context "validating incorrect smaller size" do
+          before { provider.smaller_than = 10 }
+          it { should be_nil }
+        end
+
+        context "validating correct larger size" do
+          before { provider.larger_than = 10 }
+          it { should match "LAST_NAME,FIRST_NAME" }
+        end
+
+        context "validating correct larger size" do
+          before { provider.larger_than = 2048 }
+          it { should be_nil }
+        end
+
+      end
+
+      context "with a found message since time" do
+        let(:rfc_email) { File.read fixture_path('email/csv_attachment.eml') }
+        before {
+          provider.since = Time.new(2014, 1, 31)
+          mock_imap_search ["SINCE", "31-JAN-2014"] => [1]
+          mock_imap_fetch 1 => rfc_email
+        }
+        it { should match "LAST_NAME,FIRST_NAME" }
+
+        context "without ActiveSupport" do
+          before { allow_any_instance_of(DateTime).to receive(:respond_to?).with(:getutc) { false } }
+          it { should match "LAST_NAME,FIRST_NAME" }
         end
       end
 
+      def mock_imap_search(searches)
+        searches.each do |search_keys, found_keys|
+          sort_args = ['DATE'], search_keys, 'UTF-8'
+          expect(imap).to receive(:sort).with(*sort_args).and_return found_keys
+        end
+      end
+
+      def mock_imap_fetch(list)
+        list.each do |key, email|
+          expect(imap).to receive(:fetch).with(key, 'RFC822').and_return [
+            double("Net::IMAP::FetchData", attr: {'RFC822' => email})
+          ]
+        end
+      end
     end
 
     describe "#delete_data" do
@@ -74,11 +152,11 @@ module Stockboy
         expect { provider.delete_data }.to raise_error Stockboy::OutOfSequence
       end
 
-      it "should call delete on the matching message" do
+      it "should call delete on the message key" do
         allow(provider).to receive(:client).and_yield(imap)
         allow(provider).to receive(:search) { [5] }
 
-        provider.matching_message
+        provider.message_key
 
         expect(imap).to receive(:uid_store).with(5, "+FLAGS", [:Deleted])
         expect(imap).to receive(:expunge)

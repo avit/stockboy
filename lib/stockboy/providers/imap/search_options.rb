@@ -97,7 +97,7 @@ module Stockboy::Providers
       when Numeric
         Time.at(value).strftime('%v')
       when String
-        value =~ VMS_DATE ? value : Date.parse(value).strftime('%v')
+        value =~ VMS_DATE ? value : Date.parse(value).strftime('%v').upcase!
       end
       pair
     end

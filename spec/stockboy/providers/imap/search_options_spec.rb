@@ -28,8 +28,19 @@ module Stockboy::Providers
 
       DATE_OPTIONS.each do |date_option_symbol, date_option_imap|
         it "converts #{date_option_imap.inspect} to IMAP date option" do
-          options(date_option_symbol => Time.new(2012, 12, 12))
-            .to_imap.should == [date_option_imap, "12-DEC-2012"]
+          options(date_option_symbol => TIME_FORMATS.first)
+          .to_imap.should == [date_option_imap, "12-DEC-2012"]
+        end
+      end
+
+      TIME_FORMATS = [ t = Time.new(2012, 12, 12),
+                       t.to_i,
+                       t.to_s ]
+
+      TIME_FORMATS.each do |time|
+        it "converts #{time.class} to IMAP date option" do
+          options(since: time)
+          .to_imap.should == ["SINCE", "12-DEC-2012"]
         end
       end
 
