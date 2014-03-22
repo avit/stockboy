@@ -81,11 +81,7 @@ module Stockboy::Providers
       errors << "file #{file_name} not found" unless matching_file
       data_file = ::File.new(matching_file, 'r') if matching_file
       validate_file(data_file)
-      if valid?
-        logger.info "Getting file #{file_dir}/#{matching_file}"
-        @data = data_file.read
-        logger.info "Got file #{file_dir}/#{matching_file} (#{@data_size} bytes)"
-      end
+      @data = data_file.read if valid?
     end
 
     def validate
