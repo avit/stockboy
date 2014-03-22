@@ -75,17 +75,30 @@ module Stockboy
         provider.data.should == "2012-02-02\n"
       end
 
-      context "with :since validation" do
+      context "metadata validation" do
+        before { provider.file_name = '*.csv' }
         let(:recently)  { Time.now - 60 }
         let(:last_week) { Time.now - 86400 }
 
-        it "skips old files" do
+        it "skips old files with :since" do
           expect_any_instance_of(::File).to receive(:mtime).and_return last_week
-          provider.file_name = '*.csv'
           provider.since = recently
-
           provider.data.should be_nil
           provider.errors.first.should == "no new files since #{recently}"
+        end
+
+        it "skips large files with :file_smaller" do
+          expect_any_instance_of(::File).to receive(:size).and_return 1001
+          provider.file_smaller = 1000
+          provider.data.should be_nil
+          provider.errors.first.should == "file size larger than 1000"
+        end
+
+        it "skips small files with :file_larger" do
+          expect_any_instance_of(::File).to receive(:size).and_return 999
+          provider.file_larger = 1000
+          provider.data.should be_nil
+          provider.errors.first.should == "file size smaller than 1000"
         end
       end
     end
