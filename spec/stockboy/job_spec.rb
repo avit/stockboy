@@ -17,7 +17,7 @@ class TestReader
     @parse = opts[:parse] || []
   end
   def parse(data)
-    @parse
+    @parse.respond_to?(:call) ? @parse.call(data) : @parse
   end
 end
 
@@ -26,6 +26,8 @@ module Stockboy
     let(:jobs_path) { fixture_path "jobs" }
     let(:provider)  { provider_double }
     let(:reader)    { reader_double }
+
+    subject(:job) { described_class.new }
 
     let(:job_template) {
       <<-END.gsub(/^ {6}/,'')
@@ -190,6 +192,24 @@ module Stockboy
         job.filters = {alpha: proc{ |r| r.name =~ /A/ }, beta: proc{ |r| r.name =~ /B/ }}
         job.records.should == {alpha: [], beta: []}
       end
+
+      context "with a repeating provider" do
+        let(:repeater) {
+          ProviderRepeater.new(provider) do |inputs|
+            1.upto 3 do |i|
+              inputs << provider_double(data: [{"name" => i}])
+            end
+          end
+        }
+        let(:noop_reader) { reader_double(parse: ->(data) { data }) }
+        let(:job) { Job.new(provider: repeater, reader: noop_reader, attributes: attribute_map) }
+
+        it "it loads all records into a set" do
+          job.process
+          job.all_records.size.should == 3
+        end
+      end
+
     end
 
     describe "#record_counts" do
