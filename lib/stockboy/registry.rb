@@ -39,14 +39,10 @@ module Stockboy
     end
 
     def build(key, options, block)
-      case key
-      when Symbol
-        find(key).new(options, &block)
-      when Class
-        key.new(options, &block)
-      else
-        key
-      end
+      options = [options] unless options.is_a? Array
+      key = find(key) if key.is_a? Symbol
+      key = key.new(*options, &block) if key.is_a? Class
+      key
     end
 
   end

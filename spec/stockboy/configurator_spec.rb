@@ -123,6 +123,37 @@ module Stockboy
         end
         subject.config[:filters][:pass].call(42).should == true
       end
+
+      context "with a class" do
+        class TestFilter
+          attr_reader :args, :block
+          def initialize(*args, &block)
+            @args, @block = args, block
+          end
+        end
+        before { Filters.register :test, TestFilter }
+
+        it "passes arguments to a registered class symbol" do
+          subject.filter :pass, :test, 42
+          subject.config[:filters][:pass].args.should == [42]
+        end
+
+        it "passes a block to a registered class symbol" do
+          subject.filter :pass, :test do 42 end
+          subject.config[:filters][:pass].block[].should == 42
+        end
+
+        it "passes arguments to a given class" do
+          subject.filter :pass, TestFilter, 42
+          subject.config[:filters][:pass].args.should == [42]
+        end
+
+        it "uses an instance directly" do
+          subject.filter :pass, TestFilter.new(42)
+          subject.config[:filters][:pass].args.should == [42]
+        end
+      end
+
     end
 
     describe "#to_job" do

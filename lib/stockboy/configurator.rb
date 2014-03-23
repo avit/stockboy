@@ -162,7 +162,9 @@ module Stockboy
     #   filter :update, proc{ true } # capture all remaining items
     #
     def filter(key, callable=nil, *args, &block)
-      @config[:filters][key] = block || Filters.build(callable, args)
+      filter = Filters.build(callable, args, block) || block
+      filter or raise ArgumentError, "Missing filter arguments for #{key}"
+      @config[:filters][key] = filter
     end
 
     # Register a trigger to notify the job of external events

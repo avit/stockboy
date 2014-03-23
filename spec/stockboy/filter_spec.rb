@@ -9,6 +9,9 @@ class FishFilter < Stockboy::Filter
   end
 end
 
+class CoffeeFilter < Stockboy::Filter
+end
+
 module Stockboy
   describe Filter do
 
@@ -35,6 +38,10 @@ module Stockboy
           filter.call(empty_values, double(species:"rhinoceros")).should be_false
         end
       end
+    end
+
+    it "warns of a missing subclass implementation" do
+      expect { CoffeeFilter.new.call(double, double) }.to raise_error NoMethodError
     end
 
   end
