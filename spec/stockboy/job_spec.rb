@@ -256,6 +256,16 @@ module Stockboy
 
     end
 
+    describe "#triggers=" do
+
+      it "replaces existing triggers" do
+        job.triggers = {breakfast: double}
+        job.triggers = {lunch: double}
+        job.triggers.keys.should == [:lunch]
+      end
+
+    end
+
     describe "#method_missing" do
 
       subject(:job) { Job.new(triggers: {cleanup: proc{|_|}})}
