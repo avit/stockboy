@@ -1,10 +1,22 @@
-if $DEBUG && !ENV['CI']
-  require 'pry'
-  require 'pry-debugger'
+if ENV['CI']
+  require "codeclimate-test-reporter"
+  CodeClimate::TestReporter.start
 end
 
-require "codeclimate-test-reporter"
-CodeClimate::TestReporter.start
+if ENV['COVERAGE']
+  require 'simplecov'
+  SimpleCov.start do
+    add_filter "/spec/"
+    add_group "Providers", "/providers/"
+    add_group "Readers", "/readers/"
+    add_group "Translations", "/translations/"
+  end
+end
+
+if ENV['DEBUG']
+  require 'pry'
+end
+
 
 require 'ostruct'
 require 'savon'
