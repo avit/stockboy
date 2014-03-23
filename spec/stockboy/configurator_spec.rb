@@ -42,6 +42,15 @@ module Stockboy
       end
     end
 
+    describe "#repeat" do
+      it "registers an enumerator block" do
+        expect { subject.repeat }.to raise_error ArgumentError
+        subject.repeat do |output, provider|
+          output << provider
+        end
+      end
+    end
+
     describe "#reader" do
       before do
         Readers.register(:csv, reader_class)
@@ -160,18 +169,29 @@ module Stockboy
       before do
         Providers.register :test_prov, provider_class
         Readers.register :test_read, reader_class
-      end
-
-      it "returns a Job instance" do
         subject.provider :test_prov
         subject.reader :test_read
         subject.attributes &proc{}
+      end
 
+      it "returns a Job instance" do
         job = subject.to_job
         job.should be_a(Job)
         job.provider.should be_a(provider_class)
         job.reader.should be_a(reader_class)
         job.attributes.should be_a(AttributeMap)
+      end
+
+      context "with a repeat block" do
+        before do
+          subject.repeat do |i, o| end
+        end
+
+        it "adds a repeater to the provider" do
+          job = subject.to_job
+          job.provider.should be_a ProviderRepeater
+          job.provider.base_provider.should be_a provider_class
+        end
       end
     end
 

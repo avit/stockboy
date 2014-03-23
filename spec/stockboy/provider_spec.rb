@@ -50,5 +50,26 @@ module Stockboy
       end
     end
 
+    describe "#reload" do
+      subject(:provider) { ProviderSubclass.new(foo: true) }
+
+      it "clears and reloads the data" do
+        data = provider.data
+        expect(provider).to receive(:fetch_data).once.and_call_original
+        provider.reload.should == data
+      end
+    end
+
+    describe "#inspect" do
+      subject(:provider) { ProviderSubclass.new(foo: true) }
+      subject { provider.inspect }
+
+      it "is not extraordinarily long" do
+        should start_with "#<ProviderSubclass"
+        should include "data_size="
+        should include "errors="
+        should_not include "@data"
+      end
+    end
   end
 end
