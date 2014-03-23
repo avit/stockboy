@@ -112,6 +112,25 @@ module Stockboy
       end
     end
 
+    describe "#attributes=" do
+
+      before do
+        job.attributes = AttributeMap.new do first_name end
+        job.all_records << double
+      end
+
+      it "replaces the attribute map" do
+        job.attributes = AttributeMap.new do last_name end
+        job.attributes.map(&:to).should == [:last_name]
+      end
+
+      it "resets the job" do
+        job.attributes = AttributeMap.new do last_name end
+        job.all_records.should be_empty
+      end
+
+    end
+
     describe "#process" do
       let(:attribute_map) { AttributeMap.new { name } }
 

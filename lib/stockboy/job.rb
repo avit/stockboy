@@ -83,7 +83,7 @@ module Stockboy
     def initialize(params={}, &block)
       @provider   = params[:provider]
       @reader     = params[:reader]
-      @attributes = params[:attributes]
+      @attributes = params[:attributes] || AttributeMap.new
       @filters    = FilterChain.new params[:filters]
       @triggers   = Hash.new { |h,k| h[k] = [] }
       @triggers.replace params[:triggers] if params[:triggers]
