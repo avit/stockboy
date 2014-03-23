@@ -188,8 +188,8 @@ module Stockboy
     # @return [String]
     #
     def inspect
-      prov = "provider=#{(Stockboy::Providers.all.key(provider.class) || provider.class.to_s).inspect}"
-      read = "reader=#{(Stockboy::Readers.all.key(reader.class) || reader.class.to_s).inspect}"
+      prov = "provider=#{(Stockboy::Providers.all.key(provider.class) || provider.class)}"
+      read = "reader=#{(Stockboy::Readers.all.key(reader.class) || reader.class)}"
       attr = "attributes=#{attributes.map(&:to)}"
       filt = "filters=#{filters.keys}"
       cnts = "record_counts=#{record_counts}"

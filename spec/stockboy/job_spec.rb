@@ -271,6 +271,20 @@ module Stockboy
 
     end
 
+    describe "#inspect" do
+      let(:job) { Job.new(provider: provider_double, reader: reader_double) }
+      subject { job.inspect }
+
+      it "is not extraordinarily long" do
+        should start_with "#<Stockboy::Job"
+        should include "provider=TestProvider"
+        should include "reader=TestReader"
+        should include "attributes=[]"
+        should include "filters=[]"
+        should include "record_counts={}"
+      end
+    end
+
     def provider_double(opts={})
       TestProvider.new(opts)
     end
