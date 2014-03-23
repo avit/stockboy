@@ -42,7 +42,7 @@ module Stockboy
 
     describe "#parse" do
 
-      let(:xml_file)    { RSpec.configuration.fixture_path.join "xml/body.xml" }
+      let(:xml_file)    { fixture_path "xml/body.xml" }
       let(:xml_string)  { File.read(xml_file) }
       let(:elements)    { ['MultiNamespacedEntryResponse', 'history', 'case'] }
       let(:output_keys) { ['logTime', 'logType', 'logText'] }

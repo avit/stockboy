@@ -33,11 +33,8 @@ module Stockboy
     end
 
     describe "#matching_file" do
-      subject(:provider) do
-        Providers::File.new do |f|
-          f.file_dir = RSpec.configuration.fixture_path.join("files")
-        end
-      end
+      let(:provider) { Providers::File.new(file_dir: fixture_path("files")) }
+      subject(:matching_file) { provider.matching_file }
 
       it "returns the full path to the matching file name" do
         provider.file_name = "test_data-*"
@@ -46,11 +43,7 @@ module Stockboy
     end
 
     describe "#data" do
-      subject(:provider) do
-        Providers::File.new do |f|
-          f.file_dir = RSpec.configuration.fixture_path.join("files")
-        end
-      end
+      subject(:provider) { Providers::File.new(file_dir: fixture_path("files")) }
 
       it "fails with an error if the file doesn't exist" do
         provider.file_name = "missing-file.csv"

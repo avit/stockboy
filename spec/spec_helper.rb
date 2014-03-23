@@ -38,6 +38,13 @@ RSpec.configure do |config|
     end
   end
 
+  module Helpers
+    def fixture_path(*args)
+      RSpec.configuration.fixture_path.join(*args)
+    end
+  end
+
+  config.include Helpers
 end
 
 # VCR.configure do |c|

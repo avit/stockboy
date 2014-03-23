@@ -69,7 +69,7 @@ module Stockboy
 
     describe "#data" do
       let(:xml_success_fixture) do
-        File.read(RSpec.configuration.fixture_path.join "soap/get_list/success.xml")
+        File.read(fixture_path "soap/get_list/success.xml")
       end
 
       let(:provider) do

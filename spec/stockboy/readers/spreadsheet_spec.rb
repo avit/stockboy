@@ -43,7 +43,7 @@ module Stockboy
     end
 
     describe "#parse" do
-      let(:content) { File.read(RSpec.configuration.fixture_path.join(fixture_file)) }
+      let(:content) { File.read(fixture_path fixture_file) }
 
       context "with an XLS file" do
         let(:fixture_file) { 'spreadsheets/test_data.xls' }

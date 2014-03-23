@@ -23,7 +23,7 @@ end
 
 module Stockboy
   describe Job do
-    let(:jobs_path) { RSpec.configuration.fixture_path.join('jobs') }
+    let(:jobs_path) { fixture_path "jobs" }
     let(:provider)  { provider_double }
     let(:reader)    { reader_double }
 
