@@ -93,19 +93,10 @@ module Stockboy
         provider.username = "username"
         provider.password = "password"
 
-        allow(HTTPI).to receive(:request) { response }
+        expect(HTTPI).to receive(:request) { response }
         expect_any_instance_of(HTTPI::Auth::Config).to receive(:basic).with("username", "password")
 
         provider.data.should == '{"success":true}'
-      end
-    end
-
-    describe "#client" do
-      it "yields a generic HTTP interface" do
-        provider.client do |http|
-          http.should respond_to :get
-          http.should respond_to :post
-        end
       end
     end
 

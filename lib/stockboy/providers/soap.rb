@@ -147,8 +147,8 @@ module Stockboy::Providers
     #
     def client
       @client ||= Savon.client(client_options)
-      return @client unless block_given?
-      yield @client
+      yield @client if block_given?
+      @client
     end
 
     private
@@ -159,6 +159,7 @@ module Stockboy::Providers
       elsif endpoint
         {endpoint: endpoint}
       end
+      opts[:logger] = logger
       opts[:convert_response_tags_to] = ->(tag) { string_pool(tag) }
       opts[:namespace] = namespace if namespace
       opts[:namespaces] = namespaces if namespaces

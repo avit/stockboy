@@ -125,8 +125,12 @@ module Stockboy::Providers
     end
 
     def client
-      return HTTPI unless block_given?
-      yield HTTPI
+      orig_logger, HTTPI.logger = HTTPI.logger, logger
+      req = HTTPI::Request.new(uri)
+      req.auth.basic(username, password) if username && password
+      yield req if block_given?
+      HTTPI.logger = orig_logger
+      req
     end
 
     private
@@ -138,14 +142,13 @@ module Stockboy::Providers
     end
 
     def fetch_data
-      request = HTTPI::Request.new
-      request.url = uri
-      request.auth.basic(username, password) if username && password
-      response = HTTPI.send(method, request)
-      if response.error?
-        errors << "HTTP response error: #{response.code}"
-      else
-        @data = response.body
+      client do |request|
+        response = HTTPI.request(method, request)
+        if response.error?
+          errors << "HTTP response error: #{response.code}"
+        else
+          @data = response.body
+        end
       end
     end
 

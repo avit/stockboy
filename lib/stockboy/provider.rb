@@ -33,14 +33,6 @@ module Stockboy
   class Provider
     extend Stockboy::DSL
 
-    # Default logger if none is provided to the instance
-    #
-    # @return [Logger]
-    #
-    def self.logger
-      Logger.new(STDERR)
-    end
-
     # @return [Logger]
     #
     attr_accessor :logger

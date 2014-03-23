@@ -17,6 +17,7 @@ class Railtie < Rails::Railtie
 
   initializer "stockboy.configure_rails_initialization" do
     Stockboy.configure do |config|
+      config.logger = Rails.logger
       config.template_load_paths = [Rails.root.join('config/stockboy_jobs')]
     end
 

@@ -148,9 +148,9 @@ module Stockboy::Providers
       client do |ftp|
         validate_file(matching_file)
         if valid?
-          logger.info "FTP getting file #{host} #{file_dir}/#{matching_file}"
+          logger.debug "FTP getting file #{inspect_matching_file}"
           @data = ftp.get(matching_file, nil)
-          logger.info "FTP got file #{host} #{file_dir}/#{matching_file} (#{@data_size} bytes)"
+          logger.debug "FTP got file #{inspect_matching_file} (#{data_size} bytes)"
         end
       end
       !@data.nil?
@@ -201,6 +201,10 @@ module Stockboy::Providers
       if file_larger and @data_size < file_larger
         errors << "File size smaller than #{file_larger}"
       end
+    end
+
+    def inspect_matching_file
+      "#{host} #{file_dir}/#{matching_file}"
     end
   end
 end
