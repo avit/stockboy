@@ -24,6 +24,8 @@ module Stockboy
   class Reader
     extend Stockboy::DSL
 
+    attr_reader :encoding
+
     # Initialize a new reader
     #
     # @param [Hash] opts
