@@ -28,7 +28,7 @@ module Stockboy
 
       it "yields each data set" do
         calls = []
-        repeater.data { |data| calls << data[-1] }
+        repeater.data { |data| calls << data.split(",").last }
         calls.should == ["1", "2", "3"]
       end
 

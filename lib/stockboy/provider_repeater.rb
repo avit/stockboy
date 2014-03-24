@@ -36,11 +36,10 @@ module Stockboy
             raise ArgumentError, "expected Provider, got #{provider.class}"
           end
         rescue StopIteration
-          return $!.result
+          return provider
         end
-        y = yield provider
+        yield provider
         provider.clear
-        enum.feed y
       end
     end
 
