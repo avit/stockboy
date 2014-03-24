@@ -99,6 +99,7 @@ module Stockboy::Readers
       Tempfile.open(tmp_name, Stockboy.configuration.tmp_dir) do |file|
         file.binmode
         file.write content
+        file.fsync
         table = Roo::Spreadsheet.open(file.path, @roo_options)
         table.default_sheet = sheet_number(table, @sheet)
         table.header_line = @header_line if @header_line
