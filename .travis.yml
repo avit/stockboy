@@ -5,15 +5,16 @@ env:
 rvm:
   - "1.9.3"
   - "2.1.1"
-  - "jruby-19mode"
   - "rbx"
+  - "jruby-head"
 before_install:
   - gem install bundler
 script: bundle exec rspec spec
 matrix:
+  fast_finish: true
   allow_failures:
-    - rvm:
-      - "jruby-19mode"
+    - rvm: "rbx"
+    - rvm: "jruby-head"
 addons:
   code_climate:
     repo_token: 7591072ad04d7a8ee788ce9259baa284724740cab1ae9ca94c162a583acd8f10
