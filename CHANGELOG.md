@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.1 / 2014-03-25
+
+* [ENHANCEMENT] Job initializes with an empty attribute map to allow adding
+* [ENHANCEMENT] Default to rails logger when loaded
+* [ENHANCEMENT] Use same configured logger for all provider clients
+* [BUGFIX]      Compatibility with Rubinius
+
 ## 0.7.0 / 2014-03-21
 
 * [FEATURE]     Add individual attribute mappings
