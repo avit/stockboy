@@ -3,6 +3,7 @@ require 'stockboy/providers'
 require 'stockboy/readers'
 require 'stockboy/filters'
 require 'stockboy/attribute_map'
+require 'stockboy/provider_repeater'
 
 module Stockboy
 
