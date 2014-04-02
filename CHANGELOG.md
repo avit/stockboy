@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.2 / 2014-04-02
+
+* [BUGFIX]      Require missing repeater class in DSL
+
 ## 0.7.1 / 2014-03-25
 
 * [ENHANCEMENT] Job initializes with an empty attribute map to allow adding
