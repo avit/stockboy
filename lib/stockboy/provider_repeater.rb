@@ -6,6 +6,8 @@ module Stockboy
     YIELD_ONCE = proc { |output, provider| output << provider }
 
     attr_reader :base_provider
+    attr_reader :data_size
+    attr_reader :data_time
 
     def initialize(provider, &yielder)
       @orig_provider = provider
@@ -17,12 +19,13 @@ module Stockboy
       # return base_provider.data unless block_given?
       return nil unless block_given?
       each do |nth_provider|
-        yield nth_provider.data
+        yield fetch_iteration_data(nth_provider)
       end
     end
 
     def clear
       @base_provider = @orig_provider.dup
+      @data_time, @data_size = nil, nil
       super
     end
 
@@ -57,6 +60,14 @@ module Stockboy
 
     def method_missing(method, *args, &block)
       base_provider.public_send(method, *args, &block)
+    end
+
+    def fetch_iteration_data(provider)
+      if provider.data
+        @data_size = [@data_size, provider.data_size].compact.reduce(&:+)
+        @data_time = [@data_time, provider.data_time].compact.max
+      end
+      provider.data
     end
 
   end

@@ -7,6 +7,8 @@ class ProviderSubclass < Stockboy::Provider
   end
   def fetch_data
     @data = "TEST,DATA"
+    @data_time = Time.now
+    @data_size = @data.size
   end
 end
 
@@ -69,6 +71,26 @@ module Stockboy
         should include "data_size="
         should include "errors="
         should_not include "@data"
+      end
+    end
+
+    describe "#data_size" do
+      subject(:provider) { ProviderSubclass.new }
+      its(:data_size) { should be_nil }
+
+      context "after fetching" do
+        before { provider.data }
+        its(:data_size) { should be > 0 }
+      end
+    end
+
+    describe "#data_time" do
+      subject(:provider) { ProviderSubclass.new }
+      its(:data_time) { should be_nil }
+
+      context "after iterating" do
+        before { provider.data }
+        its(:data_time) { should be_a Time }
       end
     end
   end

@@ -3,12 +3,10 @@ require 'stockboy/provider_repeater'
 
 class PaginatedProviderSubclass < Stockboy::Provider
   attr_accessor :page
-  def validate
-    true
-  end
-  def fetch_data
-    @data = "TEST,DATA,#{page}"
-  end
+  def validate; true end
+  def fetch_data; @data = "TEST,DATA,#{page}" end
+  def data_size; @data && @data.size end
+  def data_time; @data && Time.now end
 end
 
 module Stockboy
@@ -73,6 +71,26 @@ module Stockboy
           expect { repeater.data { |data| } }.to raise_error(
             "use output << provider instead of yield" )
         end
+      end
+    end
+
+    describe "#data_size" do
+      subject(:repeater) { ProviderRepeater.new(provider) }
+      its(:data_size) { should be_nil }
+
+      context "after iterating" do
+        before { repeater.data do |data| end }
+        its(:data_size) { should be > 0 }
+      end
+    end
+
+    describe "#data_time" do
+      subject(:repeater) { ProviderRepeater.new(provider) }
+      its(:data_time) { should be_nil }
+
+      context "after iterating" do
+        before { repeater.data do |data| end }
+        its(:data_time) { should be_a Time }
       end
     end
 

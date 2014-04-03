@@ -10,6 +10,8 @@ class TestProvider
   def clear
     @data = nil
   end
+  def data_size; @data && @data.size end
+  def data_time; @data && Time.now end
 end
 
 class TestReader
