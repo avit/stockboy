@@ -20,8 +20,7 @@ module Stockboy
     end
 
     def data
-      # return base_provider.data unless block_given?
-      return nil unless block_given?
+      raise ArgumentError, "expects a block for yielding each data set" unless block_given?
       each do |nth_provider|
         yield fetch_iteration_data(nth_provider)
       end
