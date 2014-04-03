@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.0 / 2014-04-02
+
+* [ENHANCEMENT] Expose `data_time` and `data_size` in repeater
+* [ENHANCEMENT] Expose `data?` method to check for loaded data
+
 ## 0.7.2 / 2014-04-02
 
 * [BUGFIX]      Require missing repeater class in DSL
