@@ -93,5 +93,16 @@ module Stockboy
         its(:data_time) { should be_a Time }
       end
     end
+
+    describe "#data?" do
+      subject(:provider) { ProviderSubclass.new }
+      its(:data?) { should be_nil }
+
+      context "after iterating" do
+        before { provider.data }
+        its(:data?) { should be true }
+      end
+    end
+
   end
 end

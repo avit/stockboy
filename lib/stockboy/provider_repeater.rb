@@ -15,6 +15,10 @@ module Stockboy
       @yielder = yielder || YIELD_ONCE
     end
 
+    def data?
+      @data_size && @data_size > 0
+    end
+
     def data
       # return base_provider.data unless block_given?
       return nil unless block_given?

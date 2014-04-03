@@ -81,6 +81,10 @@ module Stockboy
       @data
     end
 
+    def data?
+      @data_size && @data_size > 0
+    end
+
     # Reset received data
     #
     # @return [Boolean] Always true

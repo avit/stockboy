@@ -94,5 +94,15 @@ module Stockboy
       end
     end
 
+    describe "#data?" do
+      subject(:repeater) { ProviderRepeater.new(provider) }
+      its(:data?) { should be_nil }
+
+      context "after iterating" do
+        before { repeater.data do |data| end }
+        its(:data?) { should be true }
+      end
+    end
+
   end
 end
