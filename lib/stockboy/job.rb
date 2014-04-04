@@ -242,12 +242,17 @@ module Stockboy
       end
     end
 
+    # Allows for a data method that either yields or returns giving preference
+    # to the yield. It will ignore the data return value if it has yielded.
+    #
     def with_provider_data
       return to_enum(__method__) unless block_given?
       yielded = nil
       provider.data do |data|
-        yielded = true
-        yield data
+        if data
+          yielded = true
+          yield data
+        end
       end
       yield provider.data unless yielded
     end
