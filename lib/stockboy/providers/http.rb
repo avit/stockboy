@@ -126,7 +126,7 @@ module Stockboy::Providers
 
     def client
       orig_logger, HTTPI.logger = HTTPI.logger, logger
-      req = HTTPI::Request.new(uri)
+      req = HTTPI::Request.new.tap { |c| c.url = uri }
       req.auth.basic(username, password) if username && password
       yield req if block_given?
       HTTPI.logger = orig_logger
