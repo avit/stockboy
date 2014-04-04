@@ -72,6 +72,20 @@ module Stockboy
       end
     end
 
+    describe "#client" do
+      subject(:client) { provider.client }
+
+      before { provider.uri = "http://example.com/" }
+
+      it "should configure the base url" do
+        client.url.host.should == "example.com"
+      end
+
+      it "returns the value of the passed block" do
+        provider.client { |http| "DATA" }.should == "DATA"
+      end
+    end
+
     describe "#data" do
       let(:response)   { HTTPI::Response.new(200, {}, '{"success":true}') }
 

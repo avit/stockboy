@@ -61,7 +61,7 @@ module Stockboy::Providers
     dsl_attr :password
 
     def uri
-      return nil if @uri.nil? || @uri.empty?
+      return nil if @uri.nil? || @uri.to_s.empty?
       URI(@uri).tap { |u| u.query = URI.encode_www_form(@query) if @query }
     end
 
@@ -136,8 +136,8 @@ module Stockboy::Providers
     private
 
     def validate
-      errors << "uri must be specified" if uri.blank?
-      errors << "method (:get, :post) must be specified" if method.blank?
+      errors << "uri must be specified" unless uri
+      errors << "method (:get, :post) must be specified" unless method
       errors.empty?
     end
 
