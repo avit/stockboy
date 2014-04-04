@@ -116,6 +116,14 @@ module Stockboy
       provider.errors.empty?
     end
 
+    def data
+      provider.data
+    end
+
+    def data?(reduction=:all, &comparison)
+      provider.data?(reduction, &comparison)
+    end
+
     # Count of all processed records
     #
     # @!attribute [r] total_records
