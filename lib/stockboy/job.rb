@@ -120,7 +120,7 @@ module Stockboy
       provider.data
     end
 
-    def data?(reduction=:all, &comparison)
+    def data?(reduction=:all?, &comparison)
       provider.data?(reduction, &comparison)
     end
 
