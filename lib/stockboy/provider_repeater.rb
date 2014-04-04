@@ -5,10 +5,12 @@ module Stockboy
 
     YIELD_ONCE = proc { |output, provider| output << provider }
 
-    ProviderStats = Struct.new(:data_time, :data_size, :data?) do
+    ProviderStats = Struct.new(:data_time, :data_size, :data_) do
       def self.from(provider)
         new(provider.data_time, provider.data_size, provider.data?)
       end
+
+      alias :data? :data_ # 1.9 compatibility
     end
 
     attr_reader :base_provider
