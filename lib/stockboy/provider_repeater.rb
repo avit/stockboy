@@ -5,9 +5,9 @@ module Stockboy
 
     YIELD_ONCE = proc { |output, provider| output << provider }
 
-    ProviderStats = Struct.new(:data_time, :data_size) do
+    ProviderStats = Struct.new(:data_time, :data_size, :data?) do
       def self.from(provider)
-        new(provider.data_time, provider.data_size)
+        new(provider.data_time, provider.data_size, provider.data?)
       end
     end
 
@@ -24,10 +24,9 @@ module Stockboy
     # @param [:all?,:any?,:one?] reduction
     #   Specify if all iterations must return data to be valid, or just any
     #
-    def data?(reduction = :all?, &comparison)
+    def data?(reduction = :all?)
       return nil if data_iterations == 0
-      comparison ||= Provider::HAS_DATA
-      @iterations.send reduction, &comparison
+      @iterations.send(reduction, &:data?)
     end
 
     # Get the total data size returned after processing iterations

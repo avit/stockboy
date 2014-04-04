@@ -116,12 +116,12 @@ module Stockboy
       provider.errors.empty?
     end
 
-    def data
-      provider.data
+    def data(&block)
+      provider.data(&block)
     end
 
-    def data?(reduction=:all?, &comparison)
-      provider.data?(reduction, &comparison)
+    def data?(reduction=:all?)
+      provider.data?(reduction)
     end
 
     # Count of all processed records

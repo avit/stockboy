@@ -12,6 +12,7 @@ class TestProvider
   end
   def data_size; @data && @data.size end
   def data_time; @data && Time.now end
+  def data?; true end
 end
 
 class TestReader
