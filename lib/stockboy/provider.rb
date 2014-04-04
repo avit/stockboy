@@ -33,6 +33,8 @@ module Stockboy
   class Provider
     extend Stockboy::DSL
 
+    HAS_DATA   = proc { |source| source.data_size && source.data_size > 0 }
+
     # @return [Logger]
     #
     attr_accessor :logger
@@ -81,8 +83,11 @@ module Stockboy
       @data
     end
 
-    def data?
-      @data_size && @data_size > 0
+    # Determine if there is returned data
+    #
+    def data?(_=nil, &comparison)
+      return nil unless @data
+      (comparison || HAS_DATA).yield(self)
     end
 
     # Reset received data

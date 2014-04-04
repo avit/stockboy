@@ -79,7 +79,7 @@ module Stockboy
       its(:data_size) { should be_nil }
 
       context "after fetching" do
-        before { provider.data }
+        before { provider.fetch_data }
         its(:data_size) { should be > 0 }
       end
     end
@@ -88,8 +88,8 @@ module Stockboy
       subject(:provider) { ProviderSubclass.new }
       its(:data_time) { should be_nil }
 
-      context "after iterating" do
-        before { provider.data }
+      context "after fetching" do
+        before { provider.fetch_data }
         its(:data_time) { should be_a Time }
       end
     end
@@ -98,8 +98,8 @@ module Stockboy
       subject(:provider) { ProviderSubclass.new }
       its(:data?) { should be_nil }
 
-      context "after iterating" do
-        before { provider.data }
+      context "after fetching" do
+        before { provider.fetch_data }
         its(:data?) { should be true }
       end
     end

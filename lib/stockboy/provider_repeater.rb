@@ -5,22 +5,56 @@ module Stockboy
 
     YIELD_ONCE = proc { |output, provider| output << provider }
 
+    ProviderStats = Struct.new(:data_time, :data_size) do
+      def self.from(provider)
+        new(provider.data_time, provider.data_size)
+      end
+    end
+
     attr_reader :base_provider
-    attr_reader :data_size
-    attr_reader :data_time
 
     def initialize(provider, &yielder)
       @orig_provider = provider
       @base_provider = provider.dup
+      @iterations = []
       @yielder = yielder || YIELD_ONCE
     end
 
-    def data?
-      @data_size && @data_size > 0
+    # Determine if there was any returned data after processing iterations
+    # @param [:all?,:any?,:one?] reduction
+    #   Specify if all iterations must return data to be valid, or just any
+    #
+    def data?(reduction = :all?, &comparison)
+      return nil if data_iterations == 0
+      comparison ||= Provider::HAS_DATA
+      @iterations.send reduction, &comparison
+    end
+
+    # Get the total data size returned after processing iterations
+    #
+    def data_size
+      @iterations.reduce(nil) { |sum, source|
+        source.data_size ? source.data_size + sum.to_i : sum
+      }
+    end
+
+    # Get the last data time returned after processing iterations
+    #
+    def data_time
+      @iterations.reduce(nil) { |max, source|
+        source.data_time && (max.nil? || source.data_time > max) ? source.data_time : max
+      }
+    end
+
+    def data_iterations
+      @iterations.size
     end
 
     def data
-      raise ArgumentError, "expects a block for yielding each data set" unless block_given?
+      unless block_given?
+        raise ArgumentError, "expect a block for yielding data iterations"
+      end
+
       each do |nth_provider|
         yield fetch_iteration_data(nth_provider)
       end
@@ -28,7 +62,7 @@ module Stockboy
 
     def clear
       @base_provider = @orig_provider.dup
-      @data_time, @data_size = nil, nil
+      @iterations.clear
       super
     end
 
@@ -67,8 +101,7 @@ module Stockboy
 
     def fetch_iteration_data(provider)
       if provider.data
-        @data_size = [@data_size, provider.data_size].compact.reduce(&:+)
-        @data_time = [@data_time, provider.data_time].compact.max
+        @iterations << ProviderStats.from(provider)
       end
       provider.data
     end
