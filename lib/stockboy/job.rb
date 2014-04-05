@@ -217,6 +217,7 @@ module Stockboy
     def load_records
       reset
       load_all_records
+      return unless provider.data?
       partition_all_records
       @processed = true
     end
@@ -254,7 +255,8 @@ module Stockboy
           yield data
         end
       end
-      yield provider.data unless yielded
+      return if yielded
+      yield(provider.data) if provider.data
     end
 
     def record_partition(record)
