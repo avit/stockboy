@@ -116,6 +116,7 @@ module Stockboy::Providers
     rescue Net::FTPError => e
       errors << e.message
       logger.warn e.message
+      nil
     end
 
     def matching_file
