@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.1 / 2014-04-24
+
+* [BUGFIX]      Support `data_size` for non-string providers
+* [BUGFIX]      Checks for nil data and nil configuration options
+
 ## 0.8.0 / 2014-04-02
 
 * [ENHANCEMENT] Expose `data_time` and `data_size` in repeater
