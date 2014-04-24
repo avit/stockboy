@@ -5,10 +5,10 @@
 [![Build Status](https://travis-ci.org/avit/stockboy.png)][travis]
 [![Code Climate](https://codeclimate.com/github/avit/stockboy.png)][climate]
 
-Stockboy helps you receive and unpack data onto your shelves. You might
-consider using it to synchronize data exported from external sources, or
-migrating your own data from legacy systems. (TL;DR, Stockboy is a Ruby
-[DSL][dsl] for doing [ETL][etl].)
+Stockboy helps you receive and unpack data onto your shelves. It provides a DSL
+for configuring data processing pipelines. You might consider using it to
+synchronize data exported from external sources, as part of an [ETL][etl]
+workflow, or migrating your own data from legacy systems. 
 
 Full documentation available at [rdoc.info/gems/stockboy][rdoc]
 
