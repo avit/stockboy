@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.0 / 2014-05-19
+
+* [FEATURE]     Add JSON reader 
+ 
 ## 0.8.1 / 2014-04-24
 
 * [BUGFIX]      Support `data_size` for non-string providers
