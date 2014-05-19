@@ -1,5 +1,5 @@
 require 'stockboy/translator'
-require 'stockboy/translations/us_date'
+require 'stockboy/translations/date'
 
 module Stockboy::Translations
 
@@ -26,14 +26,13 @@ module Stockboy::Translations
   #   record.check_in = "1/2/12"
   #   date.translate(record, :check_in) # => #<Date 2012-02-01>
   #
-  class UKDate < Stockboy::Translations::USDate
+  class UKDate < Stockboy::Translations::Date
+    include Stockboy::Translations::Date::PatternMatching
 
-    private
-
-    def date_format(value)
-      x = separator(value)
-      value =~ MATCH_YYYY ? "%d#{x}%m#{x}%Y" : "%d#{x}%m#{x}%y"
-    end
+    PATTERNS = {
+      yyyy: {HYPHEN => '%d-%m-%Y', SLASH => '%d/%m/%Y'},
+      yy:   {HYPHEN => '%d-%m-%y', SLASH => '%d/%m/%y'}
+    }
 
   end
 end

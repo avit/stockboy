@@ -27,19 +27,12 @@ module Stockboy::Translations
   #   date.translate(record, :check_in) # => #<Date 2012-02-01>
   #
   class USDate < Stockboy::Translations::Date
+    include Stockboy::Translations::Date::PatternMatching
 
-    private
-
-    # @return [Date]
-    #
-    def parse_date(value)
-      ::Date.strptime(value, date_format(value))
-    end
-
-    def date_format(value)
-      x = separator(value)
-      value =~ MATCH_YYYY ?  "%m#{x}%d#{x}%Y" : "%m#{x}%d#{x}%y"
-    end
+    PATTERNS = {
+      yyyy: {HYPHEN => '%m-%d-%Y', SLASH => '%m/%d/%Y'},
+      yy:   {HYPHEN => '%m-%d-%y', SLASH => '%m/%d/%y'}
+    }
 
   end
 end

@@ -46,12 +46,36 @@ module Stockboy::Translations
       ::Date.parse(value)
     end
 
-    def separator(value)
-      value.include?(?/) ? ?/ : ?-
-    end
+    module PatternMatching
+      private
 
-    # Match date strings with 2-digit year
-    MATCH_YYYY = %r"\A\d{1,2}(/|-)\d{1,2}\1\d{4}\z"
+      # Match date strings with 4-digit year
+      MATCH_YYYY = %r"\A\d{1,2}(/|-)\d{1,2}\1\d{4}\z"
+      SLASH = '/'.freeze
+      HYPHEN = '-'.freeze
+
+      # @return [Date]
+      #
+      def parse_date(value)
+        ::Date.strptime(value, date_format(value))
+      end
+
+      def date_format(value)
+        patterns[yy_index(value)][separator(value)].freeze
+      end
+
+      def yy_index(value)
+        value =~ MATCH_YYYY ? :yyyy : :yy
+      end
+
+      def separator(value)
+        value.include?(SLASH) ? SLASH : HYPHEN
+      end
+
+      def patterns
+        self.class::PATTERNS
+      end
+    end
 
   end
 end
