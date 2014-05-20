@@ -80,7 +80,7 @@ module Stockboy
     #   input.email       # => "ME@EXAMPLE.COM  "
     #
     def input
-      SourceRecord.new(self.raw_hash, @table)
+      SourceRecord.new(raw_hash, @table)
     end
 
     # Data structure representing the record's mapped & translated output values
@@ -102,14 +102,14 @@ module Stockboy
         fields = raw_hash
         tr_input = col.translators.reduce(input) do |value, tr|
           begin
-            fields[col.to] = tr[value]
+            fields[key] = tr[value]
             SourceRecord.new(fields, @table)
           rescue
-            fields[col.to] = nil
+            fields[key] = nil
             break SourceRecord.new(fields, @table)
           end
         end
-        @tr_table[col.to] = tr_input.public_send(col.to)
+        @tr_table[key] = tr_input.public_send(key)
       end
     end
 
