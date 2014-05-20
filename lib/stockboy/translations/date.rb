@@ -49,10 +49,20 @@ module Stockboy::Translations
     module PatternMatching
       private
 
+      module ClassMethods
+        def match(*patterns)
+          @patterns = patterns
+        end
+        attr_reader :patterns
+      end
+
+      def self.included(base)
+        base.extend ClassMethods
+      end
+
       # Match date strings with 4-digit year
       MATCH_YYYY = %r"\A\d{1,2}(/|-)\d{1,2}\1\d{4}\z"
       SLASH = '/'.freeze
-      HYPHEN = '-'.freeze
 
       # @return [Date]
       #
@@ -61,19 +71,15 @@ module Stockboy::Translations
       end
 
       def date_format(value)
-        patterns[yy_index(value)][separator(value)].freeze
+        self.class.patterns[yy_index(value) + sep_index(value)].freeze
       end
 
       def yy_index(value)
-        value =~ MATCH_YYYY ? :yyyy : :yy
+        value =~ MATCH_YYYY ? 0 : 2
       end
 
-      def separator(value)
-        value.include?(SLASH) ? SLASH : HYPHEN
-      end
-
-      def patterns
-        self.class::PATTERNS
+      def sep_index(value)
+        value.include?(SLASH) ? 1 : 0
       end
     end
 

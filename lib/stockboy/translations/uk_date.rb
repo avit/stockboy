@@ -29,10 +29,7 @@ module Stockboy::Translations
   class UKDate < Stockboy::Translations::Date
     include Stockboy::Translations::Date::PatternMatching
 
-    PATTERNS = {
-      yyyy: {HYPHEN => '%d-%m-%Y', SLASH => '%d/%m/%Y'},
-      yy:   {HYPHEN => '%d-%m-%y', SLASH => '%d/%m/%y'}
-    }
+    match '%d-%m-%Y', '%d/%m/%Y', '%d-%m-%y', '%d/%m/%y'
 
   end
 end

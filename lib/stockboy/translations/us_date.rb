@@ -29,10 +29,7 @@ module Stockboy::Translations
   class USDate < Stockboy::Translations::Date
     include Stockboy::Translations::Date::PatternMatching
 
-    PATTERNS = {
-      yyyy: {HYPHEN => '%m-%d-%Y', SLASH => '%m/%d/%Y'},
-      yy:   {HYPHEN => '%m-%d-%y', SLASH => '%m/%d/%y'}
-    }
+    match '%m-%d-%Y', '%m/%d/%Y', '%m-%d-%y', '%m/%d/%y'
 
   end
 end
