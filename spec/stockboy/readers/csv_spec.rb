@@ -51,6 +51,15 @@ module Stockboy
           [{"city" => "Vancouver", "state" => nil, "country" => "Canada"}]
       end
 
+      it "scrubs invalid encoding characters in Unicode" do
+        reader.headers = %w[depart arrive]
+        reader.encoding = 'UTF-8'
+        garbage = 191.chr.force_encoding('UTF-8')
+        data = "Z#{garbage}rich,Genève"
+        reader.parse(data).should ==
+          [{"depart" => "Z\u{FFFD}rich", "arrive" => "Genève"}]
+      end
+
       it "strips preamble header rows" do
         reader.skip_header_rows = 2
         data = "IGNORE\r\nCOMMENTS\r\nid,name\r\n42,Arthur Dent"

@@ -95,10 +95,12 @@ module Stockboy::Readers
     private
 
     def sanitize(data)
-      data.force_encoding(encoding) if encoding
-      data = data.encode(universal_newline: true)
-                 .delete(0.chr)
-                 .chomp
+      data = data.dup
+      data.force_encoding encoding if encoding
+      data.scrub!
+      data.encode! Encoding::UTF_8, universal_newline: true
+      data.delete! 0.chr
+      data.chomp!
       from = row_start_index(data, skip_header_rows)
       to = row_end_index(data, skip_footer_rows)
       data[from..to]
