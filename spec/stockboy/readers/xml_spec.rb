@@ -15,8 +15,8 @@ module Stockboy
           elements:             ['SomeNested', 'Record']
         )
 
-        reader.options[:strip_namespaces].should be_true
-        reader.options[:advanced_typecasting].should be_true
+        reader.options[:strip_namespaces].should be true
+        reader.options[:advanced_typecasting].should be true
         reader.options[:convert_tags_to].should be_a Proc
         reader.options[:parser].should == :nokogiri
         reader.elements.should == ['some_nested', 'record']
@@ -32,8 +32,8 @@ module Stockboy
           elements ['SomeNested', 'Record']
         end
 
-        reader.options[:strip_namespaces].should be_true
-        reader.options[:advanced_typecasting].should be_true
+        reader.options[:strip_namespaces].should be true
+        reader.options[:advanced_typecasting].should be true
         reader.options[:convert_tags_to].should be_a Proc
         reader.options[:parser].should == :nokogiri
         reader.elements.should == ['some_nested', 'record']

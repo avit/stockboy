@@ -85,12 +85,12 @@ module Stockboy
 
     describe "#sheet", pending: "Hard to test this due to roo. Needs a test case with fixtures" do
       let(:sheets)      { ['Towels', 'Lemons'] }
-      let(:expectation) { mock(:spreadsheet, sheets: sheets).should_receive(:default_sheet=) }
-      let(:spreadsheet) { expectation }
+      let(:be_selected) { receive(:default_sheet=) }
+      let(:spreadsheet) { double(:spreadsheet, sheets: sheets) }
       before { subject.stub!(:with_spreadsheet).and_yield(spreadsheet) }
 
       context "with :first" do
-        let(:spreadsheet) { expectation.with('Towels') }
+        before { expect(spreadsheet).to be_selected.with('Towels') }
 
         it "calls on first sheet by name" do
           subject.sheet = :first
@@ -99,7 +99,7 @@ module Stockboy
       end
 
       context "with a string" do
-        let(:spreadsheet) { expectation.with('Towels') }
+        before { expect(spreadsheet).to be_selected.with('Towels') }
 
         it "passes unchanged" do
           subject.sheet = 'Towels'
@@ -108,7 +108,7 @@ module Stockboy
       end
 
       context "with an integer" do
-        let(:spreadsheet) { expectation.with('Towels') }
+        before { expect(spreadsheet).to be_selected.with('Towels') }
 
         it "gets sheet name" do
           subject.sheet = 1

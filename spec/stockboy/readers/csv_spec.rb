@@ -7,10 +7,10 @@ module Stockboy
     subject(:reader) { Stockboy::Readers::CSV.new }
 
     describe "default options" do
-      its(:row_sep)          { should be_nil }
-      its(:col_sep)          { should be_nil }
-      its(:quote_char)       { should be_nil }
-      its(:headers)          { should be_true }
+      its(:row_sep)          { should be nil }
+      its(:col_sep)          { should be nil }
+      its(:quote_char)       { should be nil }
+      its(:headers)          { should be true }
       its(:skip_header_rows) { should == 0 }
       its(:skip_footer_rows) { should == 0 }
     end

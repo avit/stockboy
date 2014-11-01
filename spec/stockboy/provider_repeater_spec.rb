@@ -76,7 +76,7 @@ module Stockboy
 
     describe "#data_size" do
       subject(:repeater) { ProviderRepeater.new(provider) }
-      its(:data_size) { should be_nil }
+      its(:data_size) { should be nil }
 
       context "after iterating" do
         before { repeater.data do |data| end }
@@ -86,7 +86,7 @@ module Stockboy
 
     describe "#data_time" do
       subject(:repeater) { ProviderRepeater.new(provider) }
-      its(:data_time) { should be_nil }
+      its(:data_time) { should be nil }
 
       context "after iterating" do
         before { repeater.data do |data| end }
@@ -96,7 +96,7 @@ module Stockboy
 
     describe "#data?" do
       subject(:repeater) { ProviderRepeater.new(provider) }
-      its(:data?) { should be_nil }
+      its(:data?) { should be nil }
 
       context "after iterating" do
         before { repeater.data do |data| end }

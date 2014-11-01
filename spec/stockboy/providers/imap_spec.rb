@@ -64,7 +64,7 @@ module Stockboy
 
       context "with no messages found" do
         before { mock_imap_search [] => [] }
-        it { should be_nil }
+        it { should be nil }
       end
 
       context "with a found message" do
@@ -79,7 +79,7 @@ module Stockboy
 
         context "validating incorrect filename string" do
           before { provider.attachment = "wrong_report.csv" }
-          it { should be_nil }
+          it { should be nil }
         end
 
         context "validating correct filename pattern" do
@@ -89,7 +89,7 @@ module Stockboy
 
         context "validating incorrect filename pattern" do
           before { provider.attachment = /^wrong.*\.csv$/ }
-          it { should be_nil }
+          it { should be nil }
         end
 
         context "validating correct smaller size" do
@@ -99,7 +99,7 @@ module Stockboy
 
         context "validating incorrect smaller size" do
           before { provider.smaller_than = 10 }
-          it { should be_nil }
+          it { should be nil }
         end
 
         context "validating correct larger size" do
@@ -109,7 +109,7 @@ module Stockboy
 
         context "validating correct larger size" do
           before { provider.larger_than = 2048 }
-          it { should be_nil }
+          it { should be nil }
         end
 
       end

@@ -49,8 +49,8 @@ module Stockboy
         provider.client { |f| connection = f }
 
         connection.should be_a Net::FTP
-        connection.binary.should be_true
-        connection.passive.should be_true
+        connection.binary.should be true
+        connection.passive.should be true
       end
 
       it "should return yielded result" do
@@ -94,7 +94,7 @@ module Stockboy
 
         provider.file_newer = Time.new(2010,1,1)
 
-        provider.data.should be_nil
+        provider.data.should be nil
       end
     end
 

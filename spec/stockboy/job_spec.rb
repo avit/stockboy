@@ -85,22 +85,22 @@ module Stockboy
       end
 
       it "should read a file from a path" do
-        File.should_receive(:read).with("#{jobs_path}/test_job.rb")
+        expect(File).to receive(:read).with("#{jobs_path}/test_job.rb")
         Job.define("test_job")
       end
 
       it "assigns a registered provider from a symbol" do
-        Stockboy::Providers.should_receive(:find)
-                           .with(:ftp)
-                           .and_return(TestProvider)
+        expect(Stockboy::Providers).to receive(:find)
+                                       .with(:ftp)
+                                       .and_return(TestProvider)
         job = Job.define("test_job")
         job.provider.should be_a TestProvider
       end
 
       it "assigns a registered reader from a symbol" do
-        Stockboy::Readers.should_receive(:find)
-                         .with(:csv)
-                         .and_return(TestReader)
+        expect(Stockboy::Readers).to receive(:find)
+                                     .with(:csv)
+                                     .and_return(TestReader)
         job = Job.define("test_job")
         job.reader.should be_a TestReader
       end
@@ -247,9 +247,9 @@ module Stockboy
       end
 
       it "indicates if the job has been processed" do
-        job.processed?.should be_false
+        job.processed?.should be false
         job.process
-        job.processed?.should be_true
+        job.processed?.should be true
       end
     end
 

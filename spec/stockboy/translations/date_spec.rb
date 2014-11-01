@@ -10,7 +10,7 @@ module Stockboy
     describe "#call" do
       it "returns nil for an empty string" do
         result = subject.call start: ""
-        result.should be_nil
+        result.should be nil
       end
 
       it "returns a date unmodified" do

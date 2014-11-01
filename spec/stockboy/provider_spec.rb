@@ -76,7 +76,7 @@ module Stockboy
 
     describe "#data_size" do
       subject(:provider) { ProviderSubclass.new }
-      its(:data_size) { should be_nil }
+      its(:data_size) { should be nil }
 
       context "after fetching" do
         before { provider.fetch_data }
@@ -86,7 +86,7 @@ module Stockboy
 
     describe "#data_time" do
       subject(:provider) { ProviderSubclass.new }
-      its(:data_time) { should be_nil }
+      its(:data_time) { should be nil }
 
       context "after fetching" do
         before { provider.fetch_data }
@@ -96,7 +96,7 @@ module Stockboy
 
     describe "#data?" do
       subject(:provider) { ProviderSubclass.new }
-      its(:data?) { should be_nil }
+      its(:data?) { should be nil }
 
       context "after fetching" do
         before { provider.fetch_data }

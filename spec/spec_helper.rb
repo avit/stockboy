@@ -17,7 +17,7 @@ if ENV['DEBUG']
   require 'pry'
 end
 
-
+require 'rspec/its'
 require 'ostruct'
 require 'savon'
 require 'savon/mock/spec_helper'

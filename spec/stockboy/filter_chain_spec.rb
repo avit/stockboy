@@ -17,7 +17,7 @@ module Stockboy
       let(:chain) { FilterChain.new(no_angels: filter1, no_daleks: filter2) }
 
       it "calls reset on all members" do
-        filter2.should_receive(:reset)
+        expect(filter2).to receive(:reset)
         chain.reset
       end
 

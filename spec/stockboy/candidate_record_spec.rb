@@ -82,7 +82,7 @@ module Stockboy
     describe "#to_model" do
       it "should instantiate a new model" do
         model = Class.new(OpenStruct)
-        model.should_receive(:new).with({id: '1', name: 'Arthur Dent'})
+        expect(model).to receive(:new).with({id: '1', name: 'Arthur Dent'})
         map = AttributeMap.new { id; name from: 'full_name' }
         subject = CandidateRecord.new(hash_attrs, map)
 
@@ -137,12 +137,12 @@ module Stockboy
 
       it "returns nil when raw field is unmatched" do
         key = subject.partition({beta: proc{ |raw| raw.name =~ /B/ }})
-        key.should be_nil
+        key.should be nil
       end
 
       it "returns nil when translated field is unmatched" do
         key = subject.partition({beta: proc{ |raw,out| out.name =~ /B/ }})
-        key.should be_nil
+        key.should be nil
       end
     end
 

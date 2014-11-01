@@ -18,7 +18,7 @@ module Stockboy
 
     describe ".template_path" do
       it "returns nil when missing" do
-        TemplateFile.find("not_here").should be_nil
+        TemplateFile.find("not_here").should be nil
       end
 
       it "returns a file path when found" do

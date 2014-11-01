@@ -37,7 +37,7 @@ module Stockboy
       end
 
       it "initializes arguments" do
-        provider_class.should_receive(:new).with(password:'foo')
+        expect(provider_class).to receive(:new).with(password:'foo')
         subject.provider :ftp, password: 'foo'
       end
     end
@@ -68,7 +68,7 @@ module Stockboy
 
       it "initializes arguments" do
         reader_stub = double(:reader)
-        reader_class.should_receive(:new).with(col_sep: '|').and_return(reader_stub)
+        expect(reader_class).to receive(:new).with(col_sep: '|').and_return(reader_stub)
         subject.reader reader_class, col_sep: '|'
         subject.config[:reader].should == reader_stub
       end
@@ -77,7 +77,7 @@ module Stockboy
     describe "#attributes" do
       it "initializes a block" do
         attribute_map = double
-        AttributeMap.should_receive(:new).and_return(attribute_map)
+        expect(AttributeMap).to receive(:new).and_return(attribute_map)
         subject.attributes &proc{}
         subject.config[:attributes].should be attribute_map
       end
@@ -85,7 +85,7 @@ module Stockboy
       it "replaces existing attributes" do
         subject.attribute :first_name
         subject.attributes do last_name end
-        subject.config[:attributes][:first_name].should be_nil
+        subject.config[:attributes][:first_name].should be nil
         subject.config[:attributes][:last_name].should be_an Attribute
       end
     end

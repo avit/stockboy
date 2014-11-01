@@ -52,7 +52,7 @@ module Stockboy
 
       context "with an unmatched string" do
         before { provider.file_name = "missing" }
-        it { should be_nil }
+        it { should be nil }
       end
     end
 
@@ -61,8 +61,8 @@ module Stockboy
 
       it "fails with an error if the file doesn't exist" do
         provider.file_name = "missing-file.csv"
-        provider.data.should be_nil
-        provider.valid?.should be_false
+        provider.data.should be nil
+        provider.valid?.should be false
         provider.errors.first.should match /not found/
       end
 
@@ -90,21 +90,21 @@ module Stockboy
         it "skips old files with :since" do
           expect_any_instance_of(::File).to receive(:mtime).and_return last_week
           provider.since = recently
-          provider.data.should be_nil
+          provider.data.should be nil
           provider.errors.first.should == "no new files since #{recently}"
         end
 
         it "skips large files with :file_smaller" do
           expect_any_instance_of(::File).to receive(:size).and_return 1001
           provider.file_smaller = 1000
-          provider.data.should be_nil
+          provider.data.should be nil
           provider.errors.first.should == "file size larger than 1000"
         end
 
         it "skips small files with :file_larger" do
           expect_any_instance_of(::File).to receive(:size).and_return 999
           provider.file_larger = 1000
-          provider.data.should be_nil
+          provider.data.should be nil
           provider.errors.first.should == "file size smaller than 1000"
         end
       end
