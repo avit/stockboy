@@ -94,11 +94,25 @@ module Stockboy::Readers
 
     private
 
+    # Clean incoming data based on set encoding or best information
+    #
+    #  1. Assign the given input encoding setting if available
+    #  2. Scrub invalid characters for the encoding. (Scrubbing does not apply
+    #     for BINARY input, which is undefined.)
+    #  3. Encode to UTF-8 with considerations for undefined input. The main
+    #     issue are control characters that are absent in UTF-8 (and ISO-8859-1)
+    #     but are common printable characters in Windows-1252, so we preserve
+    #     this range as a best guess.
+    #  4. Delete null bytes that are inserted as terminators by some "CSV" output
+    #  5. Delete leading/trailing garbage lines based on settings
+    #
     def sanitize(data)
       data = data.dup
       data.force_encoding encoding if encoding
       data.scrub!
-      data.encode! Encoding::UTF_8, universal_newline: true
+      data.encode! Encoding::UTF_8, universal_newline: true, fallback: proc { |c|
+        c.force_encoding(Encoding::Windows_1252) if (127..159).cover? c.ord
+      }
       data.delete! 0.chr
       data.chomp!
       from = row_start_index(data, skip_header_rows)
