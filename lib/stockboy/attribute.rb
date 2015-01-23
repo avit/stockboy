@@ -4,6 +4,16 @@ module Stockboy
   # input data fields
   #
   class Attribute < Struct.new(:to, :from, :translators, :ignore_condition)
+    def ignore?(context)
+      if Symbol === ignore_condition
+        context.public_send(to).public_send(ignore_condition)
+      elsif ignore_condition.respond_to?(:call)
+        ignore_condition.call(context)
+      else
+        false
+      end
+    end
+
     def inspect
       "#<Stockboy::Attribute to=#{to.inspect}, from=#{from.inspect}%s%s>" % [
         (", translators=#{translators}" if translators),

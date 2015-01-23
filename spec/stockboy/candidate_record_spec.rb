@@ -33,6 +33,13 @@ module Stockboy
         subject = CandidateRecord.new(hash_attrs, map).to_hash
         subject[:full_name].class.should == String
       end
+
+      it "omits ignored attributes" do
+        invalid_email = ->(r) { r.email.include?('example.com') }
+        map = AttributeMap.new { id ; email ignore: invalid_email }
+        subject = CandidateRecord.new(hash_attrs, map).to_hash
+        subject.should == { :id => '1' }
+      end
     end
 
     describe "#raw_hash" do
@@ -112,6 +119,12 @@ module Stockboy
           map = AttributeMap.new { name from: 'full_name' }
           subject = CandidateRecord.new(hash_attrs, map)
           subject.output.name.should == 'Arthur Dent'
+        end
+
+        it "returns translated values for ignored keys" do
+          map = AttributeMap.new { email ignore: ->(r){ r.email.include?("example.com") } }
+          subject = CandidateRecord.new(hash_attrs, map)
+          subject.output.email.should == "adent@example.com"
         end
       end
     end

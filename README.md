@@ -210,6 +210,17 @@ Translations are applied in order when given as an array. Since translators are
 designed to handle invalid data, they will catch exceptions and return a `nil`
 so it's a good idea to have default values at the end of the chain.
 
+#### ignore:
+If a field needs to be omitted when exporting to hash (to avoid downstream
+clients clobbering existing values with nil), specify the option with a
+callable object or a symbol that can be called against the output field value:
+
+    email ignore: ->(r) { not r.email.include?("@") }
+    score ignore: :zero?
+
+The callable object receives the whole record context like when translating
+with the "as" option.
+
 #### Built-in attribute translators: 
 
 * [`:boolean`][bool]

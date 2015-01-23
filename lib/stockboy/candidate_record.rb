@@ -19,6 +19,7 @@ module Stockboy
       @map = map
       @table = reuse_frozen_hash_keys(attrs, map)
       @tr_table = Hash.new
+      @ignored_fields = []
       freeze
     end
 
@@ -27,11 +28,24 @@ module Stockboy
     # @return [Hash]
     #
     def to_hash
+      bulk_hash.tap do |out|
+        tmp_context = SourceRecord.new(out, @table)
+        @map.each_with_object(out) do |col|
+          out.delete(col.to) if ignore?(col, tmp_context)
+        end
+      end
+    end
+    alias_method :attributes, :to_hash
+
+    # Mapped output hash including ignored values
+    #
+    # @return [Hash]
+    #
+    def bulk_hash
       Hash.new.tap do |out|
         @map.each { |col| out[col.to] = translate(col) }
       end
     end
-    alias_method :attributes, :to_hash
 
     # Return the original values mapped to attribute keys
     #
@@ -91,7 +105,7 @@ module Stockboy
     #   output.email       # => "me@example.com"
     #
     def output
-      MappedRecord.new(self.to_hash)
+      MappedRecord.new(bulk_hash)
     end
 
     private
@@ -110,6 +124,16 @@ module Stockboy
           end
         end
         @tr_table[key] = tr_input.public_send(key)
+      end
+    end
+
+    def ignore?(col, context)
+      return true if @ignored_fields.include? col.to
+      if col.ignore?(context)
+        @ignored_fields << col.to
+        true
+      else
+        false
       end
     end
 
