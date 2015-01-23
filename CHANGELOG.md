@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.0 / 2015-01-23
+
+* [FEATURE]     Option to ignore unwanted attributes from output
+ 
 ## 0.9.0 / 2014-05-19
 
 * [FEATURE]     Add JSON reader 
