@@ -52,8 +52,9 @@ module Stockboy
       from = opts.fetch(:from, key)
       from = from.to_s.freeze if from.is_a? Symbol
       translators = Array(opts[:as]).map { |t| Translations.translator_for(to, t) }
+      ignore_condition = opts[:ignore]
       define_singleton_method(key) { @map[key] }
-      @map[key] = Attribute.new(to, from, translators)
+      @map[key] = Attribute.new(to, from, translators, ignore_condition)
     end
 
     # Fetch the attribute corresponding to the source field name

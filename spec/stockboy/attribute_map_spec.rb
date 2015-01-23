@@ -7,6 +7,7 @@ module Stockboy
     subject do
       AttributeMap.new do
         email
+        score      ignore: :zero?
         updated_at from: 'statusDate', as: [proc{ |v| Date.parse(v) }]
       end
     end
@@ -43,6 +44,10 @@ module Stockboy
       subject[:updated_at].translators.first.call("2012-01-01").should == Date.new(2012,1,1)
     end
 
+    it "sets ignore conditions" do
+      expect( subject[:score].ignore_condition ).to be :zero?
+    end
+
     it "has attr accessors" do
       subject.email.should be_a Attribute
     end
@@ -52,8 +57,8 @@ module Stockboy
     end
 
     it "is enumerable" do
-      subject.map(&:from).should == ["email", "statusDate"]
-      subject.map(&:to).should == [:email, :updated_at]
+      subject.map(&:from).should == ["email", "score", "statusDate"]
+      subject.map(&:to).should == [:email, :score, :updated_at]
     end
 
     describe "#insert" do
