@@ -4,25 +4,25 @@ require 'stockboy/providers'
 module Stockboy
   describe Providers do
 
-    let(:provider) { double("provider") }
+    let(:provider) { Class.new }
 
     describe ".register" do
       it "registers a key and class" do
-        Providers.register(:snailmail, provider).should === provider
+        Providers.register(:snailmail, provider).should be provider
       end
     end
 
     describe ".find" do
       it "returns a provider class" do
         Providers.register(:snailmail, provider)
-        Providers.find(:snailmail).should === provider
+        Providers.find(:snailmail).should be provider
       end
     end
 
     describe ".[]" do
       it "returns a provider class" do
         Providers.register(:snailmail, provider)
-        Providers[:snailmail].should === provider
+        Providers[:snailmail].should be provider
       end
     end
 
