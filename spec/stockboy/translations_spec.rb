@@ -68,11 +68,11 @@ module Stockboy
 
     describe ".find" do
       it "returns a callable translator" do
-        callable = ->(i){ i.upcase }
+        callable = ->(i){ i.message.upcase }
         Translations.register :shout, callable
 
-        Translations.find(:shout).should == callable
-        Translations[:shout].should == callable
+        Translations.find(:shout).should be callable
+        Translations[:shout].should be callable
       end
     end
 
