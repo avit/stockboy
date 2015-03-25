@@ -39,7 +39,11 @@ module Stockboy
           if arg.empty?
             @instance.#{attr}
           else
-            @instance.#{attr} = arg.first
+            if arg.is_a?(Array) && arg.size == 1
+              @instance.#{attr} = arg.first
+            else
+              @instance.#{attr} = arg
+            end
           end
         end
         def #{attr}=(arg)

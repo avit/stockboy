@@ -54,6 +54,14 @@ module Stockboy
         provider.query.should  == { user: 'u' }
         provider.method.should == :get
       end
+
+      it "sets the post body when passed" do
+        provider = Providers::HTTP.new do
+          post   "http://www.example.com/", body: "body"
+        end
+
+        provider.post_body.should == "body"
+      end
     end
 
     describe "validation" do
@@ -72,6 +80,14 @@ module Stockboy
       end
     end
 
+    describe "#post_body" do
+      it "should return nil for get requests" do
+        provider.post_body = "body"
+        provider.method = :get
+        provider.post_body.should be_nil
+      end
+    end
+
     describe "#client" do
       subject(:client) { provider.client }
 
@@ -79,6 +95,12 @@ module Stockboy
 
       it "should configure the base url" do
         client.url.host.should == "example.com"
+      end
+
+      it "should set the post body value" do
+        provider.method = :post
+        provider.post_body = "body"
+        client.body.should == "body"
       end
 
       it "returns the value of the passed block" do
