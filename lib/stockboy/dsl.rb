@@ -36,10 +36,13 @@ module Stockboy
       class_eval <<-___, __FILE__, __LINE__
       class DSL < Stockboy::ConfiguratorBlock
         def #{attr}(*arg)
-          if arg.empty?
+          case arg.size
+          when 0
             @instance.#{attr}
-          else
+          when 1
             @instance.#{attr} = arg.first
+          else
+            @instance.#{attr} = *arg
           end
         end
         def #{attr}=(arg)
