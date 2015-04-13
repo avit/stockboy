@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.11.0 / 2015-04-13
+
+* [FEATURE]     Options to set POST body and headers
+ 
 ## 0.10.0 / 2015-01-23
 
 * [FEATURE]     Option to ignore unwanted attributes from output
