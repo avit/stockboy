@@ -42,6 +42,24 @@ module Stockboy::Providers
     #
     dsl_attr :method, attr_writer: false
 
+    # HTTP request headers
+    #
+    # @!attribute [rw] headers
+    # @return [String]
+    # @example
+    #   headers content_type: "text/json"
+    #
+    dsl_attr :headers
+
+    # HTTP request body
+    #
+    # @!attribute [rw] body
+    # @return [String]
+    # @example
+    #   body "<getData></getData>"
+    #
+    dsl_attr :body
+
     # User name for basic auth connection credentials
     #
     # @!attribute [rw] username
@@ -119,6 +137,8 @@ module Stockboy::Providers
       self.uri      = opts[:uri]
       self.method   = opts[:method] || :get
       self.query    = opts[:query]  || Hash.new
+      self.headers  = opts[:headers]  || Hash.new
+      self.body     = opts[:body]
       self.username = opts[:username]
       self.password = opts[:password]
       DSL.new(self).instance_eval(&block) if block_given?
@@ -128,6 +148,8 @@ module Stockboy::Providers
       orig_logger, HTTPI.logger = HTTPI.logger, logger
       req = HTTPI::Request.new.tap { |c| c.url = uri }
       req.auth.basic(username, password) if username && password
+      req.headers = headers
+      req.body = body
       block_given? ? yield(req) : req
     ensure
       HTTPI.logger = orig_logger
@@ -138,6 +160,7 @@ module Stockboy::Providers
     def validate
       errors << "uri must be specified" unless uri
       errors << "method (:get, :post) must be specified" unless method
+      errors << "body must be specified" if [:post, :put, :patch].include?(method)
       errors.empty?
     end
 

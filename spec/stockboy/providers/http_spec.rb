@@ -33,6 +33,18 @@ module Stockboy
       provider.method.should == :post
     end
 
+    it "should assign parameters from :headers" do
+      provider.headers = {"Content-Type" => "test/xml"}
+
+      provider.headers["Content-Type"].should == "test/xml"
+    end
+
+    it "should assign parameters from :body" do
+      provider.body = "<somexml></somexml>"
+
+      provider.body.should == "<somexml></somexml>"
+    end
+
     it "should assign basic auth parameters" do
       provider.username = "username"
       provider.password = "password"
@@ -69,6 +81,13 @@ module Stockboy
         provider.method = :get
         provider.should_not be_valid
         provider.errors.first.should match /uri/
+      end
+
+      it "should require a body for post" do
+        provider.uri = "http://example.com"
+        provider.method = :post
+        provider.should_not be_valid
+        provider.errors.first.should match /body/
       end
     end
 
