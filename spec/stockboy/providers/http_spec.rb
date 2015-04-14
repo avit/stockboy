@@ -69,6 +69,19 @@ module Stockboy
     end
 
     describe "validation" do
+      it "should be valid with minimal GET params" do
+        provider.uri = "http://example.com"
+        provider.method = :get
+        provider.should be_valid
+      end
+
+      it "should be valid with minimal POST params" do
+        provider.uri = "http://example.com"
+        provider.method = :post
+        provider.body = "<somexml></somexml>"
+        provider.should be_valid
+      end
+
       it "should not be valid without a method" do
         provider.uri = "http://example.com"
         provider.method = nil
