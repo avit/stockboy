@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.11.1 / 2015-04-13
+
+* [BUGFIX]      Option to set POST body works correctly
+ 
 ## 0.11.0 / 2015-04-13
 
 * [FEATURE]     Options to set POST body and headers
