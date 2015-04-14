@@ -160,7 +160,7 @@ module Stockboy::Providers
     def validate
       errors << "uri must be specified" unless uri
       errors << "method (:get, :post) must be specified" unless method
-      errors << "body must be specified" if [:post, :put, :patch].include?(method)
+      errors << "body must be specified" if [:post, :put, :patch].include?(method) && body.blank?
       errors.empty?
     end
 
