@@ -1,6 +1,7 @@
 require 'stockboy/reader'
 require 'tempfile'
 require 'roo'
+require 'roo-xls'
 
 module Stockboy::Readers
 
