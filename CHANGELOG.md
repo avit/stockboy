@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.0 / 2015-06-30
+
+We've been running this happily in production for many months. I think it's
+about time to give it a version number to reflect that.
+
 ## 0.11.1 / 2015-04-13
 
 * [BUGFIX]      Option to set POST body works correctly
