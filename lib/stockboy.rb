@@ -36,6 +36,7 @@ require 'stockboy/providers/file'
 
 # Readers
 require 'stockboy/readers/csv'
+require 'stockboy/readers/json'
 require 'stockboy/readers/xml'
 require 'stockboy/readers/fixed_width'
 require 'stockboy/readers/spreadsheet'
@@ -56,6 +57,7 @@ module Stockboy
 
   module Readers
     register :csv, CSV
+    register :json, JSON
     register :xml, XML
     register :fixed_width, FixedWidth
     register :spreadsheet, Spreadsheet
