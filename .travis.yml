@@ -4,7 +4,9 @@ env:
   - CI=true
 rvm:
   - "1.9.3"
-  - "2.1.1"
+  - "2.0.0"
+  - "2.1"
+  - "2.2"
   - "rbx"
   - "jruby-head"
 before_install:
@@ -13,6 +15,8 @@ script: bundle exec rspec spec
 matrix:
   fast_finish: true
   allow_failures:
+    - rvm: "1.9.3"
+    - rvm: "2.0.0"
     - rvm: "rbx"
     - rvm: "jruby-head"
 addons:
