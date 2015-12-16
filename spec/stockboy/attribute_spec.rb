@@ -20,6 +20,11 @@ module Stockboy
         attr.ignore?(double email: "@").should be false
       end
 
+      it "is true with a truthy value" do
+        attr = Attribute.new :email, "email", [], 1
+        attr.ignore?(double email: "").should be true
+      end
+
       it "yields records to a proc" do
         attr = Attribute.new :email, "email", [], ->(r) { not r.email.include? "@" }
         attr.ignore?(double email: "").should be true

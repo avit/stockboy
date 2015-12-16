@@ -10,7 +10,7 @@ module Stockboy
       elsif ignore_condition.respond_to?(:call)
         ignore_condition.call(context)
       else
-        false
+        !!(ignore_condition)
       end
     end
 

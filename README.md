@@ -8,7 +8,7 @@
 Stockboy helps you receive and unpack data onto your shelves. It provides a DSL
 for configuring data processing pipelines. You might consider using it to
 synchronize data exported from external sources, as part of an [ETL][etl]
-workflow, or migrating your own data from legacy systems. 
+workflow, or migrating your own data from legacy systems.
 
 Full documentation available at [rdoc.info/gems/stockboy][rdoc]
 
@@ -21,14 +21,14 @@ ways. Each data source might vary orthogonally on:
 * __Where the data resides:__
   whether a SOAP service, sent to an IMAP mailbox, an FTP server, or simply a
   local file.
-* __How the data is formatted:__ 
+* __How the data is formatted:__
   whether CSV, Excel, XML, JSON, or some other obscure format.
-* __How the records are structured:__ 
+* __How the records are structured:__
   what fields are included, and how they are named.
-* __What format the fields are:__ 
+* __What format the fields are:__
   such as different date formats (DMY vs. MDY), whether names are "first,
   last", or what do do with missing values.
-* __Which records to process:__ 
+* __Which records to process:__
   selecting whether records are incomplete, or valid and needing to be added,
   updated or deleted.
 
@@ -117,7 +117,7 @@ Writing a job template requires you to declare three parts:
     filter(:invalid_email) do |input, _|
       not(input.email.include?('@') or input['EmailAddress'] == '')
     end
-    
+
     filter(:missing_code) do |_, output|
       output.product_code.nil?
     end
@@ -145,7 +145,7 @@ data set.
       loop do
         inputs << http_provider
         break if http_provider.data.split("\n").size < 100
-        http_provider.query["page"] += 1 
+        http_provider.query["page"] += 1
       end
     end
 
@@ -215,13 +215,15 @@ If a field needs to be omitted when exporting to hash (to avoid downstream
 clients clobbering existing values with nil), specify the option with a
 callable object or a symbol that can be called against the output field value:
 
+    title ignore: true
     email ignore: ->(r) { not r.email.include?("@") }
     score ignore: :zero?
+
 
 The callable object receives the whole record context like when translating
 with the "as" option.
 
-#### Built-in attribute translators: 
+#### Built-in attribute translators:
 
 * [`:boolean`][bool]
   Common true/false strings to `True` or `False` (e.g. '1'/'0' or 't'/'f')
@@ -231,7 +233,7 @@ with the "as" option.
   Date strings from UK format to `Date` (e.g. "DD/MM/YY")
 * [`:us_date`][usda]
   Date strings from US format to `Date` (e.g. "MM/DD/YY")
-* [`:decimal`][deci] 
+* [`:decimal`][deci]
   Numeric strings to `BigDecimal` (e.g. prices)
 * [`:integer`][intg]
   Numeric strings to `Fixnum` integers
@@ -265,7 +267,7 @@ individually as `attribute :name`.
 Filters are optional, but they are very helpful for funneling the data into
 your workflow. For example, you may need to partition records for different
 handling based on a status field.
-    
+
 Filters are applied in the order that they are declared. The first filter that
 returns `true` when traversing a record will capture it. Records that fall
 through all the filters without matching anything are considered "unfiltered".
@@ -304,9 +306,9 @@ called via `job.trigger(:cleanup, Time.now)` or simply `job.cleanup(Time.now)`.
 
 ---
 
-## Installation 
+## Installation
 
-Add `gem 'stockboy'` to your Gemfile and run `bundle install`. 
+Add `gem 'stockboy'` to your Gemfile and run `bundle install`.
 
 Supported on Ruby 1.9+.
 
@@ -352,7 +354,7 @@ Contributions and pull requests are welcome.
     bundle exec rake # runs tests
 
 [gf]:  http://guestfolio.com/
-[etl]: https://en.wikipedia.org/wiki/Extract,_transform,_load 
+[etl]: https://en.wikipedia.org/wiki/Extract,_transform,_load
 [dsl]: https://en.wikipedia.org/wiki/Domain-specific_language
 [travis]: https://travis-ci.org/avit/stockboy
 [gemnasium]: https://gemnasium.com/avit/stockboy
