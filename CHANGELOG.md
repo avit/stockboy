@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.1 / 2015-12-16
+
+* [ENHANCEMENT] Add `:json` as a standard registered reader
+* [ENHANCEMENT] Allow `ignore: true` to always remove virtual attributes
+
 ## 1.0.0 / 2015-06-30
 
 We've been running this happily in production for many months. I think it's
@@ -8,19 +13,19 @@ about time to give it a version number to reflect that.
 ## 0.11.1 / 2015-04-13
 
 * [BUGFIX]      Option to set POST body works correctly
- 
+
 ## 0.11.0 / 2015-04-13
 
 * [FEATURE]     Options to set POST body and headers
- 
+
 ## 0.10.0 / 2015-01-23
 
 * [FEATURE]     Option to ignore unwanted attributes from output
- 
+
 ## 0.9.0 / 2014-05-19
 
-* [FEATURE]     Add JSON reader 
- 
+* [FEATURE]     Add JSON reader
+
 ## 0.8.1 / 2014-04-24
 
 * [BUGFIX]      Support `data_size` for non-string providers
@@ -107,4 +112,3 @@ about time to give it a version number to reflect that.
 ## 0.4.1 / 2013-11-19
 
 First post!
-
