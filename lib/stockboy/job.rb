@@ -248,6 +248,7 @@ module Stockboy
     #
     def with_provider_data
       return to_enum(__method__) unless block_given?
+      raise Stockboy::ProviderNotDefined.new "No provider was defined" unless provider
       yielded = nil
       provider.data do |data|
         if data
