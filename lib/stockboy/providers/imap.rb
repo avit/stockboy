@@ -164,7 +164,7 @@ module Stockboy::Providers
     rescue ::Net::IMAP::Error => e
       errors << "IMAP connection error"
     ensure
-      if first_connection
+      if first_connection && @open_client
         @open_client.disconnect
         @open_client = nil
       end
