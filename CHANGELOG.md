@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0 / 2016-02-19
+
+* [ENHANCEMENT] Allow `:read_timeout` and `:open_timeout` on SOAP connections
+
 ## 1.0.1 / 2015-12-16
 
 * [ENHANCEMENT] Add `:json` as a standard registered reader
