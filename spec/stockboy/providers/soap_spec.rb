@@ -30,6 +30,8 @@ module Stockboy
           p.endpoint  = "http://api.example.com/v1"
           p.namespace = "http://api.example.com/namespace"
           p.wsdl      = "http://api.example.com/?wsdl"
+          p.open_timeout = 13
+          p.read_timeout = 99
           p.message   = {user: 'u', pass: 'p'}
           p.headers   = {key: 'k'}
         end
@@ -37,6 +39,8 @@ module Stockboy
         provider.request.should   == :get_user
         provider.endpoint.should  == "http://api.example.com/v1"
         provider.wsdl.should      == "http://api.example.com/?wsdl"
+        provider.open_timeout.should == 13
+        provider.read_timeout.should == 99
         provider.namespace.should == "http://api.example.com/namespace"
         provider.message.should   == {user: 'u', pass: 'p'}
         provider.headers.should   == {key: 'k'}

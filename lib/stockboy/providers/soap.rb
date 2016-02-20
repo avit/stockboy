@@ -25,6 +25,24 @@ module Stockboy::Providers
     #
     dsl_attr :wsdl
 
+    # Maximum time to establish a connection
+    #
+    # @!attribute [rw] open_timeout
+    # @return [Fixnum]
+    # @example
+    #   open_timeout 10
+    #
+    dsl_attr :open_timeout
+
+    # Maximum time to read data from connection
+    #
+    # @!attribute [rw] read_timeout
+    # @return [Fixnum]
+    # @example
+    #   read_timeout 10
+    #
+    dsl_attr :read_timeout
+
     # The name of the request, see your SOAP documentation
     #
     # @!attribute [rw] request
@@ -159,6 +177,8 @@ module Stockboy::Providers
       elsif endpoint
         {endpoint: endpoint}
       end
+      opts[:open_timeout] = open_timeout if open_timeout
+      opts[:read_timeout] = read_timeout if read_timeout
       opts[:logger] = logger
       opts[:convert_response_tags_to] = ->(tag) { string_pool(tag) }
       opts[:namespace] = namespace if namespace
