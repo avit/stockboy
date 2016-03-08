@@ -165,6 +165,8 @@ module Stockboy::Providers
     #
     def client
       @client ||= Savon.client(client_options)
+      @client.globals.open_timeout(open_timeout) if open_timeout
+      @client.globals.read_timeout(read_timeout) if read_timeout
       yield @client if block_given?
       @client
     end
