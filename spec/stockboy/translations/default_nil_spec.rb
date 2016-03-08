@@ -9,22 +9,22 @@ module Stockboy
     describe "#call" do
       it "returns nil for empty string" do
         result = subject.call email: ""
-        result.should == nil
+        expect(result).to eq nil
       end
 
       it "returns nil for nil" do
         result = subject.call email: nil
-        result.should == nil
+        expect(result).to eq nil
       end
 
       it "returns original value if present" do
         result = subject.call email: "a@example.com"
-        result.should == "a@example.com"
+        expect(result).to eq "a@example.com"
       end
 
       it "returns original value when zero" do
         result = subject.call email: 0
-        result.should == 0
+        expect(result).to eq 0
       end
     end
 

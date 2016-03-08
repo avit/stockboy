@@ -8,21 +8,21 @@ module Stockboy
 
     describe ".register" do
       it "registers a key for a reader class" do
-        Readers.register(:markup, reader_class).should be reader_class
+        expect(Readers.register(:markup, reader_class)).to be reader_class
       end
     end
 
     describe ".find" do
       it "returns a reader class" do
         Readers.register(:markup, reader_class)
-        Readers.find(:markup).should be reader_class
+        expect(Readers.find(:markup)).to be reader_class
       end
     end
 
     describe ".[]" do
       it "returns a reader class" do
         Readers.register(:markup, reader_class)
-        Readers[:markup].should be reader_class
+        expect(Readers[:markup]).to be reader_class
       end
     end
 

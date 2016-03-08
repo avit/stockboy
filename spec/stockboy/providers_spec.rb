@@ -8,21 +8,21 @@ module Stockboy
 
     describe ".register" do
       it "registers a key and class" do
-        Providers.register(:snailmail, provider).should be provider
+        expect(Providers.register(:snailmail, provider)).to be provider
       end
     end
 
     describe ".find" do
       it "returns a provider class" do
         Providers.register(:snailmail, provider)
-        Providers.find(:snailmail).should be provider
+        expect(Providers.find(:snailmail)).to be provider
       end
     end
 
     describe ".[]" do
       it "returns a provider class" do
         Providers.register(:snailmail, provider)
-        Providers[:snailmail].should be provider
+        expect(Providers[:snailmail]).to be provider
       end
     end
 
@@ -30,7 +30,7 @@ module Stockboy
       it "returns all registered providers" do
         Providers.register(:snailmail, provider)
         Providers.register(:slugmail, provider)
-        Providers.all.should include(snailmail: provider, slugmail: provider)
+        expect(Providers.all).to include(snailmail: provider, slugmail: provider)
       end
     end
 

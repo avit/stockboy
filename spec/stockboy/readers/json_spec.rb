@@ -10,7 +10,7 @@ module Stockboy
       it "returns an array of records" do
         records = reader.parse '{"id": "42", "name": "Arthur Dent"}'
 
-        records.should == {"id" => "42", "name" => "Arthur Dent"}
+        expect(records).to eq({"id" => "42", "name" => "Arthur Dent"})
       end
 
     end

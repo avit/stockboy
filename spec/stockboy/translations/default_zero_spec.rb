@@ -9,22 +9,22 @@ module Stockboy
     describe "#call" do
       it "returns zero for nil" do
         result = subject.call count: nil
-        result.should == 0
+        expect(result).to eq 0
       end
 
       it "returns zero for empty string" do
         result = subject.call count: ""
-        result.should == 0
+        expect(result).to eq 0
       end
 
       it "returns original value if present" do
         result = subject.call count: 42
-        result.should == 42
+        expect(result).to eq 42
       end
 
       it "returns original value when zero" do
         result = subject.call count: 0
-        result.should == 0
+        expect(result).to eq 0
       end
     end
 

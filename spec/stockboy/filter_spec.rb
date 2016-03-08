@@ -21,21 +21,21 @@ module Stockboy
 
       context "matching raw value" do
         it "returns true for match" do
-          filter.call(double(species:"babylichtus"), empty_values).should be true
+          expect(filter.call(double(species:"babylichtus"), empty_values)).to be true
         end
 
         it "returns false for no match" do
-          filter.call(double(species:"triceratops"), empty_values).should be false
+          expect(filter.call(double(species:"triceratops"), empty_values)).to be false
         end
       end
 
       context "matching translated value" do
         it "returns true for match" do
-          filter.call(empty_values, double(species:"babelfish")).should be true
+          expect(filter.call(empty_values, double(species:"babelfish"))).to be true
         end
 
         it "returns false for no match" do
-          filter.call(empty_values, double(species:"rhinoceros")).should be false
+          expect(filter.call(empty_values, double(species:"rhinoceros"))).to be false
         end
       end
     end

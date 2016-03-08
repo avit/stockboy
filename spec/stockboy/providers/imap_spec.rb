@@ -16,30 +16,30 @@ module Stockboy
       provider.file_smaller = 1024**3
       provider.file_larger = 1024
 
-      provider.host.should == "mail.localhost.test"
-      provider.username.should == "uuu"
-      provider.password.should == "ppp"
-      provider.mailbox.should == "INBOX/Data"
-      provider.subject.should == %r{New Records 20[1-9][0-9]-(0[1-9]|1[0-2])-([0-2][1-9]|3[0-1])}
-      provider.attachment.should == %r{data-[0-9]+\.csv}
-      provider.since.should == Date.new(2012,12,1)
-      provider.file_smaller.should == 1024**3
-      provider.file_larger.should == 1024
+      expect(provider.host).to eq "mail.localhost.test"
+      expect(provider.username).to eq "uuu"
+      expect(provider.password).to eq "ppp"
+      expect(provider.mailbox).to eq "INBOX/Data"
+      expect(provider.subject).to eq %r{New Records 20[1-9][0-9]-(0[1-9]|1[0-2])-([0-2][1-9]|3[0-1])}
+      expect(provider.attachment).to eq %r{data-[0-9]+\.csv}
+      expect(provider.since).to eq Date.new(2012,12,1)
+      expect(provider.file_smaller).to eq 1024**3
+      expect(provider.file_larger).to eq 1024
     end
 
     it "aliases since to newer_than" do
       provider = Providers::IMAP.new{ |f| f.newer_than Date.new(2012,12,1) }
-      provider.since.should == Date.new(2012,12,1)
+      expect(provider.since).to eq Date.new(2012,12,1)
     end
 
     it "aliases file_smaller to smaller_than" do
       provider = Providers::IMAP.new{ |f| f.smaller_than 1024**3 }
-      provider.file_smaller.should == 1024**3
+      expect(provider.file_smaller).to eq 1024**3
     end
 
     describe ".new" do
       it "has no errors" do
-        provider.errors.should be_empty
+        expect(provider.errors).to be_empty
       end
 
       it "accepts block initialization" do
@@ -49,10 +49,10 @@ module Stockboy
           file_smaller 1024**3
           file_larger 1024
         end
-        provider.host.should == 'mail.test2.local'
-        provider.attachment.should == 'report.csv'
-        provider.file_smaller.should == 1024**3
-        provider.file_larger.should == 1024
+        expect(provider.host).to eq 'mail.test2.local'
+        expect(provider.attachment).to eq 'report.csv'
+        expect(provider.file_smaller).to eq 1024**3
+        expect(provider.file_larger).to eq 1024
       end
     end
 
@@ -186,7 +186,7 @@ module Stockboy
       it "closes connections when catching exceptions" do
         net_imap = expect_connection("hhh", "uuu", "ppp", "UNBOX")
         provider.client { |i| raise Net::IMAP::Error }
-        provider.errors.first.should match /IMAP connection error/
+        expect(provider.errors.first).to match /IMAP connection error/
       end
 
     end
@@ -197,7 +197,7 @@ module Stockboy
         provider.subject = "Earth"
         provider.from = "me@example.com"
 
-        provider.search_keys.should == [
+        expect(provider.search_keys).to eq [
           "SUBJECT", "Earth",
           "FROM", "me@example.com",
           "SINCE", "21-Dec-2012"
@@ -207,28 +207,28 @@ module Stockboy
       it "replaces defaults with given options" do
         provider.since = Date.new(2012, 12, 21)
         provider.subject = "Earth"
-        provider.search_keys(subject: "Improbability").should == ["SUBJECT", "Improbability"]
+        expect(provider.search_keys(subject: "Improbability")).to eq ["SUBJECT", "Improbability"]
       end
 
       it "returns the same array given" do
-        provider.search_keys(["SINCE", "21-DEC-12"]).should == ["SINCE", "21-DEC-12"]
+        expect(provider.search_keys(["SINCE", "21-DEC-12"])).to eq ["SINCE", "21-DEC-12"]
       end
     end
 
     describe "#default_search_options" do
       it "includes configured SUBJECT option" do
         provider.subject = "Life"
-        provider.default_search_options.should == {subject: "Life"}
+        expect(provider.default_search_options).to eq({subject: "Life"})
       end
 
       it "includes configured SINCE option" do
         provider.since = Date.today
-        provider.default_search_options.should == {since: Date.today}
+        expect(provider.default_search_options).to eq({since: Date.today})
       end
 
       it "includes configured FROM option" do
         provider.from = "me@example.com"
-        provider.default_search_options.should == {from: "me@example.com"}
+        expect(provider.default_search_options).to eq({from: "me@example.com"})
       end
     end
 

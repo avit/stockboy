@@ -15,11 +15,11 @@ module Stockboy
           elements:             ['SomeNested', 'Record']
         )
 
-        reader.options[:strip_namespaces].should be true
-        reader.options[:advanced_typecasting].should be true
-        reader.options[:convert_tags_to].should be_a Proc
-        reader.options[:parser].should == :nokogiri
-        reader.elements.should == ['some_nested', 'record']
+        expect(reader.options[:strip_namespaces]).to be true
+        expect(reader.options[:advanced_typecasting]).to be true
+        expect(reader.options[:convert_tags_to]).to be_a Proc
+        expect(reader.options[:parser]).to eq :nokogiri
+        expect(reader.elements).to eq ['some_nested', 'record']
       end
 
       it "configures with a block" do
@@ -32,11 +32,11 @@ module Stockboy
           elements ['SomeNested', 'Record']
         end
 
-        reader.options[:strip_namespaces].should be true
-        reader.options[:advanced_typecasting].should be true
-        reader.options[:convert_tags_to].should be_a Proc
-        reader.options[:parser].should == :nokogiri
-        reader.elements.should == ['some_nested', 'record']
+        expect(reader.options[:strip_namespaces]).to be true
+        expect(reader.options[:advanced_typecasting]).to be true
+        expect(reader.options[:convert_tags_to]).to be_a Proc
+        expect(reader.options[:parser]).to eq :nokogiri
+        expect(reader.elements).to eq ['some_nested', 'record']
       end
     end
 
@@ -52,7 +52,7 @@ module Stockboy
         it "returns element hashes" do
           items = reader.parse data
           output_keys.each do |k|
-            items[0].keys.should include k
+            expect(items[0].keys).to include k
           end
         end
 
@@ -60,7 +60,7 @@ module Stockboy
           items = reader.parse data
           output_keys.each do |key|
             i = items[0].keys.index(key)
-            items[0].keys[i].should be items[1].keys[i]
+            expect(items[0].keys[i]).to be items[1].keys[i]
           end
         end
       end

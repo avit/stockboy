@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'spec_helper'
 require 'stockboy/readers/csv'
 
@@ -18,7 +20,7 @@ module Stockboy
     describe "initialize" do
       it "configures options with argument hash" do
         reader = Readers::CSV.new(col_sep: '|')
-        reader.col_sep.should == '|'
+        expect(reader.col_sep).to eq '|'
       end
 
       it "configures options with a block" do
@@ -29,9 +31,9 @@ module Stockboy
           skip_footer_rows 1
         end
 
-        reader.col_sep.should == '|'
-        reader.skip_header_rows.should == 2
-        reader.skip_footer_rows.should == 1
+        expect(reader.col_sep).to eq '|'
+        expect(reader.skip_header_rows).to eq 2
+        expect(reader.skip_footer_rows).to eq 1
       end
     end
 
@@ -39,7 +41,7 @@ module Stockboy
       it "returns an array of records" do
         records = reader.parse "id,name\n42,Arthur Dent"
 
-        records[0].should == {"id" => "42", "name" => "Arthur Dent"}
+        expect(records[0]).to eq({"id" => "42", "name" => "Arthur Dent"})
       end
 
       it "strips null bytes from empty fields (MSSQL BCP exports)" do
@@ -47,8 +49,9 @@ module Stockboy
         reader.headers = %w[city state country]
         records = reader.parse "Vancouver|\x00|Canada"
 
-        records.should ==
+        expect(records).to eq(
           [{"city" => "Vancouver", "state" => nil, "country" => "Canada"}]
+        )
       end
 
       it "scrubs invalid encoding characters in Unicode" do
@@ -56,8 +59,9 @@ module Stockboy
         reader.encoding = 'UTF-8'
         garbage = 191.chr.force_encoding('UTF-8')
         data = "Z#{garbage}rich,Genève"
-        reader.parse(data).should ==
+        expect(reader.parse(data)).to eq(
           [{"depart" => "Z\u{FFFD}rich", "arrive" => "Genève"}]
+        )
       end
 
       it "strips preamble header rows" do
@@ -65,12 +69,12 @@ module Stockboy
         data = "IGNORE\r\nCOMMENTS\r\nid,name\r\n42,Arthur Dent"
         records = reader.parse data
 
-        records[0].should == {"id" => "42", "name" => "Arthur Dent"}
+        expect(records[0]).to eq({"id" => "42", "name" => "Arthur Dent"})
       end
 
       it "shares hash key instances between records" do
         records = reader.parse "id,name\n42,Arthur Dent\n999,Zaphod"
-        records[0].keys[0].should be records[1].keys[0]
+        expect(records[0].keys[0]).to be records[1].keys[0]
       end
     end
   end

@@ -8,20 +8,20 @@ module Stockboy
 
     it "yields a config block" do
       Stockboy::Configuration.new do |c|
-        c.should be_a Stockboy::Configuration
+        expect(c).to be_a Stockboy::Configuration
       end
     end
 
     it "is accessible from top namespace" do
-      Stockboy.configuration.should be_a Stockboy::Configuration
+      expect(Stockboy.configuration).to be_a Stockboy::Configuration
     end
 
     specify "#template_load_paths" do
       config.template_load_paths.clear
       config.template_load_paths << "/some_path"
-      config.template_load_paths.should == ["/some_path"]
+      expect(config.template_load_paths).to eq ["/some_path"]
       config.template_load_paths = ["/other_path"]
-      config.template_load_paths.should == ["/other_path"]
+      expect(config.template_load_paths).to eq ["/other_path"]
     end
 
   end

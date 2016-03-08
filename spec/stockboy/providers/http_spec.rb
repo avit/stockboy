@@ -10,47 +10,47 @@ module Stockboy
       provider.query  = {user: 'u'}
       provider.method = :get
 
-      provider.uri.should    == URI("http://www.example.com/?user=u")
-      provider.query.should  == {user: 'u'}
-      provider.method.should == :get
+      expect(provider.uri).to    eq URI("http://www.example.com/?user=u")
+      expect(provider.query).to  eq({user: 'u'})
+      expect(provider.method).to eq :get
     end
 
     it "should assign parameters from :get" do
       provider.get    = "http://www.example.com/"
       provider.query  = {user: 'u'}
 
-      provider.uri.should    == URI("http://www.example.com/?user=u")
-      provider.query.should  == {user: 'u'}
-      provider.method.should == :get
+      expect(provider.uri).to    eq URI("http://www.example.com/?user=u")
+      expect(provider.query).to  eq({user: 'u'})
+      expect(provider.method).to eq :get
     end
 
     it "should assign parameters from :post" do
       provider.post   = "http://www.example.com/"
       provider.query  = {user: 'u'}
 
-      provider.uri.should    == URI("http://www.example.com/?user=u")
-      provider.query.should  == {user: 'u'}
-      provider.method.should == :post
+      expect(provider.uri).to    eq URI("http://www.example.com/?user=u")
+      expect(provider.query).to  eq({user: 'u'})
+      expect(provider.method).to eq :post
     end
 
     it "should assign parameters from :headers" do
       provider.headers = {"Content-Type" => "test/xml"}
 
-      provider.headers["Content-Type"].should == "test/xml"
+      expect(provider.headers["Content-Type"]).to eq "test/xml"
     end
 
     it "should assign parameters from :body" do
       provider.body = "<somexml></somexml>"
 
-      provider.body.should == "<somexml></somexml>"
+      expect(provider.body).to eq "<somexml></somexml>"
     end
 
     it "should assign basic auth parameters" do
       provider.username = "username"
       provider.password = "password"
 
-      provider.username.should == "username"
-      provider.password.should == "password"
+      expect(provider.username).to eq "username"
+      expect(provider.password).to eq "password"
     end
 
     describe ".new" do
@@ -62,9 +62,9 @@ module Stockboy
           query  user: 'u'
         end
 
-        provider.uri.should    == URI("http://www.example.com/?user=u")
-        provider.query.should  == { user: 'u' }
-        provider.method.should == :get
+        expect(provider.uri).to    eq URI("http://www.example.com/?user=u")
+        expect(provider.query).to  eq({ user: 'u' })
+        expect(provider.method).to eq :get
       end
     end
 
@@ -72,35 +72,35 @@ module Stockboy
       it "should be valid with minimal GET params" do
         provider.uri = "http://example.com"
         provider.method = :get
-        provider.should be_valid
+        expect(provider).to be_valid
       end
 
       it "should be valid with minimal POST params" do
         provider.uri = "http://example.com"
         provider.method = :post
         provider.body = "<somexml></somexml>"
-        provider.should be_valid
+        expect(provider).to be_valid
       end
 
       it "should not be valid without a method" do
         provider.uri = "http://example.com"
         provider.method = nil
-        provider.should_not be_valid
-        provider.errors.first.should match /method/
+        expect(provider).not_to be_valid
+        expect(provider.errors.first).to match /method/
       end
 
       it "should not be valid without a uri" do
         provider.uri = ""
         provider.method = :get
-        provider.should_not be_valid
-        provider.errors.first.should match /uri/
+        expect(provider).not_to be_valid
+        expect(provider.errors.first).to match /uri/
       end
 
       it "should require a body for post" do
         provider.uri = "http://example.com"
         provider.method = :post
-        provider.should_not be_valid
-        provider.errors.first.should match /body/
+        expect(provider).not_to be_valid
+        expect(provider.errors.first).to match /body/
       end
     end
 
@@ -110,11 +110,11 @@ module Stockboy
       before { provider.uri = "http://example.com/" }
 
       it "should configure the base url" do
-        client.url.host.should == "example.com"
+        expect(client.url.host).to eq "example.com"
       end
 
       it "returns the value of the passed block" do
-        provider.client { |http| "DATA" }.should == "DATA"
+        expect(provider.client { |http| "DATA" }).to eq "DATA"
       end
     end
 
@@ -132,7 +132,7 @@ module Stockboy
       it "returns string body on success" do
         expect(HTTPI).to receive(:request) { response }
 
-        provider.data.should == '{"success":true}'
+        expect(provider.data).to eq '{"success":true}'
       end
 
       it "should setup basic auth if a username and password are supplied" do
@@ -142,7 +142,7 @@ module Stockboy
         expect(HTTPI).to receive(:request) { response }
         expect_any_instance_of(HTTPI::Auth::Config).to receive(:basic).with("username", "password")
 
-        provider.data.should == '{"success":true}'
+        expect(provider.data).to eq '{"success":true}'
       end
     end
 

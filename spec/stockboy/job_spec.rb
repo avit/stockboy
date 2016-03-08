@@ -74,14 +74,14 @@ module Stockboy
       end
 
       it "returns an instance of Job" do
-        Job.define("test_job").should be_a Job
+        expect(Job.define("test_job")).to be_a Job
       end
 
       it "yields the defined job" do
         yielded = nil
         job = Job.define("test_job") { |j| yielded = j }
-        job.should be_a Job
-        job.should be yielded
+        expect(job).to be_a Job
+        expect(job).to be yielded
       end
 
       it "should read a file from a path" do
@@ -94,7 +94,7 @@ module Stockboy
                                        .with(:ftp)
                                        .and_return(TestProvider)
         job = Job.define("test_job")
-        job.provider.should be_a TestProvider
+        expect(job.provider).to be_a TestProvider
       end
 
       it "assigns a registered reader from a symbol" do
@@ -102,18 +102,18 @@ module Stockboy
                                      .with(:csv)
                                      .and_return(TestReader)
         job = Job.define("test_job")
-        job.reader.should be_a TestReader
+        expect(job.reader).to be_a TestReader
       end
 
       it "assigns attributes from a block" do
         job = Job.define("test_job")
-        job.attributes.map(&:to).should == [:name, :email, :updated_at]
+        expect(job.attributes.map(&:to)).to eq [:name, :email, :updated_at]
       end
 
       it "assigns triggers into their associated array from a block" do
         job = Job.define("test_job")
-        job.triggers[:cleanup].size.should == 2
-        job.triggers[:cleanup].each { |t| t.should be_a Proc }
+        expect(job.triggers[:cleanup].size).to eq 2
+        job.triggers[:cleanup].each { |t| expect(t).to be_a Proc }
       end
     end
 
@@ -126,12 +126,12 @@ module Stockboy
 
       it "replaces the attribute map" do
         job.attributes = AttributeMap.new do last_name end
-        job.attributes.map(&:to).should == [:last_name]
+        expect(job.attributes.map(&:to)).to eq [:last_name]
       end
 
       it "resets the job" do
         job.attributes = AttributeMap.new do last_name end
-        job.all_records.should be_empty
+        expect(job.all_records).to be_empty
       end
 
     end
@@ -147,7 +147,7 @@ module Stockboy
         job.reader = reader_double(parse: [{"name"=>"A"},{"name"=>"B"}])
 
         job.process
-        job.total_records.should == 2
+        expect(job.total_records).to eq 2
       end
 
       it "partitions records by filter" do
@@ -155,7 +155,7 @@ module Stockboy
         job.filters = {alpha: proc{ |r| r.name =~ /A/ }}
 
         job.process
-        job.records[:alpha].length.should == 1
+        expect(job.records[:alpha].length).to eq 1
       end
 
       it "keeps unfiltered_records" do
@@ -163,7 +163,7 @@ module Stockboy
         job.filters = {zeta: proc{ |r| r.name =~ /Z/ }}
 
         job.process
-        job.unfiltered_records.length.should == 1
+        expect(job.unfiltered_records.length).to eq 1
       end
 
       it "keeps all_records" do
@@ -171,7 +171,7 @@ module Stockboy
         job.filters = {alpha: proc{ |r| r.name =~ /A/ }}
 
         job.process
-        job.all_records.length.should == 2
+        expect(job.all_records.length).to eq 2
       end
 
       it "resets filters between runs" do
@@ -186,14 +186,14 @@ module Stockboy
         job.reader = double(parse: [{"name"=>"A"},{"name"=>"Z"}])
         job.filters = {alpha: counter = CountingFilter.new(/A/)}
 
-        counter.matches.should == 0
+        expect(counter.matches).to eq 0
         2.times { job.process }
-        counter.matches.should == 1
+        expect(counter.matches).to eq 1
       end
 
       it "has empty partitions" do
         job.filters = {alpha: proc{ |r| r.name =~ /A/ }, beta: proc{ |r| r.name =~ /B/ }}
-        job.records.should == {alpha: [], beta: []}
+        expect(job.records).to eq({alpha: [], beta: []})
       end
 
       context "with a repeating provider" do
@@ -209,7 +209,7 @@ module Stockboy
 
         it "it loads all records into a set" do
           job.process
-          job.all_records.size.should == 3
+          expect(job.all_records.size).to eq 3
         end
       end
 
@@ -224,7 +224,7 @@ module Stockboy
 
       context "before processing" do
         it "should be empty" do
-          job.record_counts.should == {}
+          expect(job.record_counts).to eq({})
         end
       end
 
@@ -237,7 +237,7 @@ module Stockboy
         job.reader = double(parse: [{"name"=>"Arthur"}, {"name"=>"Abc"}, {"name"=>"Zaphod"}])
         job.process
 
-        job.record_counts.should == {alpha: 2, zeta: 1}
+        expect(job.record_counts).to eq({alpha: 2, zeta: 1})
       end
     end
 
@@ -247,9 +247,9 @@ module Stockboy
       end
 
       it "indicates if the job has been processed" do
-        job.processed?.should be false
+        expect(job.processed?).to be false
         job.process
-        job.processed?.should be true
+        expect(job.processed?).to be true
       end
     end
 
@@ -274,7 +274,7 @@ module Stockboy
         expect(job.provider).to receive(:delete_data).once
         stats = {}
         job.trigger(:success, stats)
-        stats[:count].should == 1
+        expect(stats[:count]).to eq 1
       end
 
     end
@@ -284,7 +284,7 @@ module Stockboy
       it "replaces existing triggers" do
         job.triggers = {breakfast: double}
         job.triggers = {lunch: double}
-        job.triggers.keys.should == [:lunch]
+        expect(job.triggers.keys).to eq [:lunch]
       end
 
     end

@@ -13,22 +13,22 @@ module Stockboy
       provider.file_larger = 1024
       provider.pick = :first
 
-      provider.file_dir.should == "fixtures/files"
-      provider.file_name.should == %r{import_20[1-9][0-9]-(0[1-9]|1[0-2])-([0-2][1-9]|3[0-1]).csv}
-      provider.file_newer.should == Date.today
-      provider.file_smaller.should == 1024**2
-      provider.file_larger.should == 1024
-      provider.pick.should == :first
+      expect(provider.file_dir).to eq "fixtures/files"
+      expect(provider.file_name).to eq %r{import_20[1-9][0-9]-(0[1-9]|1[0-2])-([0-2][1-9]|3[0-1]).csv}
+      expect(provider.file_newer).to eq Date.today
+      expect(provider.file_smaller).to eq 1024**2
+      expect(provider.file_larger).to eq 1024
+      expect(provider.pick).to eq :first
     end
 
     describe ".new" do
       it "has no errors" do
-        provider.errors.should be_empty
+        expect(provider.errors).to be_empty
       end
 
       it "accepts block initialization" do
         provider = Providers::File.new{ |f| f.file_dir 'fixtures/files' }
-        provider.file_dir.should == 'fixtures/files'
+        expect(provider.file_dir).to eq 'fixtures/files'
       end
     end
 
@@ -61,25 +61,25 @@ module Stockboy
 
       it "fails with an error if the file doesn't exist" do
         provider.file_name = "missing-file.csv"
-        provider.data.should be nil
-        provider.valid?.should be false
-        provider.errors.first.should match /not found/
+        expect(provider.data).to be nil
+        expect(provider.valid?).to be false
+        expect(provider.errors.first).to match /not found/
       end
 
       it "finds last matching file from string glob" do
         provider.file_name = "test_data-*.csv"
-        provider.data.should == "2012-02-02\n"
+        expect(provider.data).to eq "2012-02-02\n"
       end
 
       it "finds first matching file from string glob" do
         provider.file_name = "test_data-*.csv"
         provider.pick = :first
-        provider.data.should == "2012-01-01\n"
+        expect(provider.data).to eq "2012-01-01\n"
       end
 
       it "finds last matching file from regex" do
         provider.file_name = /test_data/
-        provider.data.should == "2012-02-02\n"
+        expect(provider.data).to eq "2012-02-02\n"
       end
 
       context "metadata validation" do
@@ -90,22 +90,22 @@ module Stockboy
         it "skips old files with :since" do
           expect_any_instance_of(::File).to receive(:mtime).and_return last_week
           provider.since = recently
-          provider.data.should be nil
-          provider.errors.first.should == "no new files since #{recently}"
+          expect(provider.data).to be nil
+          expect(provider.errors.first).to eq "no new files since #{recently}"
         end
 
         it "skips large files with :file_smaller" do
           expect_any_instance_of(::File).to receive(:size).and_return 1001
           provider.file_smaller = 1000
-          provider.data.should be nil
-          provider.errors.first.should == "file size larger than 1000"
+          expect(provider.data).to be nil
+          expect(provider.errors.first).to eq "file size larger than 1000"
         end
 
         it "skips small files with :file_larger" do
           expect_any_instance_of(::File).to receive(:size).and_return 999
           provider.file_larger = 1000
-          provider.data.should be nil
-          provider.errors.first.should == "file size smaller than 1000"
+          expect(provider.data).to be nil
+          expect(provider.errors.first).to eq "file size smaller than 1000"
         end
       end
     end

@@ -41,13 +41,13 @@ module Stockboy
       it "fetches data when there is none" do
         expect(provider).to receive(:fetch_data).once.and_call_original
         2.times do
-          provider.data.should == "TEST,DATA"
+          expect(provider.data).to eq "TEST,DATA"
         end
       end
 
       it "yields data to a block" do
         provider.data do |data|
-          data.should == "TEST,DATA"
+          expect(data).to eq "TEST,DATA"
         end
       end
     end
@@ -58,7 +58,7 @@ module Stockboy
       it "clears and reloads the data" do
         data = provider.data
         expect(provider).to receive(:fetch_data).once.and_call_original
-        provider.reload.should == data
+        expect(provider.reload).to eq data
       end
     end
 

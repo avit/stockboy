@@ -9,22 +9,22 @@ module Stockboy
     describe "#call" do
       it "returns empty string for nil" do
         result = subject.call comment: nil
-        result.should == ""
+        expect(result).to eq ""
       end
 
       it "returns empty string for an empty string" do
         result = subject.call comment: ""
-        result.should == ""
+        expect(result).to eq ""
       end
 
       it "returns original value if present" do
         result = subject.call comment: "asdf"
-        result.should == "asdf"
+        expect(result).to eq "asdf"
       end
 
       it "returns original value when zero" do
         result = subject.call comment: 0
-        result.should == 0
+        expect(result).to eq 0
       end
     end
 

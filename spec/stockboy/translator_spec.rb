@@ -16,10 +16,10 @@ module Stockboy
     describe "#inspect" do
       it "names its field key" do
         str = Class.new(Stockboy::Translator).new(:date).inspect
-        str.should == "#<Stockboy::Translator (date)>"
+        expect(str).to eq "#<Stockboy::Translator (date)>"
 
         str = MyTranslator.new(:date).inspect
-        str.should == "#<MyTranslator (date)>"
+        expect(str).to eq "#<MyTranslator (date)>"
       end
     end
 

@@ -17,31 +17,31 @@ module Stockboy
 
       it "initializes from hash attribute" do
         map = AttributeMap.new(:email => row)
-        map[:email].should == row
+        expect(map[:email]).to eq row
       end
     end
 
     it "sets same destination as default" do
-      subject[:email].should == Attribute.new(:email, "email", [])
+      expect(subject[:email]).to eq Attribute.new(:email, "email", [])
     end
 
     it "sets source from string to string" do
       map = AttributeMap.new { updated_at from: "statusDate" }
-      map[:updated_at].from.should == "statusDate"
+      expect(map[:updated_at].from).to eq "statusDate"
     end
 
     it "sets source from symbol to string" do
       map = AttributeMap.new { updated_at from: :statusDate }
-      map[:updated_at].from.should == "statusDate"
+      expect(map[:updated_at].from).to eq "statusDate"
     end
 
     it "sets source from number to number" do
       map = AttributeMap.new { email from: 12 }
-      map[:email].from.should == 12
+      expect(map[:email].from).to eq 12
     end
 
     it "sets callable translators" do
-      subject[:updated_at].translators.first.call("2012-01-01").should == Date.new(2012,1,1)
+      expect(subject[:updated_at].translators.first.call("2012-01-01")).to eq Date.new(2012,1,1)
     end
 
     it "sets ignore conditions" do
@@ -49,7 +49,7 @@ module Stockboy
     end
 
     it "has attr accessors" do
-      subject.email.should be_a Attribute
+      expect(subject.email).to be_a Attribute
     end
 
     it "raises error for undefined attrs" do
@@ -57,8 +57,8 @@ module Stockboy
     end
 
     it "is enumerable" do
-      subject.map(&:from).should == ["email", "score", "statusDate"]
-      subject.map(&:to).should == [:email, :score, :updated_at]
+      expect(subject.map(&:from)).to eq ["email", "score", "statusDate"]
+      expect(subject.map(&:to)).to eq [:email, :score, :updated_at]
     end
 
     describe "#insert" do
@@ -67,7 +67,7 @@ module Stockboy
       it "sets options from hash" do
         upcase = ->(r) { r.upcase }
         map.insert :test, from: "Test", as: upcase
-        map[:test].should == Attribute.new(:test, "Test", [upcase])
+        expect(map[:test]).to eq Attribute.new(:test, "Test", [upcase])
       end
     end
 

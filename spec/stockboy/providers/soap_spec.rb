@@ -14,11 +14,11 @@ module Stockboy
       provider.message   = {user: 'u', pass: 'p'}
       provider.headers   = {key: 'k'}
 
-      provider.wsdl.should      == "http://api.example.com/?wsdl"
-      provider.request.should   == :get_user
-      provider.namespace.should == "http://api.example.com/"
-      provider.message.should   == {user: 'u', pass: 'p'}
-      provider.headers.should   == {key: 'k'}
+      expect(provider.wsdl).to      eq "http://api.example.com/?wsdl"
+      expect(provider.request).to   eq :get_user
+      expect(provider.namespace).to eq "http://api.example.com/"
+      expect(provider.message).to   eq({user: 'u', pass: 'p'})
+      expect(provider.headers).to   eq({key: 'k'})
     end
 
     describe ".new" do
@@ -36,14 +36,14 @@ module Stockboy
           p.headers   = {key: 'k'}
         end
 
-        provider.request.should   == :get_user
-        provider.endpoint.should  == "http://api.example.com/v1"
-        provider.wsdl.should      == "http://api.example.com/?wsdl"
-        provider.client.globals[:open_timeout].should == 13
-        provider.client.globals[:read_timeout].should == 99
-        provider.namespace.should == "http://api.example.com/namespace"
-        provider.message.should   == {user: 'u', pass: 'p'}
-        provider.headers.should   == {key: 'k'}
+        expect(provider.request).to   eq :get_user
+        expect(provider.endpoint).to  eq "http://api.example.com/v1"
+        expect(provider.wsdl).to      eq "http://api.example.com/?wsdl"
+        expect(provider.client.globals[:open_timeout]).to eq 13
+        expect(provider.client.globals[:read_timeout]).to eq 99
+        expect(provider.namespace).to eq "http://api.example.com/namespace"
+        expect(provider.message).to   eq({user: 'u', pass: 'p'})
+        expect(provider.headers).to   eq({key: 'k'})
       end
     end
 
@@ -56,7 +56,7 @@ module Stockboy
       context "without a WSDL document" do
         it "has error for blank endpoint & WSDL namespace" do
           provider.valid?
-          provider.errors.first.should match /endpoint/
+          expect(provider.errors.first).to match /endpoint/
         end
       end
     end
@@ -66,7 +66,7 @@ module Stockboy
         provider.endpoint = "http://api.example.com/v1"
         provider.namespace = ''
         provider.client do |soap|
-          soap.should be_a Savon::Client
+          expect(soap).to be_a Savon::Client
         end
       end
     end
@@ -102,13 +102,13 @@ module Stockboy
       end
 
       it "uses string keys" do
-        response.keys.each { |k| k.should be_a String }
+        response.keys.each { |k| expect(k).to be_a String }
       end
 
       it "shares key string objects from a common pool" do
         cases = response["MultiNamespacedEntryResponse"]["history"]["case"]
         text_keys = cases.map { |c| c.keys[c.keys.index("logText")] }
-        text_keys[0].should be text_keys[1]
+        expect(text_keys[0]).to be text_keys[1]
       end
 
     end

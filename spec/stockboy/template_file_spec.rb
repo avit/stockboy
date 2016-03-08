@@ -12,17 +12,17 @@ module Stockboy
 
     describe ".read" do
       it "returns the template string" do
-        TemplateFile.read("test_job").should match "# file exists!"
+        expect(TemplateFile.read("test_job")).to match "# file exists!"
       end
     end
 
     describe ".template_path" do
       it "returns nil when missing" do
-        TemplateFile.find("not_here").should be nil
+        expect(TemplateFile.find("not_here")).to be nil
       end
 
       it "returns a file path when found" do
-        TemplateFile.find("test_job").should == "#{template_path}/test_job.rb"
+        expect(TemplateFile.find("test_job")).to eq "#{template_path}/test_job.rb"
       end
     end
 

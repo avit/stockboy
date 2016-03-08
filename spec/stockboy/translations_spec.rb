@@ -24,7 +24,7 @@ module Stockboy
       end
 
       it "rejects non-callable objects" do
-        expect { Translations.register(:wrong, Object) }.to raise_error
+        expect { Translations.register(:wrong, Object) }.to raise_error ArgumentError
       end
     end
 
@@ -32,12 +32,12 @@ module Stockboy
       it "translates a string" do
         Translations.register :personalize, "Dear Mr. ".public_method(:<<)
 
-        Translations.translate(:personalize, "Fun").should == "Dear Mr. Fun"
+        expect(Translations.translate(:personalize, "Fun")).to eq "Dear Mr. Fun"
       end
 
       it "translates from a proc" do
         myproc = proc { |context| "Dear Mr. #{context[:first_name]}" }
-        Translations.translate(myproc, {first_name: "Fun"}).should == "Dear Mr. Fun"
+        expect(Translations.translate(myproc, {first_name: "Fun"})).to eq "Dear Mr. Fun"
       end
     end
 
@@ -45,24 +45,24 @@ module Stockboy
       it "returns a translator for a registered proc" do
         Translations.register :test, ->(i){ i.message.upcase }
         tr = Translations.translator_for(:message, :test)
-        tr.call(double message: "no!").should == "NO!"
+        expect(tr.call(double message: "no!")).to eq "NO!"
       end
 
       it "returns a translator for a registered class" do
         Translations.register :test, Translations::Integer
         tr = Translations.translator_for :id, :test
-        tr.call(double id: "42").should == 42
+        expect(tr.call(double id: "42")).to eq 42
       end
 
       it "returns a translator for a registered instance" do
         Translations.register :test, Translations::Integer.new(:id)
         tr = Translations.translator_for :anything, :test
-        tr.call(double id: "42").should == 42
+        expect(tr.call(double id: "42")).to eq 42
       end
 
       it "returns a no-op for unrecognized translators" do
         tr = Translations.translator_for :id, :fail
-        tr.call(double id: "42").should == "42"
+        expect(tr.call(double id: "42")).to eq "42"
       end
     end
 
@@ -71,8 +71,8 @@ module Stockboy
         callable = ->(i){ i.message.upcase }
         Translations.register :shout, callable
 
-        Translations.find(:shout).should be callable
-        Translations[:shout].should be callable
+        expect(Translations.find(:shout)).to be callable
+        expect(Translations[:shout]).to be callable
       end
     end
 

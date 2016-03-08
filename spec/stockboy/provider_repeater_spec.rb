@@ -27,7 +27,7 @@ module Stockboy
       it "yields each data set" do
         calls = []
         repeater.data { |data| calls << data.split(",").last }
-        calls.should == ["1", "2", "3"]
+        expect(calls).to eq ["1", "2", "3"]
       end
 
     end
@@ -43,7 +43,7 @@ module Stockboy
           repeater.each do |nth_provider|
             calls << nth_provider
           end
-          calls.map(&:page).should == [42]
+          expect(calls.map(&:page)).to eq [42]
         end
       end
 

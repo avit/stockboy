@@ -21,10 +21,10 @@ module Stockboy
           headers: %w(X Y Z)
         )
 
-        reader.format.should == :xlsx
-        reader.sheet.should  == 'Sheet 42'
-        reader.header_row.should == 5
-        reader.headers.should == %w(X Y Z)
+        expect(reader.format).to eq :xlsx
+        expect(reader.sheet).to  eq 'Sheet 42'
+        expect(reader.header_row).to eq 5
+        expect(reader.headers).to eq %w(X Y Z)
       end
 
       it "configures with a block" do
@@ -35,10 +35,10 @@ module Stockboy
           headers %w(X Y Z)
         end
 
-        reader.format.should == :xlsx
-        reader.sheet.should  == 'Sheet 42'
-        reader.header_row.should == 5
-        reader.headers.should == %w(X Y Z)
+        expect(reader.format).to eq :xlsx
+        expect(reader.sheet).to  eq 'Sheet 42'
+        expect(reader.header_row).to eq 5
+        expect(reader.headers).to eq %w(X Y Z)
       end
     end
 
@@ -52,8 +52,8 @@ module Stockboy
           reader = described_class.new(format: :xls)
           data = reader.parse(content)
 
-          data.should_not be_empty
-          data.each { |i| i.should be_a Hash }
+          expect(data).not_to be_empty
+          data.each { |i| expect(i).to be_a Hash }
         end
       end
 
@@ -64,30 +64,30 @@ module Stockboy
           reader = described_class.new(format: :xls, first_row: 6)
           data = reader.parse(content)
 
-          data.first.values.should == ["Arthur Dent", 42]
+          expect(data.first.values).to eq ["Arthur Dent", 42]
         end
 
         it "ends on the given last row counting backwards" do
           reader = described_class.new(format: :xls, last_row: -3)
           data = reader.parse(content)
 
-          data.last.values.should == ["Marvin", 9999999]
+          expect(data.last.values).to eq ["Marvin", 9999999]
         end
 
         it "ends on the given last row counting upwards" do
           reader = described_class.new(format: :xls, last_row: 9)
           data = reader.parse(content)
 
-          data.last.values.should == ["Ford", 40]
+          expect(data.last.values).to eq ["Ford", 40]
         end
       end
     end
 
-    describe "#sheet", pending: "Hard to test this due to roo. Needs a test case with fixtures" do
+    describe "#sheet", skip: "Hard to test this due to roo. Needs a test case with fixtures" do
       let(:sheets)      { ['Towels', 'Lemons'] }
       let(:be_selected) { receive(:default_sheet=) }
       let(:spreadsheet) { double(:spreadsheet, sheets: sheets) }
-      before { subject.stub!(:with_spreadsheet).and_yield(spreadsheet) }
+      before { allow(subject).to receive(:with_spreadsheet).and_yield(spreadsheet) }
 
       context "with :first" do
         before { expect(spreadsheet).to be_selected.with('Towels') }

@@ -8,7 +8,7 @@ module Stockboy
       def self.it_should_be(actual, arg)
         it "returns #{actual.inspect} for #{arg[:for].inspect}" do
           result = subject.call arg[:for]
-          result.should eq actual
+          expect(result).to eq actual
         end
       end
 

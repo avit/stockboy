@@ -8,21 +8,21 @@ module Stockboy
 
     describe ".register" do
       it "registers a key and class" do
-        Filters.register(:invalid, filter).should === filter
+        expect(Filters.register(:invalid, filter)).to be === filter
       end
     end
 
     describe ".find" do
       it "returns a filter class" do
         Filters.register(:invalid, filter)
-        Filters.find(:invalid).should === filter
+        expect(Filters.find(:invalid)).to be === filter
       end
     end
 
     describe ".[]" do
       it "returns a filter class" do
         Filters.register(:invalid, filter)
-        Filters[:invalid].should === filter
+        expect(Filters[:invalid]).to be === filter
       end
     end
 
@@ -30,7 +30,7 @@ module Stockboy
       it "returns all registered filters" do
         Filters.register(:invalid, filter)
         Filters.register(:semivalid, filter)
-        Filters.all.should include(invalid: filter, semivalid: filter)
+        expect(Filters.all).to include(invalid: filter, semivalid: filter)
       end
     end
 

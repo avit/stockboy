@@ -9,8 +9,8 @@ module Stockboy
 
     it "initializes keys and values from a hash" do
       chain = FilterChain.new(no_angels: filter1, no_daleks: filter2)
-      chain.keys.should == [:no_angels, :no_daleks]
-      chain.values.should == [filter1, filter2]
+      expect(chain.keys).to eq [:no_angels, :no_daleks]
+      expect(chain.values).to eq [filter1, filter2]
     end
 
     describe "#reset" do
@@ -23,7 +23,7 @@ module Stockboy
 
       it "returns a hash of filter keys to empty arrays" do
         empty_records = chain.reset
-        empty_records.should == {no_angels: [], no_daleks: []}
+        expect(empty_records).to eq({no_angels: [], no_daleks: []})
       end
     end
 
@@ -31,7 +31,7 @@ module Stockboy
       it "adds filters to the front of the chain" do
         chain = FilterChain.new(filter1: double)
         chain.prepend(filter0: double)
-        chain.keys.should == [:filter0, :filter1]
+        expect(chain.keys).to eq [:filter0, :filter1]
       end
     end
 

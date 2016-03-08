@@ -28,12 +28,12 @@ module Stockboy
 
       it "registers with a symbol" do
         subject.provider :ftp
-        subject.config[:provider].should be_a(provider_class)
+        expect(subject.config[:provider]).to be_a(provider_class)
       end
 
       it "registers with a class" do
         subject.provider provider_class
-        subject.config[:provider].should be_a(provider_class)
+        expect(subject.config[:provider]).to be_a(provider_class)
       end
 
       it "initializes arguments" do
@@ -58,19 +58,19 @@ module Stockboy
 
       it "registers with a symbol" do
         subject.reader :csv
-        subject.config[:reader].should be_a(reader_class)
+        expect(subject.config[:reader]).to be_a(reader_class)
       end
 
       it "registers with a class" do
         subject.reader reader_class
-        subject.config[:reader].should be_a(reader_class)
+        expect(subject.config[:reader]).to be_a(reader_class)
       end
 
       it "initializes arguments" do
         reader_stub = double(:reader)
         expect(reader_class).to receive(:new).with(col_sep: '|').and_return(reader_stub)
         subject.reader reader_class, col_sep: '|'
-        subject.config[:reader].should == reader_stub
+        expect(subject.config[:reader]).to eq reader_stub
       end
     end
 
@@ -79,28 +79,28 @@ module Stockboy
         attribute_map = double
         expect(AttributeMap).to receive(:new).and_return(attribute_map)
         subject.attributes &proc{}
-        subject.config[:attributes].should be attribute_map
+        expect(subject.config[:attributes]).to be attribute_map
       end
 
       it "replaces existing attributes" do
         subject.attribute :first_name
         subject.attributes do last_name end
-        subject.config[:attributes][:first_name].should be nil
-        subject.config[:attributes][:last_name].should be_an Attribute
+        expect(subject.config[:attributes][:first_name]).to be nil
+        expect(subject.config[:attributes][:last_name]).to be_an Attribute
       end
     end
 
     describe "#attribute" do
       it "inserts a single attribute" do
         subject.attribute :test, from: "Test"
-        subject.config[:attributes][:test].should == Attribute.new(:test, "Test", [])
+        expect(subject.config[:attributes][:test]).to eq Attribute.new(:test, "Test", [])
       end
 
       it "respects existing attributes added first" do
         subject.attributes do first_name end
         subject.attribute :last_name
-        subject.config[:attributes][:first_name].should be_an Attribute
-        subject.config[:attributes][:last_name].should be_an Attribute
+        expect(subject.config[:attributes][:first_name]).to be_an Attribute
+        expect(subject.config[:attributes][:last_name]).to be_an Attribute
       end
     end
 
@@ -114,7 +114,7 @@ module Stockboy
           job.process
         end
 
-        subject.config[:triggers][:reprocess][0].should be_a Proc
+        expect(subject.config[:triggers][:reprocess][0]).to be_a Proc
       end
 
     end
@@ -123,14 +123,14 @@ module Stockboy
       it "initializes a callable" do
         filter_stub = double(call: true)
         subject.filter :pass, filter_stub
-        subject.config[:filters][:pass].should == filter_stub
+        expect(subject.config[:filters][:pass]).to eq filter_stub
       end
 
       it "initializes a block" do
         subject.filter :pass do |r|
           true if r == 42
         end
-        subject.config[:filters][:pass].call(42).should == true
+        expect(subject.config[:filters][:pass].call(42)).to eq true
       end
 
       context "with a class" do
@@ -144,22 +144,22 @@ module Stockboy
 
         it "passes arguments to a registered class symbol" do
           subject.filter :pass, :test, 42
-          subject.config[:filters][:pass].args.should == [42]
+          expect(subject.config[:filters][:pass].args).to eq [42]
         end
 
         it "passes a block to a registered class symbol" do
           subject.filter :pass, :test do 42 end
-          subject.config[:filters][:pass].block[].should == 42
+          expect(subject.config[:filters][:pass].block[]).to eq 42
         end
 
         it "passes arguments to a given class" do
           subject.filter :pass, TestFilter, 42
-          subject.config[:filters][:pass].args.should == [42]
+          expect(subject.config[:filters][:pass].args).to eq [42]
         end
 
         it "uses an instance directly" do
           subject.filter :pass, TestFilter.new(42)
-          subject.config[:filters][:pass].args.should == [42]
+          expect(subject.config[:filters][:pass].args).to eq [42]
         end
       end
 
@@ -176,10 +176,10 @@ module Stockboy
 
       it "returns a Job instance" do
         job = subject.to_job
-        job.should be_a(Job)
-        job.provider.should be_a(provider_class)
-        job.reader.should be_a(reader_class)
-        job.attributes.should be_a(AttributeMap)
+        expect(job).to be_a(Job)
+        expect(job.provider).to be_a(provider_class)
+        expect(job.reader).to be_a(reader_class)
+        expect(job.attributes).to be_a(AttributeMap)
       end
 
       context "with a repeat block" do
@@ -189,8 +189,8 @@ module Stockboy
 
         it "adds a repeater to the provider" do
           job = subject.to_job
-          job.provider.should be_a ProviderRepeater
-          job.provider.base_provider.should be_a provider_class
+          expect(job.provider).to be_a ProviderRepeater
+          expect(job.provider.base_provider).to be_a provider_class
         end
       end
     end

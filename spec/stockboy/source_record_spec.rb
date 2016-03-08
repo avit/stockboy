@@ -9,11 +9,11 @@ module Stockboy
     end
 
     it "accesses initialized fields from hash" do
-      record.full_name.should == 'Arthur Dent'
+      expect(record.full_name).to eq 'Arthur Dent'
     end
 
     it "accesses source field names" do
-      record[3].should == 'Arthur Dent'
+      expect(record[3]).to eq 'Arthur Dent'
     end
   end
 end

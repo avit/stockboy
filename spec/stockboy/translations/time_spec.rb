@@ -9,17 +9,17 @@ module Stockboy
     describe "#call" do
       it "returns nil for an empty string" do
         result = subject.call start: ""
-        result.should be nil
+        expect(result).to be nil
       end
 
       it "returns a time" do
         result = subject.call start: "2013-12-11 10:09:08"
-        result.should == Time.utc(2013,12,11,10,9,8)
+        expect(result).to eq Time.utc(2013,12,11,10,9,8)
       end
 
       it "respects timezone" do
         result = subject.call start: "2013-12-11 10:09:08 -0800"
-        result.should == Time.utc(2013,12,11,18,9,8)
+        expect(result).to eq Time.utc(2013,12,11,18,9,8)
       end
     end
 

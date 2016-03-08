@@ -9,12 +9,12 @@ module Stockboy
     describe "#call" do
       it "returns '' for nil" do
         result = subject.call name: nil
-        result.should == ""
+        expect(result).to eq ""
       end
 
       it "strips trailing & leading whitespace" do
         result = subject.call name: " Arthur \n"
-        result.should == "Arthur"
+        expect(result).to eq "Arthur"
       end
     end
 

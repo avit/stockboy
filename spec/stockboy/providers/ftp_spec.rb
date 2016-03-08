@@ -23,21 +23,21 @@ module Stockboy
       ftp.file_dir = "files/here"
       ftp.file_name = %r{import_20[1-9][0-9]-(0[1-9]|1[0-2])-([0-2][1-9]|3[0-1]).csv}
 
-      ftp.host.should == "localhost.test"
-      ftp.username.should == "uuu"
-      ftp.password.should == "ppp"
-      ftp.file_dir.should == "files/here"
-      ftp.file_name.should == %r{import_20[1-9][0-9]-(0[1-9]|1[0-2])-([0-2][1-9]|3[0-1]).csv}
+      expect(ftp.host).to eq "localhost.test"
+      expect(ftp.username).to eq "uuu"
+      expect(ftp.password).to eq "ppp"
+      expect(ftp.file_dir).to eq "files/here"
+      expect(ftp.file_name).to eq %r{import_20[1-9][0-9]-(0[1-9]|1[0-2])-([0-2][1-9]|3[0-1]).csv}
     end
 
     describe ".new" do
       it "has no errors" do
-        subject.errors.should be_empty
+        expect(subject.errors).to be_empty
       end
 
       it "accepts block initialization" do
         ftp = Providers::FTP.new{ |f| f.host 'test2.local' }
-        ftp.host.should == 'test2.local'
+        expect(ftp.host).to eq 'test2.local'
       end
     end
 
@@ -48,9 +48,9 @@ module Stockboy
         connection = false
         provider.client { |f| connection = f }
 
-        connection.should be_a Net::FTP
-        connection.binary.should be true
-        connection.passive.should be true
+        expect(connection).to be_a Net::FTP
+        expect(connection.binary).to be true
+        expect(connection.passive).to be true
       end
 
       it "should return yielded result" do
@@ -58,7 +58,7 @@ module Stockboy
 
         result = provider.client { |_| "a_file_name.csv" }
 
-        result.should == "a_file_name.csv"
+        expect(result).to eq "a_file_name.csv"
       end
     end
 
@@ -67,14 +67,14 @@ module Stockboy
         provider.host = nil
         provider.data
 
-        provider.errors.first.should match /host/
+        expect(provider.errors.first).to match /host/
       end
 
       it "adds an error on missing file_name" do
         provider.file_name = nil
         provider.data
 
-        provider.errors.first.should match /file_name/
+        expect(provider.errors.first).to match /file_name/
       end
 
       it "downloads the last matching file" do
@@ -83,7 +83,7 @@ module Stockboy
         expect(net_ftp).to receive(:get).with('20120102.csv', nil).and_return "DATA"
         expect(provider).to receive(:validate_file).and_return true
 
-        provider.data.should == "DATA"
+        expect(provider.data).to eq "DATA"
       end
 
       it "skips old files" do
@@ -94,7 +94,7 @@ module Stockboy
 
         provider.file_newer = Time.new(2010,1,1)
 
-        provider.data.should be nil
+        expect(provider.data).to be nil
       end
     end
 
@@ -103,14 +103,14 @@ module Stockboy
         net_ftp = expect_connection
         expect(net_ftp).to receive(:nlst).and_return ["1.csv", "2.csv"]
 
-        provider.matching_file.should == "2.csv"
+        expect(provider.matching_file).to eq "2.csv"
 
         net_ftp = expect_connection
         expect(net_ftp).to receive(:nlst).and_return ["1.csv", "2.csv", "3.csv"]
 
-        provider.matching_file.should == "2.csv"
+        expect(provider.matching_file).to eq "2.csv"
         provider.clear
-        provider.matching_file.should == "3.csv"
+        expect(provider.matching_file).to eq "3.csv"
       end
     end
 
@@ -124,12 +124,12 @@ module Stockboy
         net_ftp = expect_connection
         expect(net_ftp).to receive(:nlst).and_return ["1.csv", "2.csv"]
 
-        provider.matching_file.should == "2.csv"
+        expect(provider.matching_file).to eq "2.csv"
 
         net_ftp = expect_connection
         expect(net_ftp).to receive(:delete).with("2.csv")
 
-        provider.delete_data.should == "2.csv"
+        expect(provider.delete_data).to eq "2.csv"
       end
     end
 
