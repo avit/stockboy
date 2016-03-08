@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1 / 2016-03-08
+
+* [BUGFIX]      Timeouts on SOAP connections were ignored
+
 ## 1.1.0 / 2016-02-19
 
 * [ENHANCEMENT] Allow `:read_timeout` and `:open_timeout` on SOAP connections
