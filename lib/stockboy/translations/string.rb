@@ -24,9 +24,9 @@ module Stockboy::Translations
     #
     def translate(context)
       value = field_value(context, field_key)
-      return "" if value.blank?
+      return "" if value.nil?
 
-      value.strip
+      value.to_s.strip
     end
 
   end

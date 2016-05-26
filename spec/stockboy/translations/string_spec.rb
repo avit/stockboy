@@ -16,6 +16,11 @@ module Stockboy
         result = subject.call name: " Arthur \n"
         expect(result).to eq "Arthur"
       end
+
+      it "casts other types to string" do
+        result = subject.call name: 1.0/3
+        expect(result).to eq "0.3333333333333333"
+      end
     end
 
   end
