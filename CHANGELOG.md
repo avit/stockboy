@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.2 / 2016-05-26
+
+* [BUGFIX]      Cast other types in string converter to string
+
 ## 1.1.1 / 2016-03-08
 
 * [BUGFIX]      Timeouts on SOAP connections were ignored
