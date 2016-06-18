@@ -213,6 +213,13 @@ module Stockboy
         end
       end
 
+      context "with no provider" do
+        let(:provider) { nil }
+
+        it "should raise an exception" do
+          expect { job.process }.to raise_error Stockboy::ProviderNotDefined
+        end
+      end
     end
 
     describe "#record_counts" do
