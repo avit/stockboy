@@ -27,6 +27,13 @@ module Stockboy
     #
     attr_accessor :logger
 
+    # To allow inspection when tranlastion error occurs
+    #
+    # By default returns nil on error but can be overridden 
+    attr_accessor :translation_error_handler
+
+
+
     # Initialize a set of global configuration options
     #
     # @yield self for configuration
@@ -35,6 +42,7 @@ module Stockboy
       @template_load_paths = []
       @logger = Logger.new(STDOUT)
       @tmp_dir = Dir.tmpdir
+      @translation_error_handler = -> (error) { nil }
       yield self if block_given?
     end
   end

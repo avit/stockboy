@@ -57,7 +57,8 @@ module Stockboy
     end
 
     describe "attribute translation" do
-      subject(:hash) { CandidateRecord.new(hash_attrs, map).to_hash }
+      let (:record) { CandidateRecord.new(hash_attrs, map) }
+      subject(:hash) { record.to_hash }
 
       context "from lambda" do
         let(:map) { AttributeMap.new{ birthday as: ->(r){ Date.parse(r.birthday) } } }
@@ -78,6 +79,13 @@ module Stockboy
       context "with exception" do
         let(:map) { AttributeMap.new{ id as: [->(r){r.id.to_i}, ->(r){r.id / 0}] } }
         it { should eq({id: nil}) }
+
+        context "while debugging" do
+          it "raises the error" do 
+            Stockboy.configuration.translation_error_handler = -> (error) { raise error }
+            expect { hash }.to(raise_error(Stockboy::TranslationError)) 
+          end
+        end
       end
 
       context "dynamic without an input field" do
