@@ -21,6 +21,7 @@ require 'rspec/its'
 require 'ostruct'
 require 'savon'
 require 'savon/mock/spec_helper'
+require 'pathname'
 # require 'vcr'
 
 $:.unshift File.expand_path('../lib/stockboy/lib', __FILE__)
