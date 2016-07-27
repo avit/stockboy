@@ -119,7 +119,8 @@ module Stockboy
             fields[key] = tr[value]
             SourceRecord.new(fields, @table)
           rescue
-            fields[key] = nil
+            translation_error = TranslationError.new(key, self)
+            fields[key] = Stockboy.configuration.translation_error_handler.call(translation_error)
             break SourceRecord.new(fields, @table)
           end
         end
