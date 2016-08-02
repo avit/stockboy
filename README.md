@@ -261,6 +261,25 @@ individually as `attribute :name`.
 [ukda]: lib/stockboy/translators/uk_date.rb
 [usda]: lib/stockboy/translators/us_date.rb
 
+#### Debugging attribute translations
+
+If an attribute can't be translated the default behaviour is to return `nil`
+instead of raising an error that would terminate the entire job. There is a
+global config option to handle these errors as needed, perhaps for debugging:
+
+    Stockboy.configuration.translation_error_handler = proc { |error|
+      puts "Failed attribute: #{error.key.inspect}"
+      puts "Input: #{error.record.raw_hash.inspect}"
+      puts error.backtrace
+    }
+
+The object yielded to the error handler is an exception with additional properties:
+
+* `key`: The name of the attribute key that was attempted to translate
+* `record`: The original record context with all the input fields for inspection
+
+It can simply be raised if preferred.
+
 
 ### 4. Funnel it with filters
 

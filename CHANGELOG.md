@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0 / 2016-08-02
+
+* [ENHANCEMENT] Option to handle errors raised in translation chain
+
 ## 1.1.2 / 2016-05-26
 
 * [BUGFIX]      Cast other types in string converter to string
