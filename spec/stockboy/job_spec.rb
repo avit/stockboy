@@ -211,6 +211,18 @@ module Stockboy
           job.process
           expect(job.all_records.size).to eq 3
         end
+
+        context "and no data" do
+          let(:repeater) {
+            ProviderRepeater.new(provider) do |inputs|
+            end
+          }
+
+          it "gets no records" do
+            job.process
+            expect(job.all_records.size).to eq 0
+          end
+        end
       end
 
     end

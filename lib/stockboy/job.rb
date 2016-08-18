@@ -256,7 +256,7 @@ module Stockboy
         end
       end
       return if yielded
-      yield(provider.data) if provider.data
+      yield(provider.data) if provider.data?
     end
 
     def record_partition(record)
