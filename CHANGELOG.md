@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1 / 2016-08-02
+
+* [BUGFIX]      Repeater would error with zero yielded data iterations
+
 ## 1.2.0 / 2016-08-02
 
 * [ENHANCEMENT] Option to handle errors raised in translation chain
