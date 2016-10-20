@@ -29,4 +29,8 @@ class FTPAdapter
   def size(file_name)
     client.size file_name
   end
+
+  def exception_class
+    Net::FTPError
+  end
 end

@@ -129,11 +129,10 @@ module Stockboy::Providers
       @open_client = nil
       response
 
-      ## get help on how to catch these errors
-    # rescue Net::FTPError => e
-    #   errors << e.message
-    #   logger.warn e.message
-    #   nil
+    rescue ftp.exception_class => e
+      errors << e.message
+      logger.warn e.message
+      nil
     end
 
     def matching_file

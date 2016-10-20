@@ -31,6 +31,10 @@ class SFTPAdapter
     client.file.open("#{@file_dir}#{file_name}").stat.size
   end
 
+  def exception_class
+    Net::SFTP::StatusException
+  end
+
   private
 
   def normalize_file_dir(file_dir)
