@@ -74,10 +74,10 @@ module Stockboy::Providers
 
     # Use SFTP protocol for file transfers
     #
-    # @!attribute [rw] binary
+    # @!attribute [rw] secure
     # @return [Boolean]
     # @example
-    #   binary true
+    #   secure true
     #
     dsl_attr :secure
 

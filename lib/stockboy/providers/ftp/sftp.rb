@@ -48,5 +48,4 @@ class SFTPAdapter
       "/" + file_dir + "/"
     end
   end
-
 end
