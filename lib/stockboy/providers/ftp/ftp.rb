@@ -3,11 +3,25 @@ require 'net/ftp'
 class FTPAdapter
   attr_accessor :client
 
-  def initialize(host, username, password, options={})
-    @client = Net::FTP.open(host, username, password)
-    client.binary = options['binary']
-    client.passive = options['passive']
-    client.chdir options[:file_dir] if options[:file_dir]
+  def initialize(provider)
+    @provider = provider
+
+  end
+
+  def open
+    Net::FTP.open(@provider.host, @provider.username, @provider.password) do |ftp|
+      puts 'open connection'
+      @client = ftp
+      client.binary = @provider.binary
+      client.passive = @provider.passive
+      result = yield self
+      puts 'close connection'
+      result
+    end
+  end
+
+  def chdir(directory)
+    client.chdir directory
   end
 
   def list_files
@@ -30,7 +44,7 @@ class FTPAdapter
     client.size file_name
   end
 
-  def exception_class
+  def self.exception_class
     Net::FTPError
   end
 end

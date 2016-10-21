@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'stockboy/providers/ftp'
+require 'pry'
 
 module Stockboy
   describe Providers::FTP do
@@ -42,17 +43,6 @@ module Stockboy
     end
 
     describe "#client" do
-      it "should open connection to host with username and password" do
-        expect_connection
-
-        connection = false
-        provider.client { |f| connection = f }
-
-        expect(connection).to be_a Net::FTP
-        expect(connection.binary).to be true
-        expect(connection.passive).to be true
-      end
-
       it "should return yielded result" do
         expect_connection
 
@@ -79,8 +69,8 @@ module Stockboy
 
       it "downloads the last matching file" do
         net_ftp = expect_connection
-        expect(net_ftp).to receive(:nlst).and_return ['20120101.csv', '20120102.csv']
-        expect(net_ftp).to receive(:get).with('20120102.csv', nil).and_return "DATA"
+        expect(net_ftp).to receive(:list_files).and_return ['20120101.csv', '20120102.csv']
+        expect(net_ftp).to receive(:download).with('20120102.csv').and_return "DATA"
         expect(provider).to receive(:validate_file).and_return true
 
         expect(provider.data).to eq "DATA"
@@ -88,12 +78,12 @@ module Stockboy
 
       it "skips old files" do
         net_ftp = expect_connection
-        expect(net_ftp).to receive(:nlst).and_return ['20120101.csv', '20120102.csv']
-        expect(net_ftp).to receive(:mtime).with('20120102.csv').and_return(Time.new(2009,01,01))
-        expect(net_ftp).to_not receive(:get)
+        expect(net_ftp).to receive(:list_files).and_return ['20120101.csv', '20120102.csv']
+        expect(net_ftp).to receive(:modification_time).with('20120102.csv').and_return(Time.new(2009,01,01))
+        expect(net_ftp).to receive(:size).with('20120102.csv').and_return(Time.new(2009,01,01))
+        expect(net_ftp).to_not receive(:download)
 
         provider.file_newer = Time.new(2010,1,1)
-
         expect(provider.data).to be nil
       end
     end
@@ -101,12 +91,12 @@ module Stockboy
     describe "#matching_file" do
       it "does not change until cleared" do
         net_ftp = expect_connection
-        expect(net_ftp).to receive(:nlst).and_return ["1.csv", "2.csv"]
+        expect(net_ftp).to receive(:list_files).and_return ["1.csv", "2.csv"]
 
         expect(provider.matching_file).to eq "2.csv"
 
         net_ftp = expect_connection
-        expect(net_ftp).to receive(:nlst).and_return ["1.csv", "2.csv", "3.csv"]
+        expect(net_ftp).to receive(:list_files).and_return ["1.csv", "2.csv", "3.csv"]
 
         expect(provider.matching_file).to eq "2.csv"
         provider.clear
@@ -116,13 +106,13 @@ module Stockboy
 
     describe "#delete_data" do
       it "should raise an error when called blindly" do
-        expect_any_instance_of(Net::FTP).to_not receive(:delete)
+        expect_any_instance_of(provider.adapter_class).to_not receive(:delete)
         expect { provider.delete_data }.to raise_error Stockboy::OutOfSequence
       end
 
       it "should delete the matching file" do
         net_ftp = expect_connection
-        expect(net_ftp).to receive(:nlst).and_return ["1.csv", "2.csv"]
+        expect(net_ftp).to receive(:list_files).and_return ["1.csv", "2.csv"]
 
         expect(provider.matching_file).to eq "2.csv"
 
@@ -133,10 +123,12 @@ module Stockboy
       end
     end
 
-    def expect_connection(host="localhost.test", user="a", pass="b")
-      net_ftp = Net::FTP.new
-      expect(Net::FTP).to receive(:open).with(host, user, pass).and_yield(net_ftp)
-      net_ftp
+    def expect_connection(host="localhost.test", user="a", pass="b", binary=true, passive=true, file_dir=nil )
+      adapter = instance_double(provider.adapter_class)
+      expect(adapter).to receive(:open).and_yield(adapter)
+
+      expect(provider.adapter_class).to receive(:new).with(provider).and_return adapter
+      adapter
     end
 
   end

@@ -1,6 +1,7 @@
 require 'stockboy/provider'
 require 'stockboy/providers/ftp/ftp'
 require 'stockboy/providers/ftp/sftp'
+require 'pry'
 
 module Stockboy::Providers
 
@@ -123,13 +124,15 @@ module Stockboy::Providers
     def client
       return yield @open_client if @open_client
 
-      ftp = adapter_class.new(host, username, password, {binary: binary, passive: passive, file_dir: file_dir})
-      @open_client = ftp
-      response = yield ftp
-      @open_client = nil
-      response
+      adapter_class.new(self).open do |ftp|
+        @open_client = ftp
+        ftp.chdir file_dir if file_dir
+        response = yield ftp
+        @open_client = nil
+        response
+      end
 
-    rescue ftp.exception_class => e
+    rescue adapter_class.exception_class => e
       errors << e.message
       logger.warn e.message
       nil
