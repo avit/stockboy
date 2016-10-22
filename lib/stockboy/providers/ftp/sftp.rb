@@ -1,5 +1,4 @@
 require 'net/sftp'
-require 'pry'
 
 class SFTPAdapter
   attr_accessor :client
