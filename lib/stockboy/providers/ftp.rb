@@ -1,7 +1,6 @@
 require 'stockboy/provider'
-require 'stockboy/providers/ftp/ftp'
-require 'stockboy/providers/ftp/sftp'
-require 'pry'
+require 'stockboy/providers/adapters/ftp_adapter'
+require 'stockboy/providers/adapters/sftp_adapter'
 
 module Stockboy::Providers
 
@@ -114,11 +113,7 @@ module Stockboy::Providers
     end
 
     def adapter_class
-      if secure
-        SFTPAdapter
-      else
-        FTPAdapter
-      end
+      secure ? Stockboy::Providers::Adapters::SFTPAdapter : Stockboy::Providers::Adapters::FTPAdapter
     end
 
     def client
@@ -141,7 +136,7 @@ module Stockboy::Providers
     def matching_file
       return @matching_file if @matching_file
       client do |ftp|
-        file_listing = ftp.list_files.sort
+        file_listing = ftp.list_files
         @matching_file = pick_from file_listing.select(&file_name_matcher)
       end
     end

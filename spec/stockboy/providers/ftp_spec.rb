@@ -1,6 +1,5 @@
 require 'spec_helper'
 require 'stockboy/providers/ftp'
-require 'pry'
 
 module Stockboy
   describe Providers::FTP do
