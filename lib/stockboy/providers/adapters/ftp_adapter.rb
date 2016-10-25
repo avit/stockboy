@@ -13,14 +13,12 @@ module Stockboy
 
         def open
           Net::FTP.open(@provider.host, @provider.username, @provider.password) do |ftp|
-            puts "open connection"
             @client = ftp
             client.binary = @provider.binary
             client.passive = @provider.passive
             result = yield self
-            puts "close connection"
-            result
           end
+          result
         end
 
         def chdir(directory)

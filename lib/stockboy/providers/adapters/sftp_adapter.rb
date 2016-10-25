@@ -14,10 +14,8 @@ module Stockboy
         def open
           result = nil
           Net::SFTP.start(@provider.host, @provider.username, password: @provider.password) do |sftp|
-            puts "open connection"
             @client = sftp
             result = yield self
-            puts "close sftp connection"
           end
           result
         end
@@ -32,16 +30,12 @@ module Stockboy
 
           case file_name
           when Regexp
-            client.dir.entries(file_dir)
-               .select { |i| i.name =~ file_name }
-               .map    { |i| i.name }
-               .sort
+            entries = client.dir.entries(file_dir).select { |i| i.name =~ file_name }
           when String
-            client.dir.entries(file_dir)
-              .select { |i| ::File.fnmatch(file_name, i.name) }
-              .map    { |i| i.name }
-              .sort
+            entries = client.dir.entries(file_dir).select { |i| ::File.fnmatch(file_name, i.name) }
           end
+
+          entries.map { |i| i.name }.sort
         end
 
         def delete(file_name)
@@ -53,7 +47,7 @@ module Stockboy
         end
 
         def full_path(file_name)
-          ::File.join[full_path(@file_dir, file_name)]
+          ::File.join(@file_dir, file_name)
         end
 
         def modification_time(file_name)
