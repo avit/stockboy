@@ -1,26 +1,24 @@
 module Stockboy
   class OutOfSequence < StandardError; end
 
-  # TranslationError is a wrapper to store the standard error as well as the key and record which caused it
-  class TranslationError < StandardError 
+  class TranslationError < StandardError
 
-     def initialize (key, record)
+    def initialize (key, record)
       @key = key
       @record = record
       @cause = $!
-     end
+    end
 
-     def message
+    def message
       reason = @cause && @cause.message || super
       "Attribute [#{key}] caused #{reason}"
-     end
+    end
 
     def backtrace
       @cause && cause.backtrace || super
     end
 
-     attr_reader :key
-     attr_reader :record
-
-    end
+    attr_reader :key
+    attr_reader :record
+  end
 end
