@@ -130,6 +130,9 @@ module Stockboy
 
         expect(::File).to receive(:delete).with(target.path)
         provider.delete_data
+
+        expect(::File.exist?(non_matching_duplicate)).to be true
+        non_matching_duplicate.close
       end
     end
 

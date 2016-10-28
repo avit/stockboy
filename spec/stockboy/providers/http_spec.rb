@@ -136,6 +136,13 @@ module Stockboy
         expect(provider.data).to eq '{"success":true}'
       end
 
+      it "sets an error on failure" do
+        expect(HTTPI).to receive(:request) { not_found }
+
+        expect(provider.data).to be_nil
+        expect(provider.errors.first).to include "HTTP response error: 404"
+      end
+
       it "should setup basic auth if a username and password are supplied" do
         provider.username = "username"
         provider.password = "password"
