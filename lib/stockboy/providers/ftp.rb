@@ -1,5 +1,6 @@
 require 'stockboy/provider'
-require 'net/ftp'
+require 'stockboy/providers/adapters/ftp_adapter'
+require 'stockboy/providers/adapters/sftp_adapter'
 
 module Stockboy::Providers
 
@@ -71,6 +72,15 @@ module Stockboy::Providers
     #
     dsl_attr :binary
 
+    # Use SFTP protocol for file transfers
+    #
+    # @!attribute [rw] secure
+    # @return [Boolean]
+    # @example
+    #   secure true
+    #
+    dsl_attr :secure
+
     # @macro provider.file_options
     dsl_attr :file_name
     dsl_attr :file_dir
@@ -91,6 +101,7 @@ module Stockboy::Providers
       @passive      = opts[:passive]
       @username     = opts[:username]
       @password     = opts[:password]
+      @secure       = opts[:secure]
       @binary       = opts[:binary]
       @file_dir     = opts[:file_dir]
       @file_name    = opts[:file_name]
@@ -101,19 +112,22 @@ module Stockboy::Providers
       DSL.new(self).instance_eval(&block) if block_given?
     end
 
+    def adapter_class
+      secure ? Stockboy::Providers::Adapters::SFTPAdapter : Stockboy::Providers::Adapters::FTPAdapter
+    end
+
     def client
       return yield @open_client if @open_client
 
-      Net::FTP.open(host, username, password) do |ftp|
-        ftp.binary = binary
-        ftp.passive = passive
-        ftp.chdir file_dir if file_dir
+      adapter_class.new(self).open do |ftp|
         @open_client = ftp
+        ftp.chdir file_dir if file_dir
         response = yield ftp
         @open_client = nil
         response
       end
-    rescue Net::FTPError => e
+
+    rescue adapter_class.exception_class => e
       errors << e.message
       logger.warn e.message
       nil
@@ -122,7 +136,7 @@ module Stockboy::Providers
     def matching_file
       return @matching_file if @matching_file
       client do |ftp|
-        file_listing = ftp.nlst.sort
+        file_listing = ftp.list_files
         @matching_file = pick_from file_listing.select(&file_name_matcher)
       end
     end
@@ -150,7 +164,7 @@ module Stockboy::Providers
         validate_file(matching_file)
         if valid?
           logger.debug "FTP getting file #{inspect_matching_file}"
-          @data = ftp.get(matching_file, nil)
+          @data = ftp.download(matching_file)
           logger.debug "FTP got file #{inspect_matching_file} (#{data_size} bytes)"
         end
       end
@@ -184,7 +198,7 @@ module Stockboy::Providers
     end
 
     def validate_file_newer(data_file)
-      @data_time ||= client { |ftp| ftp.mtime(data_file) }
+      @data_time ||= client { |ftp| ftp.modification_time(data_file) }
       if file_newer and @data_time < file_newer
         errors << "No new files since #{file_newer}"
       end
