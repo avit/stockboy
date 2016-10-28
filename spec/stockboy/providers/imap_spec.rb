@@ -154,7 +154,7 @@ module Stockboy
 
       it "should call delete on the message key" do
         allow(provider).to receive(:client).and_yield(imap)
-        allow(provider).to receive(:search) { [5] }
+        allow(provider).to receive(:find_messages).and_return([5])
 
         provider.message_key
 
@@ -184,9 +184,9 @@ module Stockboy
       end
 
       it "closes connections when catching exceptions" do
-        net_imap = expect_connection("hhh", "uuu", "ppp", "UNBOX")
+        expect_connection("hhh", "uuu", "ppp", "UNBOX")
         provider.client { |i| raise Net::IMAP::Error }
-        expect(provider.errors.first).to match /IMAP connection error/
+        expect(provider.errors.first).to include "IMAP connection error"
       end
 
     end

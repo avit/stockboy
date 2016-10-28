@@ -267,9 +267,9 @@ module Stockboy
       end
     end
 
-    def with_query_caching(&block)
+    def with_query_caching
       if defined? ActiveRecord
-        ActiveRecord::Base.cache(&block)
+        ActiveRecord::Base.cache { yield }
       else
         yield
       end

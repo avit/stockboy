@@ -11,14 +11,6 @@ module Stockboy
        'birthday' => '1980-01-01'}
     end
 
-    describe "initialize" do
-      let(:map) { AttributeMap.new { id; email } }
-
-      it "takes a hash and attributes map" do
-        record = CandidateRecord.new(hash_attrs, map)
-      end
-    end
-
     describe "#to_hash" do
       it "remaps attributes" do
         map = AttributeMap.new { name from: 'full_name' }

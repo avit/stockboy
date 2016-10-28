@@ -143,6 +143,7 @@ module Stockboy::Providers
       @file_larger  = opts[:file_larger]
       @pick         = opts[:pick] || :last
       DSL.new(self).instance_eval(&block) if block_given?
+      @open_client  = nil
     end
 
     # Direct access to the configured +Net::IMAP+ connection
@@ -161,7 +162,7 @@ module Stockboy::Providers
         @open_client.examine(mailbox)
       end
       yield @open_client
-    rescue ::Net::IMAP::Error => e
+    rescue ::Net::IMAP::Error
       errors << "IMAP connection error"
     ensure
       if first_connection && @open_client
@@ -261,10 +262,10 @@ module Stockboy::Providers
     end
 
     def open_attachment(mail)
-      part = mail.attachments.detect { |part| validate_attachment(part) }
-      validate_file(part) if part or return
-      yield part.decoded if valid?
-      part
+      file = mail.attachments.detect { |part| validate_attachment(part) }
+      validate_file(file) if file or return
+      yield file.decoded if valid?
+      file
     end
 
     def validate

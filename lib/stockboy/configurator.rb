@@ -1,4 +1,3 @@
-require 'stockboy/job'
 require 'stockboy/providers'
 require 'stockboy/readers'
 require 'stockboy/filters'

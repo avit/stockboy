@@ -86,21 +86,21 @@ module Stockboy
         provider.uri = "http://example.com"
         provider.method = nil
         expect(provider).not_to be_valid
-        expect(provider.errors.first).to match /method/
+        expect(provider.errors.first).to include "method"
       end
 
       it "should not be valid without a uri" do
         provider.uri = ""
         provider.method = :get
         expect(provider).not_to be_valid
-        expect(provider.errors.first).to match /uri/
+        expect(provider.errors.first).to include "uri"
       end
 
       it "should require a body for post" do
         provider.uri = "http://example.com"
         provider.method = :post
         expect(provider).not_to be_valid
-        expect(provider.errors.first).to match /body/
+        expect(provider.errors.first).to include "body"
       end
     end
 
@@ -120,6 +120,7 @@ module Stockboy
 
     describe "#data" do
       let(:response)   { HTTPI::Response.new(200, {}, '{"success":true}') }
+      let(:not_found)  { HTTPI::Response.new(404, {}, '{"success":false}') }
 
       subject(:provider) do
         Providers::HTTP.new do |s|

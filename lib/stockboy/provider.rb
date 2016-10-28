@@ -162,7 +162,7 @@ module Stockboy
       when Symbol
         list.public_send @pick
       when Proc
-        list.reduce &@pick
+        list.reduce(&@pick)
       end
     end
 

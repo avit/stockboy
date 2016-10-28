@@ -110,6 +110,7 @@ module Stockboy::Providers
       @file_larger  = opts[:file_larger]
       @pick         = opts[:pick] || :last
       DSL.new(self).instance_eval(&block) if block_given?
+      @open_client  = nil
     end
 
     def adapter_class

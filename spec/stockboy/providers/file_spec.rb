@@ -63,7 +63,7 @@ module Stockboy
         provider.file_name = "missing-file.csv"
         expect(provider.data).to be nil
         expect(provider.valid?).to be false
-        expect(provider.errors.first).to match /not found/
+        expect(provider.errors.first).to include "not found"
       end
 
       it "finds last matching file from string glob" do

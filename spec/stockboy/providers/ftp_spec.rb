@@ -56,14 +56,14 @@ module Stockboy
         provider.host = nil
         provider.data
 
-        expect(provider.errors.first).to match /host/
+        expect(provider.errors.first).to include "host"
       end
 
       it "adds an error on missing file_name" do
         provider.file_name = nil
         provider.data
 
-        expect(provider.errors.first).to match /file_name/
+        expect(provider.errors.first).to include "file_name"
       end
 
       it "downloads the last matching file" do

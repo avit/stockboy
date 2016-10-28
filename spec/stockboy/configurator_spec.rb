@@ -78,7 +78,7 @@ module Stockboy
       it "initializes a block" do
         attribute_map = double
         expect(AttributeMap).to receive(:new).and_return(attribute_map)
-        subject.attributes &proc{}
+        subject.attributes do end
         expect(subject.config[:attributes]).to be attribute_map
       end
 
@@ -171,7 +171,7 @@ module Stockboy
         Readers.register :test_read, reader_class
         subject.provider :test_prov
         subject.reader :test_read
-        subject.attributes &proc{}
+        subject.attributes do end
       end
 
       it "returns a Job instance" do

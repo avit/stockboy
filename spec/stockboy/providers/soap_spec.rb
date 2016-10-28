@@ -56,7 +56,7 @@ module Stockboy
       context "without a WSDL document" do
         it "has error for blank endpoint & WSDL namespace" do
           provider.valid?
-          expect(provider.errors.first).to match /endpoint/
+          expect(provider.errors.first).to include "endpoint"
         end
       end
     end

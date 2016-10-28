@@ -80,7 +80,7 @@ module Stockboy::Readers
       chain = options[:header_converters] || []
       chain << proc{ |h| h.freeze }
       opts = options.merge(header_converters: chain)
-      ::CSV.parse(sanitize(data), opts).map &:to_hash
+      ::CSV.parse(sanitize(data), opts).map(&:to_hash)
     end
 
     # Hash of all CSV-specific options
