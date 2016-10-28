@@ -122,7 +122,7 @@ module Stockboy
       end
     end
 
-    def expect_connection(host="localhost.test", user="a", pass="b", binary=true, passive=true, file_dir=nil )
+    def expect_connection
       adapter = instance_double(provider.adapter_class)
       expect(adapter).to receive(:open).and_yield(adapter)
 
