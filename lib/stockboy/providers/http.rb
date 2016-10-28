@@ -120,14 +120,6 @@ module Stockboy::Providers
       @uri = uri
     end
 
-    def username=(username)
-      @username = username
-    end
-
-    def password=(password)
-      @password = password
-    end
-
     # @!endgroup
 
     # Initialize an HTTP provider

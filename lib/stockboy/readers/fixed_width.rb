@@ -49,7 +49,7 @@ module Stockboy::Readers
     #
     # @return [Fixnum]
     #
-    dsl_attr :row_format
+    dsl_attr :row_format, attr_reader: false
 
     # Override original file encoding
     #
