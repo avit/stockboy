@@ -9,6 +9,7 @@ module Stockboy::Providers
     end
 
     def open
+      result = nil
       Net::FTP.open(@provider.host, @provider.username, @provider.password) do |ftp|
         @client = ftp
         client.binary = @provider.binary
