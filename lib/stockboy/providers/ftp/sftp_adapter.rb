@@ -23,17 +23,7 @@ module Stockboy::Providers
     end
 
     def list_files
-      file_name = @provider.file_name
-      file_dir = @file_dir
-
-      case file_name
-      when Regexp
-        entries = client.dir.entries(file_dir).select { |i| i.name =~ file_name }
-      when String
-        entries = client.dir.entries(file_dir).select { |i| ::File.fnmatch(file_name, i.name) }
-      end
-
-      entries.map { |i| i.name }.sort
+      client.dir.entries(@file_dir).map(&:name).sort
     end
 
     def delete(file_name)
