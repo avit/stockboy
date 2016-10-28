@@ -191,7 +191,7 @@ module Stockboy::Providers
     #
     def message_key
       return @message_key if @message_key
-      message_ids = search(default_search_options)
+      message_ids = find_messages(default_search_options)
       @message_key = pick_from(message_ids) unless message_ids.empty?
     end
 
@@ -211,11 +211,11 @@ module Stockboy::Providers
     #   Override default configured search options
     #
     # @example
-    #   provider.search(subject: "Daily Report", before: Date.today)
-    #   provider.search(["SUBJECT", "Daily Report", "BEFORE", "21-DEC-12"])
-    #   provider.search("FLAGGED BEFORE 21-DEC-12")
+    #   provider.find_messages(subject: "Daily Report", before: Date.today)
+    #   provider.find_messages(["SUBJECT", "Daily Report", "BEFORE", "21-DEC-12"])
+    #   provider.find_messages("FLAGGED BEFORE 21-DEC-12")
     #
-    def search(options=nil)
+    def find_messages(options=nil)
       client { |imap| imap.sort(['DATE'], search_keys(options), 'UTF-8') }
     end
 
