@@ -7,11 +7,17 @@ module Stockboy
      def initialize (key, record)
       @key = key
       @record = record
+      @cause = $!
      end
 
      def message
-      "Attribute [#{key}] caused #{cause.message}"
+      reason = @cause && @cause.message || super
+      "Attribute [#{key}] caused #{reason}"
      end
+
+    def backtrace
+      @cause && cause.backtrace || super
+    end
 
      attr_reader :key
      attr_reader :record

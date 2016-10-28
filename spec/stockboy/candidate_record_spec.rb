@@ -78,12 +78,29 @@ module Stockboy
 
       context "with exception" do
         let(:map) { AttributeMap.new{ id as: [->(r){r.id.to_i}, ->(r){r.id / 0}] } }
+        let(:last_line) { __LINE__ - 1 }
+
         it { should eq({id: nil}) }
 
         context "while debugging" do
-          it "raises the error" do 
-            Stockboy.configuration.translation_error_handler = -> (error) { raise error }
-            expect { hash }.to(raise_error(Stockboy::TranslationError)) 
+          around do |example|
+            handler = Stockboy.configuration.translation_error_handler
+            example.run
+            Stockboy.configuration.translation_error_handler = handler
+          end
+
+          it "raises the error" do
+            captured = nil
+            Stockboy.configuration.translation_error_handler = -> (error) do
+              captured = error
+              raise error
+            end
+
+            expect { hash }.to raise_error(Stockboy::TranslationError)
+            expect(captured.message).to eq "Attribute [id] caused divided by 0"
+            expect(captured.key).to eq :id
+            expect(captured.record).to be record
+            expect(captured.backtrace[0]).to start_with "#{__FILE__}:#{last_line}:"
           end
         end
       end
