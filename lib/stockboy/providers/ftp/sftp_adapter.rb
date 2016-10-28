@@ -39,11 +39,15 @@ module Stockboy::Providers
     end
 
     def modification_time(file_name)
-      client.file.open(full_path(file_name)).stat.mtime
+      stat(file_name).mtime
     end
 
     def size(file_name)
-      client.file.open(full_path(file_name)).stat.size
+      stat(file_name).size
+    end
+
+    def stat(file_name)
+      client.file.open(full_path(file_name)).stat
     end
 
     def self.exception_class
