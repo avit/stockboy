@@ -22,8 +22,8 @@ module Stockboy::Providers
   #   end
   #
   class FTP < Stockboy::Provider
-    require_relative 'adapters/ftp_adapter'
-    require_relative 'adapters/sftp_adapter'
+    require_relative 'ftp/ftp_adapter'
+    require_relative 'ftp/sftp_adapter'
 
     # @!group Options
 
