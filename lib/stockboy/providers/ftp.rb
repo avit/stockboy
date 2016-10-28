@@ -1,6 +1,4 @@
 require 'stockboy/provider'
-require 'stockboy/providers/adapters/ftp_adapter'
-require 'stockboy/providers/adapters/sftp_adapter'
 
 module Stockboy::Providers
 
@@ -24,6 +22,8 @@ module Stockboy::Providers
   #   end
   #
   class FTP < Stockboy::Provider
+    require_relative 'adapters/ftp_adapter'
+    require_relative 'adapters/sftp_adapter'
 
     # @!group Options
 
@@ -113,7 +113,7 @@ module Stockboy::Providers
     end
 
     def adapter_class
-      secure ? Stockboy::Providers::Adapters::SFTPAdapter : Stockboy::Providers::Adapters::FTPAdapter
+      secure ? SFTPAdapter : FTPAdapter
     end
 
     def client
