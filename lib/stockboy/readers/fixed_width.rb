@@ -99,7 +99,7 @@ module Stockboy::Readers
       when Hash then headers.values
       when Array then headers
       else
-        raise "Invalid headers set for #{self.class}"
+        raise invalid_headers
       end
     end
 
@@ -109,12 +109,16 @@ module Stockboy::Readers
       when Hash then headers.keys.map(&:freeze)
       when Array then (0 ... headers.length).to_a
       else
-        raise "Invalid headers set for #{self.class}"
+        raise invalid_headers
       end
     end
 
     def parse_row(row)
       Hash[column_keys.zip(row.unpack(row_format))]
+    end
+
+    def invalid_headers
+      ArgumentError.new "Invalid headers set for #{self.class}"
     end
 
   end

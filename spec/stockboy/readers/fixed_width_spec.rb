@@ -48,5 +48,13 @@ module Stockboy
       expect(records.last[:age]).to eq '44'
     end
 
+    context "without specified headers" do
+      it "raises an error" do
+        reader = described_class.new
+
+        expect { reader.parse(data) }.to raise_error ArgumentError
+      end
+    end
+
   end
 end
