@@ -18,13 +18,15 @@ module Stockboy
           format:  :xlsx,
           sheet:   'Sheet 42',
           header_row: 5,
-          headers: %w(X Y Z)
+          headers: %w(X Y Z),
+          options: {packed: :zip}
         )
 
         expect(reader.format).to eq :xlsx
         expect(reader.sheet).to  eq 'Sheet 42'
         expect(reader.header_row).to eq 5
         expect(reader.headers).to eq %w(X Y Z)
+        expect(reader.options).to eq({packed: :zip})
       end
 
       it "configures with a block" do
@@ -33,12 +35,14 @@ module Stockboy
           sheet 'Sheet 42'
           header_row 5
           headers %w(X Y Z)
+          options({packed: :zip})
         end
 
         expect(reader.format).to eq :xlsx
         expect(reader.sheet).to  eq 'Sheet 42'
         expect(reader.header_row).to eq 5
         expect(reader.headers).to eq %w(X Y Z)
+        expect(reader.options).to eq({packed: :zip})
       end
     end
 
@@ -63,6 +67,16 @@ module Stockboy
           expect(data.first).to eq({"id" => "Name", "years" => "Age"})
           expect(data.last).to eq({"id" => "Marvin", "years" => 9999999})
         end
+      end
+
+      context "underlying gem other options" do
+        let(:fixture_file) { 'spreadsheets/test_data.xls.zip' }
+
+        it "are passed to underlying library" do
+          reader = described_class.new(format: :xls, options: {packed: :zip, file_warning: :ignore})
+
+          data = reader.parse(content)
+          expect(data).to be_an Array
         end
       end
 

@@ -59,6 +59,13 @@ module Stockboy::Readers
     #
     dsl_attr :headers
 
+    # Options passed to underlying Roo library
+    #
+    # @!attribute [rw] options
+    # @return [Hash]
+    #
+    dsl_attr :options
+
     # @!endgroup
 
     # Initialize a new Spreadsheet reader
@@ -73,7 +80,7 @@ module Stockboy::Readers
       @last_row  = opts[:last_row]
       @header_row  = opts[:header_row]
       @headers = opts[:headers]
-      @roo_options = opts[:roo_options] || {}
+      @options = opts[:options] || {}
       DSL.new(self).instance_eval(&block) if block_given?
     end
 
@@ -87,15 +94,6 @@ module Stockboy::Readers
       end
     end
 
-    # Roo-specific options hash passed to underlying spreadsheet parser
-    #
-    # @!attribute [r] options
-    # @return [Hash]
-    #
-    def options
-      @roo_options
-    end
-
     private
 
     def enum_data_rows(table)
@@ -107,7 +105,7 @@ module Stockboy::Readers
         file.binmode
         file.write content
         file.fsync
-        table = Roo::Spreadsheet.open(file.path, @roo_options)
+        table = Roo::Spreadsheet.open(file.path, @options)
         table.default_sheet = sheet_number(table, @sheet)
         table.header_line = @header_row if @header_row
         yield table
