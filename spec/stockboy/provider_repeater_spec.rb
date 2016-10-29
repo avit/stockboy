@@ -30,6 +30,10 @@ module Stockboy
         expect(calls).to eq ["1", "2", "3"]
       end
 
+      it "raises an error if no block was given" do
+        expect{ repeater.data }.to raise_error ArgumentError
+      end
+
     end
 
     describe "#each" do
@@ -101,6 +105,18 @@ module Stockboy
       context "after iterating" do
         before { repeater.data do |data| end }
         its(:data?) { should be true }
+      end
+    end
+
+    describe "#clear" do
+      subject(:repeater) { ProviderRepeater.new(provider) }
+
+      it "resets iterations and data" do
+        expect(repeater.data_iterations).to eq 0
+        repeater.data do |data| end
+        expect(repeater.data_iterations).to eq 1
+        repeater.clear
+        expect(repeater.data_iterations).to eq 0
       end
     end
 
