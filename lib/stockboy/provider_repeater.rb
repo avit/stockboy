@@ -64,7 +64,6 @@ module Stockboy
     def clear
       @base_provider = @orig_provider.dup
       @iterations.clear
-      super
     end
 
     def each
