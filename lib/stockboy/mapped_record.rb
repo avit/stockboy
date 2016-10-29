@@ -48,12 +48,5 @@ module Stockboy
       @fields = fields
       freeze
     end
-
-    # @return [String]
-    #
-    def to_s
-      @fields.to_s
-    end
-
   end
 end
