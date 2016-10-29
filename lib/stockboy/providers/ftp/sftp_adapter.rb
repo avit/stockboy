@@ -57,7 +57,7 @@ module Stockboy::Providers
     end
 
     def self.exception_class
-      Net::SFTP::StatusException
+      Net::SFTP::Exception
     end
   end
 end
