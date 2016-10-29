@@ -27,6 +27,9 @@ module Stockboy::Readers
 
     # Line number to look for headers, starts counting at 1, like in Excel
     #
+    # When specified without +first_row+, then the next row becomes the first
+    # data row by default.
+    #
     # @!attribute [rw] header_row
     # @return [Fixnum]
     #
@@ -47,6 +50,9 @@ module Stockboy::Readers
     dsl_attr :last_row
 
     # Override to set headers manually
+    #
+    # When specified, the first spreadsheet row is the default
+    # first data row, unless specified by +first_row+.
     #
     # @!attribute [rw] headers
     # @return [Array]
@@ -103,7 +109,7 @@ module Stockboy::Readers
         file.fsync
         table = Roo::Spreadsheet.open(file.path, @roo_options)
         table.default_sheet = sheet_number(table, @sheet)
-        table.header_line = @header_line if @header_line
+        table.header_line = @header_row if @header_row
         yield table
       end
     end
@@ -117,7 +123,15 @@ module Stockboy::Readers
     end
 
     def first_table_row(table)
-      @first_row || table.first_row
+      return @first_row if @first_row
+
+      if @headers
+        table.first_row
+      elsif @header_row
+        @header_row + 1
+      else
+        table.first_row + 1
+      end
     end
 
     def last_table_row(table)

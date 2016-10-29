@@ -48,12 +48,21 @@ module Stockboy
       context "with an XLS file" do
         let(:fixture_file) { 'spreadsheets/test_data.xls' }
 
-        it "returns an array of hashes" do
+        it "uses line 1 for header names and line 2 for first row by default" do
           reader = described_class.new(format: :xls)
           data = reader.parse(content)
 
-          expect(data).not_to be_empty
-          data.each { |i| expect(i).to be_a Hash }
+          expect(data.first).to eq({"Name" => "Arthur Dent", "Age" => 42})
+          expect(data.last).to eq({"Name" => "Marvin", "Age" => 9999999})
+        end
+
+        it "Uses line 1 for first data row if headers are given" do
+          reader = described_class.new(format: :xls, headers: ["id", "years"])
+          data = reader.parse(content)
+
+          expect(data.first).to eq({"id" => "Name", "years" => "Age"})
+          expect(data.last).to eq({"id" => "Marvin", "years" => 9999999})
+        end
         end
       end
 
@@ -79,6 +88,24 @@ module Stockboy
           data = reader.parse(content)
 
           expect(data.last.values).to eq ["Ford", 40]
+        end
+      end
+
+      context "with non-first header row" do
+        let(:fixture_file) { 'spreadsheets/test_row_options.xls' }
+
+        it "can use a different header_row" do
+          reader = described_class.new(format: :xls, header_row: 4)
+          data = reader.parse(content)
+
+          expect(data.first).to eq({"Name" => nil, "Age" => nil})
+        end
+
+        it "can set both header_row and first_row" do
+          reader = described_class.new(format: :xls, header_row: 4, first_row: 6)
+          data = reader.parse(content)
+
+          expect(data.first).to eq({"Name" => "Arthur Dent", "Age" => 42})
         end
       end
     end
