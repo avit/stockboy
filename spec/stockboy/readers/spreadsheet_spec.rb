@@ -124,37 +124,30 @@ module Stockboy
       end
     end
 
-    describe "#sheet", skip: "Hard to test this due to roo. Needs a test case with fixtures" do
-      let(:sheets)      { ['Towels', 'Lemons'] }
-      let(:be_selected) { receive(:default_sheet=) }
-      let(:spreadsheet) { double(:spreadsheet, sheets: sheets) }
-      before { allow(subject).to receive(:with_spreadsheet).and_yield(spreadsheet) }
+    describe "#sheet" do
+      let(:reader) { described_class.new(format: :xls) }
+      let(:fixture_file) { 'spreadsheets/test_data_sheets.xls' }
+      let(:content) { File.read(fixture_path fixture_file) }
 
-      context "with :first" do
-        before { expect(spreadsheet).to be_selected.with('Towels') }
+      it "can specify :last sheet" do
+        reader = described_class.new(format: :xls, sheet: :last)
+        data = reader.parse content
 
-        it "calls on first sheet by name" do
-          subject.sheet = :first
-          subject.parse ""
-        end
+        expect(data.first.values).to eq(["Earth", "Mostly Harmless"])
       end
 
-      context "with a string" do
-        before { expect(spreadsheet).to be_selected.with('Towels') }
+      it "can specify sheet by name" do
+        reader = described_class.new(format: :xls, sheet: 'Planets')
+        data = reader.parse content
 
-        it "passes unchanged" do
-          subject.sheet = 'Towels'
-          subject.parse ""
-        end
+        expect(data.first.values).to eq(["Earth", "Mostly Harmless"])
       end
 
-      context "with an integer" do
-        before { expect(spreadsheet).to be_selected.with('Towels') }
+      it "can specify sheet by number" do
+        reader = described_class.new(format: :xls, sheet: 2)
+        data = reader.parse content
 
-        it "gets sheet name" do
-          subject.sheet = 1
-          subject.parse ""
-        end
+        expect(data.first.values).to eq(["Earth", "Mostly Harmless"])
       end
     end
 
