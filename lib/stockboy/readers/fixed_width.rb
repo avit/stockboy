@@ -29,11 +29,15 @@ module Stockboy::Readers
     # String format used for unpacking rows
     #
     # This is read from the {#headers} attribute by default but can be
-    # overridden
+    # overridden. Uses implementation from +String#unpack+ to set field widths
+    # and types.
     #
     # @return [String]
+    # @see http://ruby-doc.org/core/String.html#method-i-unpack
+    # @example
+    #   row_format "U16U32" # column A: 16 unicode, column B: 32 unicode
     #
-    dsl_attr :skip_header_rows
+    dsl_attr :row_format, attr_reader: false
 
     # Number of file rows to skip from start of file
     #
@@ -41,7 +45,7 @@ module Stockboy::Readers
     #
     # @return [Fixnum]
     #
-    dsl_attr :skip_footer_rows
+    dsl_attr :skip_header_rows
 
     # Number of file rows to skip at end of file
     #
@@ -49,7 +53,7 @@ module Stockboy::Readers
     #
     # @return [Fixnum]
     #
-    dsl_attr :row_format, attr_reader: false
+    dsl_attr :skip_footer_rows
 
     # Override original file encoding
     #
