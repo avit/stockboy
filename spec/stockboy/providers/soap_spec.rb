@@ -21,6 +21,22 @@ module Stockboy
       expect(provider.headers).to   eq({key: 'k'})
     end
 
+    describe "logging" do
+      before do
+        provider.wsdl = "http://api.example.com/?wsdl"
+      end
+
+      it "should be active on debug level" do
+        provider.logger.level = Logger::DEBUG
+        expect(provider.client.globals[:log]).to be true
+      end
+
+      it "should not be active on info level" do
+        provider.logger.level = Logger::INFO
+        expect(provider.client.globals[:log]).to be false
+      end
+    end
+
     describe ".new" do
       its(:errors) { should be_empty }
 

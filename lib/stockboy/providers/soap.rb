@@ -182,6 +182,7 @@ module Stockboy::Providers
       opts[:open_timeout] = open_timeout if open_timeout
       opts[:read_timeout] = read_timeout if read_timeout
       opts[:logger] = logger
+      opts[:log] = logger.debug?
       opts[:convert_response_tags_to] = ->(tag) { string_pool(tag) }
       opts[:namespace] = namespace if namespace
       opts[:namespaces] = namespaces if namespaces
