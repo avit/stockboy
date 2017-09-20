@@ -3,12 +3,11 @@ bundler_args: --without debug --without doc
 env:
   - CI=true
 rvm:
-  - "1.9.3"
-  - "2.0.0"
-  - "2.1"
-  - "2.2"
-  - "rbx"
-  - "jruby-head"
+  - 2.2
+  - 2.3
+  - 2.4
+  - ruby-head
+  - jruby-head
 before_install:
   - gem install bundler
 script:
@@ -17,10 +16,7 @@ script:
 matrix:
   fast_finish: true
   allow_failures:
-    - rvm: "1.9.3"
-    - rvm: "2.0.0"
-    - rvm: "rbx"
-    - rvm: "jruby-head"
+    - rvm: jruby-head
 addons:
   code_climate:
     repo_token: 7591072ad04d7a8ee788ce9259baa284724740cab1ae9ca94c162a583acd8f10
