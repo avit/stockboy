@@ -1,9 +1,4 @@
-if ENV['CI']
-  require "codeclimate-test-reporter"
-  CodeClimate::TestReporter.start
-end
-
-if ENV['COVERAGE']
+if ENV['COVERAGE'] || ENV['CI']
   require 'simplecov'
   SimpleCov.start do
     add_filter "/spec/"

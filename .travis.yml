@@ -11,7 +11,9 @@ rvm:
   - "jruby-head"
 before_install:
   - gem install bundler
-script: bundle exec rspec spec
+script:
+  - bundle exec rspec spec
+  - bundle exec codeclimate-test-reporter
 matrix:
   fast_finish: true
   allow_failures:
