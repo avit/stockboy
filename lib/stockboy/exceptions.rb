@@ -15,7 +15,7 @@ module Stockboy
     end
 
     def backtrace
-      @cause && cause.backtrace || super
+      @cause && @cause.backtrace || super
     end
 
     attr_reader :key

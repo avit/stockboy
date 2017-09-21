@@ -83,7 +83,7 @@ module Stockboy
 
           it "raises the error" do
             captured = nil
-            Stockboy.configuration.translation_error_handler = -> (error) do
+            Stockboy.configuration.translation_error_handler = ->(error) do
               captured = error
               raise error
             end

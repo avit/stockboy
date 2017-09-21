@@ -42,7 +42,7 @@ module Stockboy
       @template_load_paths = []
       @logger = Logger.new(STDOUT)
       @tmp_dir = Dir.tmpdir
-      @translation_error_handler = -> (error) { nil }
+      @translation_error_handler = ->(error) { nil }
       yield self if block_given?
     end
   end
