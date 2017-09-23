@@ -84,8 +84,8 @@ module Stockboy::Readers
       data.force_encoding(encoding) if encoding
       data = StringIO.new(data) unless data.is_a? StringIO
       skip_header_rows.times { data.readline }
-      records = data.reduce([]) do |a, row|
-        a.tap { a << parse_row(row) unless row.strip.empty? }
+      records = data.each_with_object([]) do |row, a|
+        a << parse_row(row) unless row.strip.empty?
       end
       skip_footer_rows.times { records.pop }
       records
