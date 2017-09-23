@@ -80,7 +80,7 @@ module Stockboy::Readers
     end
 
     def parse(data)
-      @column_widths, @column_keys = nil, nil
+      validate_headers
       data.force_encoding(encoding) if encoding
       data = StringIO.new(data) unless data.is_a? StringIO
       skip_header_rows.times { data.readline }
@@ -98,22 +98,16 @@ module Stockboy::Readers
     private
 
     def column_widths
-      return @column_widths if @column_widths
-      @column_widths = case headers
+      @column_widths ||= case headers
       when Hash then headers.values
       when Array then headers
-      else
-        raise invalid_headers
       end
     end
 
     def column_keys
-      return @column_keys if @column_keys
-      @column_keys = case headers
+      @column_keys ||= case headers
       when Hash then headers.keys.map(&:freeze)
       when Array then (0 ... headers.length).to_a
-      else
-        raise invalid_headers
       end
     end
 
@@ -121,8 +115,13 @@ module Stockboy::Readers
       Hash[column_keys.zip(row.unpack(row_format))]
     end
 
-    def invalid_headers
-      ArgumentError.new "Invalid headers set for #{self.class}"
+    def validate_headers
+      @column_widths, @column_keys, @row_format = nil, nil, nil
+      case headers
+      when Hash, Array then true
+      else raise ArgumentError, "Invalid headers set for #{self.class}, " \
+                                "got #{headers.class}, expected Hash or Array"
+      end
     end
 
   end
