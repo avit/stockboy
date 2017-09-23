@@ -25,14 +25,14 @@ module Stockboy::Readers
     # Skip number of rows at start of file before data starts
     #
     # @!attribute [rw] skip_header_rows
-    # @return [Fixnum]
+    # @return [Integer]
     #
     dsl_attr :skip_header_rows
 
     # Skip number of rows at end of file after data ends
     #
     # @!attribute [rw] skip_footer_rows
-    # @return [Fixnum]
+    # @return [Integer]
     #
     dsl_attr :skip_footer_rows
 

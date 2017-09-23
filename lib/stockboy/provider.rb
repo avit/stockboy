@@ -216,14 +216,14 @@ module Stockboy
   #
   #   @!attribute [rw] file_smaller
   #     Validates the maximum data size for the matched file, in bytes
-  #     @return [Fixnum]
+  #     @return [Integer]
   #     @macro provider.pick_validation
   #     @example
   #       file_smaller 1024^3
   #
   #   @!attribute [rw] file_larger
   #     Validates the minimum file size for the matched file, in bytes. This can # help guard against processing zero-byte or truncated files.
-  #     @return [Fixnum]
+  #     @return [Integer]
   #     @macro provider.pick_validation
   #     @example
   #       file_larger 1024

@@ -14,7 +14,7 @@ module Stockboy::Readers
     # Array format will use numeric indexes for field keys. Hash will use the
     # keys for naming the fields.
     #
-    # @return [Array<Fixnum>, Hash{Object=>Fixnum}]
+    # @return [Array<Integer>, Hash{Object=>Integer}]
     # @example
     #   reader.headers = [10, 5, 10, 42]
     #   reader.parse(data)
@@ -43,7 +43,7 @@ module Stockboy::Readers
     #
     # Useful if the file starts with a preamble or header metadata
     #
-    # @return [Fixnum]
+    # @return [Integer]
     #
     dsl_attr :skip_header_rows
 
@@ -51,7 +51,7 @@ module Stockboy::Readers
     #
     # Useful if the file ends with a summary or notice
     #
-    # @return [Fixnum]
+    # @return [Integer]
     #
     dsl_attr :skip_footer_rows
 
@@ -66,9 +66,9 @@ module Stockboy::Readers
     # Initialize a new fixed-width reader
     #
     # @param [Hash] opts
-    # @option opts [Array<Fixnum>, Hash<Fixnum>] headers
-    # @option opts [Fixnum] skip_header_rows
-    # @option opts [Fixnum] skip_footer_rows
+    # @option opts [Array<Integer>, Hash<Integer>] headers
+    # @option opts [Integer] skip_header_rows
+    # @option opts [Integer] skip_footer_rows
     # @option opts [String] encoding
     #
     def initialize(opts={}, &block)

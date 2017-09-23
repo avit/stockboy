@@ -236,7 +236,7 @@ with the "as" option.
 * [`:decimal`][deci]
   Numeric strings to `BigDecimal` (e.g. prices)
 * [`:integer`][intg]
-  Numeric strings to `Fixnum` integers
+  Numeric strings to `Integer` integers
 * [`:string`][stri]
   Clean strings with leading/trailing whitespace trimmed
 * [`:or_empty`][dest]

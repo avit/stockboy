@@ -2,7 +2,7 @@ require 'stockboy/translator'
 
 module Stockboy::Translations
 
-  # Translate string values to +Fixnum+
+  # Translate string values to +Integer+
   #
   # == Job template DSL
   #
@@ -20,7 +20,7 @@ module Stockboy::Translations
   #
   class Integer < Stockboy::Translator
 
-    # @return [Fixnum]
+    # @return [Integer]
     #
     def translate(context)
       value = field_value(context, field_key)

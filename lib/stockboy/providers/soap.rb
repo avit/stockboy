@@ -28,7 +28,7 @@ module Stockboy::Providers
     # Maximum time to establish a connection
     #
     # @!attribute [rw] open_timeout
-    # @return [Fixnum]
+    # @return [Integer]
     # @example
     #   open_timeout 10
     #
@@ -37,7 +37,7 @@ module Stockboy::Providers
     # Maximum time to read data from connection
     #
     # @!attribute [rw] read_timeout
-    # @return [Fixnum]
+    # @return [Integer]
     # @example
     #   read_timeout 10
     #

@@ -127,7 +127,7 @@ module Stockboy
     # Count of all processed records
     #
     # @!attribute [r] total_records
-    # @return [Fixnum]
+    # @return [Integer]
     #
     def total_records
       @all_records.size
@@ -135,7 +135,7 @@ module Stockboy
 
     # Counts of processed records grouped by filter key
     #
-    # @return [Hash{Symbol=>Fixnum}]
+    # @return [Hash{Symbol=>Integer}]
     #
     def record_counts
       @records.reduce(Hash.new) { |a, (k,v)| a[k] = v.size; a }

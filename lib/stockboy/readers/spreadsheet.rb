@@ -21,7 +21,7 @@ module Stockboy::Readers
     # Spreadsheet sheet number, defaults to first
     #
     # @!attribute [rw] sheet
-    # @return [Fixnum]
+    # @return [Integer]
     #
     dsl_attr :sheet
 
@@ -31,21 +31,21 @@ module Stockboy::Readers
     # data row by default.
     #
     # @!attribute [rw] header_row
-    # @return [Fixnum]
+    # @return [Integer]
     #
     dsl_attr :header_row
 
     # Line number of first data row, starts counting at 1, like in Excel
     #
     # @!attribute [rw] first_row
-    # @return [Fixnum]
+    # @return [Integer]
     #
     dsl_attr :first_row
 
     # Line number of last data row, use negative numbers to count back from end
     #
     # @!attribute [rw] last_row
-    # @return [Fixnum]
+    # @return [Integer]
     #
     dsl_attr :last_row
 
@@ -115,7 +115,7 @@ module Stockboy::Readers
     def sheet_number(table, id)
       case id
       when Symbol then table.sheets.public_send id
-      when Fixnum then table.sheets[id-1]
+      when Integer then table.sheets[id-1]
       when String then id
       end
     end

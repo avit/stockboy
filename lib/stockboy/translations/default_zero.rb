@@ -28,7 +28,7 @@ module Stockboy::Translations
   #
   class DefaultZero < Stockboy::Translator
 
-    # @return [Fixnum]
+    # @return [Integer]
     #
     def translate(context)
       value = field_value(context, field_key)
