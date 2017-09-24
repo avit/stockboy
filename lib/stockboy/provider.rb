@@ -162,7 +162,7 @@ module Stockboy
       when Symbol
         list.public_send @pick
       when Proc
-        list.reduce(&@pick)
+        @pick.arity == 1 ? @pick.call(list) : list.reduce(&@pick)
       end
     end
 

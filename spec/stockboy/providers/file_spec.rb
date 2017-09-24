@@ -82,6 +82,18 @@ module Stockboy
         expect(provider.data).to eq "2012-02-02\n"
       end
 
+      it "selects item from single list argument proc" do
+        provider.file_name = "*"
+        provider.pick = ->(list) { list[1] }
+        expect(provider.data).to eq "2012-01-01\n"
+      end
+
+      it "reduces to single item from two-argument proc" do
+        provider.file_name = "*"
+        provider.pick = ->(last, best) { last.include?("01") ? last : best }
+        expect(provider.data).to eq "2012-01-01\n"
+      end
+
       context "metadata validation" do
         before { provider.file_name = '*.csv' }
         let(:recently)  { Time.now - 60 }
