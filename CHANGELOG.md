@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.3.0 / 2017-10-26
+
+* [FEATURE]     Add `secure` option for FTP to use SFTP
+* [FEATURE]     Update test matrix for recent ruby versions
+* [ENHANCEMENT] Log SOAP provider output on debug level
+* [ENHANCEMENT] Let pick accept proc with single arg for list
+* [BUGFIX]      Fix defaults for spreadsheet row options
+* [BUGFIX]      Fix spreadsheet option initialization
+
 ## 1.2.1 / 2016-08-02
 
 * [BUGFIX]      Repeater would error with zero yielded data iterations
