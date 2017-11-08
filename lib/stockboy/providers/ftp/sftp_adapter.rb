@@ -35,7 +35,7 @@ module Stockboy::Providers
     end
 
     def modification_time(file_name)
-      stat(file_name).mtime
+      (mtime = stat(file_name).mtime) && Time.at(mtime)
     end
 
     def size(file_name)
