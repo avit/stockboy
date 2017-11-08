@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.1 / 2017-11-07
+
+* [ENHANCEMENT] Expose both raw FTP commands or generic adapter commands
+
 ## 1.3.0 / 2017-10-26
 
 * [FEATURE]     Add `secure` option for FTP to use SFTP
