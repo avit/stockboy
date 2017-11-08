@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.2 / 2017-11-08
+
+* [BUGFIX]      Fix SFTP adapter returning integer for modification_time
+
 ## 1.3.1 / 2017-11-07
 
 * [ENHANCEMENT] Expose both raw FTP commands or generic adapter commands
