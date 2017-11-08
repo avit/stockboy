@@ -41,9 +41,63 @@ module Stockboy
       end
     end
 
+    describe "#adapter" do
+      it "should return yielded result" do
+        stub_adapter
+
+        result = provider.adapter { |_| "a_file_name.csv" }
+
+        expect(result).to eq "a_file_name.csv"
+      end
+
+      context "with default secure (false)" do
+        it "yields an FTP adapter" do
+          net_ftp = expect_ftp_connection
+
+          provider.adapter do |ftp|
+            expect(ftp.client).to be net_ftp
+          end
+        end
+
+        it "catches FTP errors" do
+          expect_ftp_connection
+
+          provider.adapter do |ftp|
+            raise Net::FTPError, "not really gopher"
+          end
+
+          expect(provider.errors).to include "not really gopher"
+        end
+      end
+
+      context "with secure" do
+        before do
+          provider.secure = true
+        end
+
+        it "yields an SFTP adapter" do
+          net_sftp = expect_sftp_connection
+
+          provider.adapter do |ftp|
+            expect(ftp.client).to be net_sftp
+          end
+        end
+
+        it "catches SFTP errors" do
+          expect_sftp_connection
+
+          provider.adapter do |ftp|
+            raise Net::SFTP::Exception, "still not gopher"
+          end
+
+          expect(provider.errors).to include "still not gopher"
+        end
+      end
+    end
+
     describe "#client" do
       it "should return yielded result" do
-        expect_connection
+        expect_ftp_connection
 
         result = provider.client { |_| "a_file_name.csv" }
 
@@ -67,20 +121,20 @@ module Stockboy
       end
 
       it "downloads the last matching file" do
-        net_ftp = expect_connection
-        expect(net_ftp).to receive(:list_files).and_return ['20120101.csv', '20120102.csv']
-        expect(net_ftp).to receive(:download).with('20120102.csv').and_return "DATA"
+        adapter = stub_adapter
+        expect(adapter).to receive(:list_files).and_return ['20120101.csv', '20120102.csv']
+        expect(adapter).to receive(:download).with('20120102.csv').and_return "DATA"
         expect(provider).to receive(:validate_file).and_return true
 
         expect(provider.data).to eq "DATA"
       end
 
       it "skips old files" do
-        net_ftp = expect_connection
-        expect(net_ftp).to receive(:list_files).and_return ['20120101.csv', '20120102.csv']
-        expect(net_ftp).to receive(:modification_time).with('20120102.csv').and_return(Time.new(2009,01,01))
-        expect(net_ftp).to receive(:size).with('20120102.csv').and_return(Time.new(2009,01,01))
-        expect(net_ftp).to_not receive(:download)
+        adapter = stub_adapter
+        expect(adapter).to receive(:list_files).and_return ['20120101.csv', '20120102.csv']
+        expect(adapter).to receive(:modification_time).with('20120102.csv').and_return(Time.new(2009,01,01))
+        expect(adapter).to receive(:size).with('20120102.csv').and_return(Time.new(2009,01,01))
+        expect(adapter).to_not receive(:download)
 
         provider.file_newer = Time.new(2010,1,1)
         expect(provider.data).to be nil
@@ -89,13 +143,13 @@ module Stockboy
 
     describe "#matching_file" do
       it "does not change until cleared" do
-        net_ftp = expect_connection
-        expect(net_ftp).to receive(:list_files).and_return ["1.csv", "2.csv"]
+        adapter = stub_adapter
+        expect(adapter).to receive(:list_files).and_return ["1.csv", "2.csv"]
 
         expect(provider.matching_file).to eq "2.csv"
 
-        net_ftp = expect_connection
-        expect(net_ftp).to receive(:list_files).and_return ["1.csv", "2.csv", "3.csv"]
+        adapter = stub_adapter
+        expect(adapter).to receive(:list_files).and_return ["1.csv", "2.csv", "3.csv"]
 
         expect(provider.matching_file).to eq "2.csv"
         provider.clear
@@ -110,24 +164,36 @@ module Stockboy
       end
 
       it "should delete the matching file" do
-        net_ftp = expect_connection
-        expect(net_ftp).to receive(:list_files).and_return ["1.csv", "2.csv"]
+        adapter = stub_adapter
+        expect(adapter).to receive(:list_files).and_return ["1.csv", "2.csv"]
 
         expect(provider.matching_file).to eq "2.csv"
 
-        net_ftp = expect_connection
-        expect(net_ftp).to receive(:delete).with("2.csv")
+        adapter = stub_adapter
+        expect(adapter).to receive(:delete).with("2.csv")
 
         expect(provider.delete_data).to eq "2.csv"
       end
     end
 
-    def expect_connection
-      adapter = instance_double(provider.adapter_class)
+    def stub_adapter
+      adapter = instance_double(provider.adapter_class, client: nil)
       expect(adapter).to receive(:open).and_yield(adapter)
 
       expect(provider.adapter_class).to receive(:new).with(provider).and_return adapter
       adapter
+    end
+
+    def expect_ftp_connection
+      connection = instance_double(Net::FTP, "binary=" => nil, "passive=" => nil)
+      expect(Net::FTP).to receive(:open).and_yield(connection)
+      connection
+    end
+
+    def expect_sftp_connection
+      connection = instance_double(Net::SFTP)
+      expect(Net::SFTP).to receive(:start).and_yield(connection)
+      connection
     end
 
   end

@@ -110,21 +110,21 @@ module Stockboy::Providers
       @file_larger  = opts[:file_larger]
       @pick         = opts[:pick] || :last
       DSL.new(self).instance_eval(&block) if block_given?
-      @open_client  = nil
+      @open_adapter  = nil
     end
 
     def adapter_class
       secure ? SFTPAdapter : FTPAdapter
     end
 
-    def client
-      return yield @open_client if @open_client
+    def adapter
+      return yield @open_adapter if @open_adapter
 
       adapter_class.new(self).open do |ftp|
-        @open_client = ftp
+        @open_adapter = ftp
         ftp.chdir file_dir if file_dir
         response = yield ftp
-        @open_client = nil
+        @open_adapter = nil
         response
       end
 
@@ -134,9 +134,13 @@ module Stockboy::Providers
       nil
     end
 
+    def client
+      adapter { |ftp| yield ftp.client }
+    end
+
     def matching_file
       return @matching_file if @matching_file
-      client do |ftp|
+      adapter do |ftp|
         file_listing = ftp.list_files
         @matching_file = pick_from file_listing.select(&file_name_matcher)
       end
@@ -144,7 +148,7 @@ module Stockboy::Providers
 
     def delete_data
       raise Stockboy::OutOfSequence, "must confirm #matching_file or calling #data" unless picked_matching_file?
-      client do |ftp|
+      adapter do |ftp|
         logger.info "FTP deleting file #{host} #{file_dir}/#{matching_file}"
         ftp.delete matching_file
         matching_file
@@ -161,7 +165,7 @@ module Stockboy::Providers
     private
 
     def fetch_data
-      client do |ftp|
+      adapter do |ftp|
         validate_file(matching_file)
         if valid?
           logger.debug "FTP getting file #{inspect_matching_file}"
@@ -199,21 +203,21 @@ module Stockboy::Providers
     end
 
     def validate_file_newer(data_file)
-      @data_time ||= client { |ftp| ftp.modification_time(data_file) }
+      @data_time ||= adapter { |ftp| ftp.modification_time(data_file) }
       if file_newer and @data_time < file_newer
         errors << "No new files since #{file_newer}"
       end
     end
 
     def validate_file_smaller(data_file)
-      @data_size ||= client { |ftp| ftp.size(data_file) }
+      @data_size ||= adapter { |ftp| ftp.size(data_file) }
       if file_smaller and @data_size > file_smaller
         errors << "File size larger than #{file_smaller}"
       end
     end
 
     def validate_file_larger(data_file)
-      @data_size ||= client { |ftp| ftp.size(data_file) }
+      @data_size ||= adapter { |ftp| ftp.size(data_file) }
       if file_larger and @data_size < file_larger
         errors << "File size smaller than #{file_larger}"
       end

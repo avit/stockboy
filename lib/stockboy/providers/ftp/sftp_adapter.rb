@@ -34,16 +34,18 @@ module Stockboy::Providers
       client.download!(full_path(file_name))
     end
 
-    def full_path(file_name)
-      ::File.join(@file_dir, file_name)
-    end
-
     def modification_time(file_name)
       stat(file_name).mtime
     end
 
     def size(file_name)
       stat(file_name).size
+    end
+
+    private
+
+    def full_path(file_name)
+      ::File.join(@file_dir, file_name)
     end
 
     def stat(file_name)
