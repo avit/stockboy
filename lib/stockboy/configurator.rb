@@ -29,10 +29,16 @@ module Stockboy
     # @overload new(&block)
     #   Evaluate DSL in a block
     #
-    def initialize(dsl='', file=__FILE__, &block)
+    def initialize(dsl='', file=__FILE__, inject_variables={}, &block)
       @config = {}
       @config[:triggers] = Hash.new { |hash, key| hash[key] = [] }
       @config[:filters] = {}
+
+      inject_variables.each do |k, v|
+        raise DSLVariableCollision if instance_variable_defined?("@#{k}")
+        instance_variable_set("@#{k}", v)
+      end
+
       if block_given?
         instance_eval(&block)
       else

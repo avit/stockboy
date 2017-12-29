@@ -97,9 +97,9 @@ module Stockboy
     # @yield instance for further configuration or processing
     # @see Configuration#template_load_paths
     #
-    def self.define(template_name)
+    def self.define(template_name, template_variables={})
       return nil unless template = TemplateFile.read(template_name)
-      job = Configurator.new(template, TemplateFile.find(template_name)).to_job
+      job = Configurator.new(template, TemplateFile.find(template_name), template_variables).to_job
       yield job if block_given?
       job
     end

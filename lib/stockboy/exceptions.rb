@@ -21,4 +21,6 @@ module Stockboy
     attr_reader :key
     attr_reader :record
   end
+
+  class DSLVariableCollision < StandardError; end
 end
