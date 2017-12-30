@@ -53,6 +53,12 @@ module Stockboy
 
     attr_reader :triggers
 
+    # Env variables passed to the job template DSL
+    #
+    # @return [Hash]
+    #
+    attr_accessor :env
+
     # Lists of records grouped by filter key
     #
     # @return [Hash{Symbol=>Array}]
@@ -87,6 +93,7 @@ module Stockboy
       @filters    = FilterChain.new params[:filters]
       @triggers   = Hash.new { |h,k| h[k] = [] }
       @triggers.replace params[:triggers] if params[:triggers]
+      @env        = params[:env]
       yield self if block_given?
       reset
     end

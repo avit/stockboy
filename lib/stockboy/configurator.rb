@@ -171,7 +171,7 @@ module Stockboy
     end
 
     def env
-      @env ||= Hash.new do |hash, key|
+      @config[:env] ||= Hash.new do |hash, key|
         raise DSLEnvVariableUndefined, "#{key} not defined"
       end
     end
