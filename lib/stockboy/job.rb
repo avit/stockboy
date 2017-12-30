@@ -94,6 +94,7 @@ module Stockboy
     # Instantiate a job configured by DSL template file
     #
     # @param template_name [String] File basename from template load path
+    # @param template_variables [Hash] env variables to be 'injected' into the template
     # @yield instance for further configuration or processing
     # @see Configuration#template_load_paths
     #

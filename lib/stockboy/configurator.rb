@@ -29,15 +29,12 @@ module Stockboy
     # @overload new(&block)
     #   Evaluate DSL in a block
     #
-    def initialize(dsl='', file=__FILE__, inject_variables={}, &block)
+    def initialize(dsl='', file=__FILE__, env_variables={}, &block)
       @config = {}
       @config[:triggers] = Hash.new { |hash, key| hash[key] = [] }
       @config[:filters] = {}
 
-      inject_variables.each do |k, v|
-        raise DSLVariableCollision if instance_variable_defined?("@#{k}")
-        instance_variable_set("@#{k}", v)
-      end
+      env.merge! env_variables
 
       if block_given?
         instance_eval(&block)
@@ -171,6 +168,12 @@ module Stockboy
       filter = Filters.build(callable, args, block) || block
       filter or raise ArgumentError, "Missing filter arguments for #{key}"
       @config[:filters][key] = filter
+    end
+
+    def env
+      @env ||= Hash.new do |hash, key|
+        raise DSLEnvVariableUndefined, "#{key} not defined"
+      end
     end
 
     # Register a trigger to notify the job of external events

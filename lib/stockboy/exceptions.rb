@@ -22,5 +22,5 @@ module Stockboy
     attr_reader :record
   end
 
-  class DSLVariableCollision < StandardError; end
+  class DSLEnvVariableUndefined < StandardError; end
 end
