@@ -165,6 +165,17 @@ module Stockboy
 
     end
 
+    describe "#env" do
+      it "returns a Hash" do
+        expect(subject.env).to be_a(Hash)
+      end
+
+      it "raises an error when an undefined env variable is used" do
+        expect{subject.env[:my_undefined_key]}.to raise_error DSLEnvVariableUndefined
+      end
+
+    end
+
     describe "#to_job" do
       before do
         Providers.register :test_prov, provider_class
