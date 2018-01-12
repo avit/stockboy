@@ -55,9 +55,9 @@ module Stockboy
 
     # Env variables passed to the job template DSL
     #
-    # @return [Hash]
+    # @return [Configurator::EnvVars]
     #
-    attr_accessor :env
+    attr_reader :env
 
     # Lists of records grouped by filter key
     #
