@@ -19,6 +19,7 @@ module Stockboy
     # @return [Hash]
     #
     attr_reader :config
+    attr_reader :env
 
     # Evaluate DSL and capture configuration for building a job
     #
@@ -29,10 +30,14 @@ module Stockboy
     # @overload new(&block)
     #   Evaluate DSL in a block
     #
-    def initialize(dsl='', file=__FILE__, &block)
+    def initialize(dsl='', file=__FILE__, env_variables={}, &block)
       @config = {}
       @config[:triggers] = Hash.new { |hash, key| hash[key] = [] }
       @config[:filters] = {}
+
+      @env = EnvVars.new(env_variables)
+      @config[:env] = @env
+
       if block_given?
         instance_eval(&block)
       else
@@ -211,6 +216,25 @@ module Stockboy
     def wrap_provider(config)
       return unless (repeat = config.delete(:repeat))
       config[:provider] = ProviderRepeater.new(config[:provider], &repeat)
+    end
+
+    # Store for template variables to be used in the DSL.
+    #
+    # A "frozen" copy is made of any values passed, such that template variables are
+    # locked at job definition time. To use a different set of variables, the job must
+    # be re-defined.
+    #
+    class EnvVars
+        def initialize(variables)
+            @h = Hash.new do |hash, key|
+                raise DSLEnvVariableUndefined, "#{key} not defined"
+            end
+            @h.merge!(Marshal.load(Marshal.dump(variables)))
+        end
+
+        def [](key)
+            @h[key].dup
+        end
     end
 
   end

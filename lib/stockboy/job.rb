@@ -53,6 +53,12 @@ module Stockboy
 
     attr_reader :triggers
 
+    # Env variables passed to the job template DSL
+    #
+    # @return [Configurator::EnvVars]
+    #
+    attr_reader :env
+
     # Lists of records grouped by filter key
     #
     # @return [Hash{Symbol=>Array}]
@@ -87,6 +93,7 @@ module Stockboy
       @filters    = FilterChain.new params[:filters]
       @triggers   = Hash.new { |h,k| h[k] = [] }
       @triggers.replace params[:triggers] if params[:triggers]
+      @env        = params[:env]
       yield self if block_given?
       reset
     end
@@ -94,12 +101,13 @@ module Stockboy
     # Instantiate a job configured by DSL template file
     #
     # @param template_name [String] File basename from template load path
+    # @param template_variables [Hash] env variables to be 'injected' into the template
     # @yield instance for further configuration or processing
     # @see Configuration#template_load_paths
     #
-    def self.define(template_name)
+    def self.define(template_name, template_variables={})
       return nil unless template = TemplateFile.read(template_name)
-      job = Configurator.new(template, TemplateFile.find(template_name)).to_job
+      job = Configurator.new(template, TemplateFile.find(template_name), template_variables).to_job
       yield job if block_given?
       job
     end

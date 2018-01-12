@@ -165,6 +165,34 @@ module Stockboy
 
     end
 
+    describe "#env" do
+      it "returns a Configurator::EnvVars object" do
+        expect(subject.env).to be_a(Configurator::EnvVars)
+      end
+    end
+
+    describe "EnvVars" do
+      let(:initial_vars) { {:test_key => "test value"} }
+      let(:env_vars) { Configurator::EnvVars.new(initial_vars) }
+
+      it "can be read like a Hash" do
+        expect(env_vars).to respond_to(:[])
+      end
+
+      it "raises an error when an undefined env variable is used" do
+        expect{env_vars[:my_undefined_key]}.to raise_error DSLEnvVariableUndefined
+      end
+
+      it "'s values are immutable" do
+        new_value = env_vars[:test_key]  << "appended string"
+        expect(env_vars[:test_key]).not_to eq new_value
+
+        initial_vars[:test_key] << "+mutating inputs"
+        expect(env_vars[:test_key]).to eq "test value"
+      end
+
+    end
+
     describe "#to_job" do
       before do
         Providers.register :test_prov, provider_class
