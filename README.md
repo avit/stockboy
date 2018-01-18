@@ -75,6 +75,30 @@ accessed as individual methods, or by converting the record to a hash.
     record.to_model(YourModel) or YourModel.new(record.attributes)
     #=> #<YourModel ...>
 
+### Record Hash
+
+Record attributes are hashed from the output values. This means that records can
+be compared as equal:
+
+    record1.attributes
+    #=> {last_name: "Robin", first_name: "Hood", location: "Sherwood Forest"}
+
+    record2.attributes
+    #=> {first_name: "Robin", last_name: "Hood", location: "Sherwood Forest"}
+
+    record1 == record2
+    #=> true
+
+Or reduced to a unique set:
+
+    job.records[:new_signups].uniq
+
+Because of its consistency, the object hash on Stockboy records is suitable as
+an identity key, e.g. for caching.
+
+    record.hash
+    #=> "0d320adc4cae992a1d0a6c6e4f1aff11"
+
 
 ## Job Template DSL
 
