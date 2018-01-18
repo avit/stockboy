@@ -176,5 +176,47 @@ module Stockboy
       end
     end
 
+    describe "hash" do
+      let (:map1)     { AttributeMap.new {id;full_name;email;birthday} }
+      let (:map2)     { AttributeMap.new {id;full_name;email;birthday} }
+      let (:record1)  { CandidateRecord.new(hash_attrs, map1) }
+      let (:record2)  { CandidateRecord.new(hash_attrs, map2) }
+
+      it "generates a consistent md5 hash of the record" do
+        expect(record1.hash).to eq(record2.hash)
+      end
+
+      context "with attributes in different order" do
+        let (:map2)   { AttributeMap.new {email;birthday;id;full_name} }
+
+        it "should have different hash" do
+          expect(record1.hash).to_not eq(record2.hash)
+        end
+      end
+
+      context "with an ignored attribute" do
+        let (:map2)   { AttributeMap.new {id ignore: true;full_name;email;birthday} }
+
+        it "should have different hash" do
+          expect(record1.hash).to_not eq(record2.hash)
+        end
+      end
+
+      context "with a translated attribute" do
+        let (:map2)   { AttributeMap.new {id;full_name as: ->(r){ r.full_name.upcase };email;birthday} }
+
+        it "should have different hash" do
+          expect(record1.hash).to_not eq(record2.hash)
+        end
+      end
+
+      context "with an attributes name changed" do
+        let (:map2)   { AttributeMap.new {id;full_name;contact from: "email" ;birthday} }
+
+        it "should have different hash" do
+          expect(record1.hash).to_not eq(record2.hash)
+        end
+      end
+    end
   end
 end

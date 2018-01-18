@@ -82,6 +82,14 @@ module Stockboy
       nil
     end
 
+    # Generate an md5 hash from the mapped output attributes
+    #
+    # @return [String] MD5 hash
+    #
+    def hash
+      Digest::MD5.hexdigest(Marshal::dump(to_hash)).freeze
+    end
+
     # Data structure representing the record's raw input values
     #
     # Values can be accessed like hash keys, or attribute names that correspond
