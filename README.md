@@ -99,6 +99,12 @@ an identity key, e.g. for caching.
     record.hash
     #=> "0d320adc4cae992a1d0a6c6e4f1aff11"
 
+**Note:**
+If you rely on this feature for record uniqueness, it’s up to you to ensure that
+the same input values are always translated to consistently produce the same
+output values.
+[Translator blocks](#3-collect-it-into-attributes) that manipulate values based on data external to the record
+(for example time), would produce records with different hash values.
 
 ## Job Template DSL
 
