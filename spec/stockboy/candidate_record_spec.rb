@@ -176,6 +176,18 @@ module Stockboy
       end
     end
 
+    describe "==" do
+      let (:map1)     { AttributeMap.new {id;full_name;email;birthday} }
+      let (:map2)     { AttributeMap.new {id;full_name;email;birthday} }
+      let (:record1)  { CandidateRecord.new(hash_attrs, map1) }
+      let (:record2)  { CandidateRecord.new(hash_attrs, map2) }
+
+      it "is true with two records with the same attributes" do
+        expect(record1 == record2).to be true
+        expect(record1.eql? record2).to be true
+      end
+    end
+
     describe "hash" do
       let (:map1)     { AttributeMap.new {id;full_name;email;birthday} }
       let (:map2)     { AttributeMap.new {id;full_name;email;birthday} }
