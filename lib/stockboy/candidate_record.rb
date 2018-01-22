@@ -36,6 +36,7 @@ module Stockboy
       end
     end
     alias_method :attributes, :to_hash
+    alias_method :to_h, :to_hash
 
     # Mapped output hash including ignored values
     #
@@ -81,6 +82,21 @@ module Stockboy
       end
       nil
     end
+
+    # Generate an md5 hash from the mapped output attributes
+    #
+    # @return [String] MD5 hash
+    #
+    def hash
+      Digest::MD5.hexdigest(Marshal::dump(to_hash)).freeze
+    end
+
+    # Use the record attributes hash to compare equality between objects
+    #
+    def ==(other)
+     self.hash == other.hash
+    end
+    alias_method :eql?, :==
 
     # Data structure representing the record's raw input values
     #
