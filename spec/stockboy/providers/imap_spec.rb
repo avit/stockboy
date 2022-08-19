@@ -237,6 +237,7 @@ module Stockboy
       expect(Net::IMAP).to receive(:new).with(host) { net_imap }
       expect(net_imap).to receive(:login).with(user, pass)
       expect(net_imap).to receive(:examine).with(mailbox)
+      expect(net_imap).to receive(:starttls)
       expect(net_imap).to receive(:disconnect)
       net_imap
     end

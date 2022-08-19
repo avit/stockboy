@@ -158,6 +158,7 @@ module Stockboy::Providers
       first_connection = @open_client.nil?
       if first_connection
         @open_client = ::Net::IMAP.new(host)
+        @open_client.starttls
         @open_client.login(username, password)
         @open_client.examine(mailbox)
       end
