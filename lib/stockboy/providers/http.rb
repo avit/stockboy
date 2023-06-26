@@ -158,7 +158,10 @@ module Stockboy::Providers
 
     def fetch_data
       client do |request|
-        response = HTTPI.request(method, request)
+        response = HTTPI.request(method, request) do |http_client|
+          http_client.ssl_config.set_default_paths
+        end
+
         if response.error?
           errors << "HTTP response error: #{response.code}"
         else
